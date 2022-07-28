@@ -41,3 +41,12 @@
 * Manage Users
 * Find <user> using name and open
 * Give <role> to user
+
+# Filter patient
+* Enter patientId
+* Click on Filter
+
+# Navigate to Audit Log module
+* Goto Bahmni main home
+* Open "Admin" module
+* Open Audit Log module

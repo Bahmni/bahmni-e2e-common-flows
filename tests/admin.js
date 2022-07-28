@@ -239,3 +239,35 @@ step("Give <role> to user", async function (role) {
     await checkBox(toLeftOf(role)).check();
     await click(button("Save User"));
 });
+
+step("Click on Audit log", async function () {
+    await click("Audit Log");
+
+});
+
+step("Open Audit Log module", async function () {
+    await click("Audit Log");
+    await waitFor(10000);
+});
+
+step("Enter patientId", async function () {
+    var patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
+    await write(patientIdentifierValue, into(textBox(toRightOf("Patient ID "))));
+
+});
+
+step("Click on Filter", async function () {
+    await click("Filter");
+    await waitFor(10000);
+});
+
+
+step("Verify Event <message> in Audit log for the <user>", async function (strMessage, strUser) {
+    var patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
+    var username = users.getUserNameFromEncoding(process.env[strUser]);
+    strMessage = strMessage.replace('<user>', username).replace('<patient>', patientIdentifierValue);
+    if (strMessage.includes(patientIdentifierValue)) {
+        assert.ok(await text(strMessage, toRightOf(username), toRightOf(patientIdentifierValue)).exists());
+    }
+    assert.ok(await text(strMessage, toRightOf(username)).exists());
+});
