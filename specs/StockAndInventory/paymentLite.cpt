@@ -55,3 +55,9 @@
 * Goto the tab All
 * open the invoice
 * verify the payment is complete
+
+# Run report and validate
+* goto reports in payment lite
+* Validate Report is displayed
+* Download the report
+* Validate the downloaded report
