@@ -27,11 +27,11 @@
 * Select customer
 * Click New Transaction
 * Create a new invoice
-* Associate the newly created patient to an invoice
+* Add items to invoice
 * Save Invoice
-* Note the invoice number
+* Note the Date, Invoice Number and Amount
 
-# Associate the newly created patient to an invoice
+# Add items to invoice
 * Choose the doctor in paymentlite
 * Add a new Item
 * Choose the prescibed medicines in paymentlite
@@ -43,11 +43,11 @@
 * Select the payment mode as "cash"
 * Save payment
 
-# Note the invoice number
+# Note the Date, Invoice Number and Amount
 * Click Invoices
 * Goto the tab Draft
 * Goto the tab All
-* Note the invoice number of the patient
+* Note the Date, Invoice Number and Amount of the patient
 
 # Verify the payment is complete
 * Click Invoices

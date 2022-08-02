@@ -4,7 +4,6 @@ var assert = require("assert")
 var users = require("./util/users");
 var fs = require('fs')
 var path = require('path')
-var pdfReader = require("./util/pdfReader");
 const console = require("console");
 const pdf = require('pdf-parse');
 
@@ -181,12 +180,19 @@ step("Goto the tab All", async function () {
 	await click("All")
 });
 
-step("Note the invoice number of the patient", async function () {
+step("Note the Date, Invoice Number and Amount of the patient", async function () {
 	var firstName = gauge.dataStore.scenarioStore.get("patientFirstName")
 	var middleName = gauge.dataStore.scenarioStore.get("patientMiddleName")
 
 	var invoiceNumber = await link(toLeftOf(`${firstName} ${middleName}`), below("NUMBER"), toRightOf("DATE")).text()
 	gauge.dataStore.scenarioStore.put("invoiceNumber", invoiceNumber)
+	
+	var invoiceAmount = await link(toRightOf(`${firstName} ${middleName}`), below("TOTAL"), toLeftOf("ACTION")).text()
+	gauge.dataStore.scenarioStore.put("invoiceAmount", invoiceAmount)
+	
+	var invoiceDate = await link(toLeftOf(`${firstName} ${middleName}`), below("DATE"), toRightOf("INVOICES")).text()
+	gauge.dataStore.scenarioStore.put("invoiceDate", invoiceDate)
+	
 });
 
 step("Associate the invoice to the payment", async function () {
@@ -236,27 +242,31 @@ step("Validate Report is displayed", async function () {
 });
 
 step("Download the report", async function () {
-	var downloadPath = path.resolve(__dirname, 'data', 'downloaded');
+	var downloadPath = path.resolve(__dirname, '../data', 'downloaded');
 	var FilePath = path.join(downloadPath, 'document.pdf');
+	fileExtension.removeDir(downloadPath);
 	await client().send('Page.setDownloadBehavior', {
 		behavior: 'allow',
 		downloadPath: downloadPath,
 	});
 	await click(button("Download PDF"));
-	console.log(FilePath)
-	assert.ok(fs.existsSync(FilePath))
+	await waitFor(() => fileExtension.exists(FilePath))
+	assert.ok(fileExtension.exists(FilePath))
 	gauge.dataStore.scenarioStore.put("pdfReportPath", FilePath)
-	waitFor(15000)
-	// switchTo("Crater - Self Hosted Invoicing Platform");
 });
 
 step("Validate the downloaded report", async function () {
+	var firstName = gauge.dataStore.scenarioStore.get("patientFirstName")
+	var middleName = gauge.dataStore.scenarioStore.get("patientMiddleName")
+	var lastName = gauge.dataStore.scenarioStore.get("patientLastName")
 	var invoiceNumber = gauge.dataStore.scenarioStore.get("invoiceNumber")
+	var invoiceAmount = gauge.dataStore.scenarioStore.get("invoiceAmount")
+	var invoiceDate = gauge.dataStore.scenarioStore.get("invoiceDate")
 	let dataBuffer = fs.readFileSync(gauge.dataStore.scenarioStore.get("pdfReportPath"));
-	console.log(invoiceNumber)
+	gauge.message(`Invoice - ${invoiceNumber} Amount - ${invoiceAmount} Date - ${invoiceDate}`)
 	pdf(dataBuffer).then(function (data) {
-		console.log(data.text)
-		console.log(data.text.includes(invoiceNumber));
-		assert.ok(data.text.includes(invoiceNumber));
+		var pdfText = data.text
+		assert.ok(pdfText.includes("Sales Report: By Customer"));
+        assert.ok(pdfText.includes(`${firstName} ${middleName} ${lastName}\n${invoiceDate} (${invoiceNumber})${invoiceAmount}\n${invoiceAmount}`));
 	});
 });
