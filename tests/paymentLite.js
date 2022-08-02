@@ -186,13 +186,13 @@ step("Note the Date, Invoice Number and Amount of the patient", async function (
 
 	var invoiceNumber = await link(toLeftOf(`${firstName} ${middleName}`), below("NUMBER"), toRightOf("DATE")).text()
 	gauge.dataStore.scenarioStore.put("invoiceNumber", invoiceNumber)
-	
+
 	var invoiceAmount = await link(toRightOf(`${firstName} ${middleName}`), below("TOTAL"), toLeftOf("ACTION")).text()
 	gauge.dataStore.scenarioStore.put("invoiceAmount", invoiceAmount)
-	
+
 	var invoiceDate = await link(toLeftOf(`${firstName} ${middleName}`), below("DATE"), toRightOf("INVOICES")).text()
 	gauge.dataStore.scenarioStore.put("invoiceDate", invoiceDate)
-	
+
 });
 
 step("Associate the invoice to the payment", async function () {
@@ -267,6 +267,6 @@ step("Validate the downloaded report", async function () {
 	pdf(dataBuffer).then(function (data) {
 		var pdfText = data.text
 		assert.ok(pdfText.includes("Sales Report: By Customer"));
-        assert.ok(pdfText.includes(`${firstName} ${middleName} ${lastName}\n${invoiceDate} (${invoiceNumber})${invoiceAmount}\n${invoiceAmount}`));
+		assert.ok(pdfText.includes(`${firstName} ${middleName} ${lastName}\n${invoiceDate} (${invoiceNumber})${invoiceAmount}\n${invoiceAmount}`));
 	});
 });
