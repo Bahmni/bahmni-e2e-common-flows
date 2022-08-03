@@ -1,4 +1,4 @@
-const { goto, click, waitFor, button, write, into, textBox, below, scrollTo, above, toLeftOf, toRightOf, $, text, doubleClick, press, link, client, switchTo } = require("taiko");
+const { goto, click, waitFor, button, write, into, textBox, below, scrollTo, above, toLeftOf, toRightOf, $, text, doubleClick, press, link, client } = require("taiko");
 var fileExtension = require("./util/fileExtension")
 var assert = require("assert")
 var users = require("./util/users");
@@ -187,10 +187,10 @@ step("Note the Date, Invoice Number and Amount of the patient", async function (
 	var invoiceNumber = await link(toLeftOf(`${firstName} ${middleName}`), below("NUMBER"), toRightOf("DATE")).text()
 	gauge.dataStore.scenarioStore.put("invoiceNumber", invoiceNumber)
 
-	var invoiceAmount = await link(toRightOf(`${firstName} ${middleName}`), below("TOTAL"), toLeftOf("ACTION")).text()
+	var invoiceAmount = await text('/₹ [0-9]*\.[0-9]+/', toRightOf(`${firstName} ${middleName}`), below("TOTAL")).text()
 	gauge.dataStore.scenarioStore.put("invoiceAmount", invoiceAmount)
 
-	var invoiceDate = await link(toLeftOf(`${firstName} ${middleName}`), below("DATE"), toRightOf("INVOICES")).text()
+	var invoiceDate = await text('/([0-9]+(/[0-9]+)+(/[0-9]+))/', toLeftOf(`${firstName} ${middleName}`), below("DATE")).text()
 	gauge.dataStore.scenarioStore.put("invoiceDate", invoiceDate)
 
 });
@@ -251,6 +251,7 @@ step("Download the report", async function () {
 	});
 	await click(button("Download PDF"));
 	await waitFor(() => fileExtension.exists(FilePath))
+	await waitFor(1000)
 	assert.ok(fileExtension.exists(FilePath))
 	gauge.dataStore.scenarioStore.put("pdfReportPath", FilePath)
 });
@@ -260,7 +261,7 @@ step("Validate the downloaded report", async function () {
 	var middleName = gauge.dataStore.scenarioStore.get("patientMiddleName")
 	var lastName = gauge.dataStore.scenarioStore.get("patientLastName")
 	var invoiceNumber = gauge.dataStore.scenarioStore.get("invoiceNumber")
-	var invoiceAmount = gauge.dataStore.scenarioStore.get("invoiceAmount")
+	var invoiceAmount = gauge.dataStore.scenarioStore.get("invoiceAmount").replace(" ","")
 	var invoiceDate = gauge.dataStore.scenarioStore.get("invoiceDate")
 	let dataBuffer = fs.readFileSync(gauge.dataStore.scenarioStore.get("pdfReportPath"));
 	gauge.message(`Invoice - ${invoiceNumber} Amount - ${invoiceAmount} Date - ${invoiceDate}`)
