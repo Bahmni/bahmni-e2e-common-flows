@@ -1,6 +1,7 @@
 # Enter vitals <Vitals>
 * Click Vitals
 * Enter Form Values <Vitals>
+* Verify error displayed on page
 
 # Doctor issues an Admit disposition
 * Open clinical tab
@@ -14,6 +15,7 @@
 * wait for overlay to disappear
 * Doctor captures consultation notes "Consultation notes"
 * Save data
+* Verify error displayed on page
 
 # Doctor issues an Discharge disposition
 * Choose Disposition
@@ -51,11 +53,13 @@
 * Open "Medications" Tab
 * Doctor prescribes medicines <medication>
 * Save data
+* Verify error displayed on page
 
 # Doctor prescribes tests <tests>
 * Open "Orders" Tab
 * Doctor prescribe tests <tests>
 * Save data
+* Verify error displayed on page
 
 # The doctor joins the link for the appointment
 * Open "Appointment scheduling" module
@@ -76,10 +80,13 @@
 * Open "Diagnoses" Tab
 * Doctor notes the diagnosis and condition <diagnosis_condition>
 * Save data
+* Verify error displayed on page
 
 # Enter History and Examination details <historyExamination>
 * Enter History and examination details <historyExamination>
 * Save data
+* Verify error displayed on page
+
 
 # Verify diagnosis and condition in patient clinical dashboard
 * Verify diagnosis in patient clinical dashboard

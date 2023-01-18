@@ -35,6 +35,7 @@
 * Enter random email address
 * Upload patient image
 * Save the patient data
+* Verify error displayed on page
 
 # Open clinical tab
 * Open "Clinical" module
@@ -49,9 +50,11 @@
 
 # Start an OPD Visit
 * Click Start OPD Visit
+* Verify error displayed on page
 * Enter registration fees "100"
 * Save visit data
 * wait for overlay and Saved to disappear
+* Verify error displayed on page
 * Click back button
 
 # Start a <visit> Visit
@@ -123,4 +126,3 @@
 * wait for overlay to disappear
 * Save visit data
 * wait for overlay to disappear
-
