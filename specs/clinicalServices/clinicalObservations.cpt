@@ -49,9 +49,9 @@
 * Search the newly created patient
 * wait for overlay to disappear
 
-# Doctor prescribes medications <medication>
+# Doctor prescribes medications <medications>
 * Open "Medications" Tab
-* Doctor prescribes medicines <medication>
+* Doctor prescribes medicines <medications>
 * Save data
 * Verify no error displayed on page
 

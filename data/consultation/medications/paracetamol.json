@@ -1,7 +1,8 @@
 {
     "drug_name": "Paracetamol 650 mg",
     "units": "Capsule(s)",
-    "frequency": "Thrice a day",
-    "dose": "3",
-    "duration": "7"
+    "frequency": "Twice a day",
+    "dose": "1",
+    "duration": "7",
+    "notes": "Twice a day for 7 days"
 }

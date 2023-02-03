@@ -42,35 +42,46 @@ step("put medications <prescriptionNames>", async function (prescriptionNames) {
 })
 
 step("Doctor prescribes medicines <prescriptionNames>", async function (prescriptionNames) {
-    var prescriptionFile = `./bahmni-e2e-common-flows/data/${prescriptionNames}.json`;
-    gauge.dataStore.scenarioStore.put("prescriptions", prescriptionFile)
-    var drugName = gauge.dataStore.scenarioStore.get("Drug Name")
+    if (prescriptionNames.includes(',')) { var prescriptionsList = prescriptionNames.split(',') }
+    else { var prescriptionsList = prescriptionNames.split() }
+    console.log(prescriptionsList)
+    for (var i = 0; i < prescriptionsList.length; i++) {
 
-    var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
-    gauge.message(medicalPrescriptions)
+        var prescriptionFile = `./bahmni-e2e-common-flows/data/${prescriptionsList[i]}.json`;
+        gauge.dataStore.scenarioStore.put("prescriptions", prescriptionFile)
+        var drugName = gauge.dataStore.scenarioStore.get("Drug Name")
 
-    if (medicalPrescriptions.drug_name != null) {
-        if (drugName == null)
-            drugName = medicalPrescriptions.drug_name;
-        if (await textBox(toRightOf("Drug Name")).exists()) {
-            await write(drugName, into(textBox(toRightOf("Drug Name"))));
-            await click(link(drugName, below(textBox(toRightOf("Drug Name")))));
-            await dropDown(toRightOf("Units")).select(medicalPrescriptions.units);
-            await dropDown(toRightOf("Frequency")).select(medicalPrescriptions.frequency)
-            await write(medicalPrescriptions.dose, into(textBox(toRightOf("Dose"))));
-            await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
+        var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
+        gauge.message(medicalPrescriptions)
+
+        if (medicalPrescriptions.drug_name != null) {
+            if (drugName == null)
+                drugName = medicalPrescriptions.drug_name;
+            if (await textBox(toRightOf("Drug Name")).exists()) {
+                await write(drugName, into(textBox(toRightOf("Drug Name"))));
+                await click(link(drugName, below(textBox(toRightOf("Drug Name")))));
+                await dropDown(toRightOf("Units")).select(medicalPrescriptions.units);
+                await dropDown(toRightOf("Frequency")).select(medicalPrescriptions.frequency)
+                await write(medicalPrescriptions.dose, into(textBox(toRightOf("Dose"))));
+                await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
+                await write(medicalPrescriptions.notes, into(textBox(toRightOf("Additional Instructions"))));
+            }
+            else {
+                await write(drugName, into(textBox(below("Drug Name"))));
+                await click(link(drugName, below("Drug Name")));
+                await dropDown(below("Units")).select(medicalPrescriptions.units);
+                await dropDown(below("Frequency")).select(medicalPrescriptions.frequency)
+                await write(medicalPrescriptions.dose, into(textBox(below("Dose"))));
+                await write(medicalPrescriptions.duration, into(textBox(below("Duration"))));
+                await write(medicalPrescriptions.notes, into(textBox(toRightOf("Additional Instructions"))));
+            }
+            await click("Add");
         }
-        else {
-            await write(drugName, into(textBox(below("Drug Name"))));
-            await click(link(drugName, below("Drug Name")));
-            await dropDown(below("Units")).select(medicalPrescriptions.units);
-            await dropDown(below("Frequency")).select(medicalPrescriptions.frequency)
-            await write(medicalPrescriptions.dose, into(textBox(below("Dose"))));
-            await write(medicalPrescriptions.duration, into(textBox(below("Duration"))));
-        }
-        await click("Add");
+
     }
-});
+}
+);
+
 
 step("Doctor captures consultation notes <notes>", async function (notes) {
     gauge.dataStore.scenarioStore.put("consultationNotes", notes)
@@ -140,3 +151,5 @@ step("Doctor notes the diagnosis and condition <filePath>", async function (file
         await click("Add", below("Action"))
     }
 });
+
+
