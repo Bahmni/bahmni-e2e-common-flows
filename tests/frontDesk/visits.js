@@ -81,12 +81,16 @@ step("verify OPD", async function () {
 
 step("Verify medical prescription in patient clinical dashboard", async function () {
     await taikoHelper.repeatUntilNotFound($(".dashboard-section-loader"))
-    var prescriptionFile = gauge.dataStore.scenarioStore.get("prescriptions")
-    var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
-    assert.ok(await text(medicalPrescriptions.drug_name, within($("#Treatments"))).exists())
-    assert.ok(await text(`${medicalPrescriptions.dose} ${medicalPrescriptions.units}, ${medicalPrescriptions.frequency}`, within($("#Treatments"))).exists())
-    assert.ok(await text(`${medicalPrescriptions.duration} Days`, within($("#Treatments"))).exists())
+    var prescriptionCount = gauge.dataStore.scenarioStore.get("prescriptionsCount")
+    for (var i = 0; i < prescriptionCount; i++) {
+        var prescriptionFile = gauge.dataStore.scenarioStore.get("prescriptions"+i)
+        var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
+        assert.ok(await text(medicalPrescriptions.drug_name, within($("#Treatments"))).exists())
+        assert.ok(await text(`${medicalPrescriptions.dose} ${medicalPrescriptions.units}, ${medicalPrescriptions.frequency}`, within($("#Treatments"))).exists())
+        assert.ok(await text(`${medicalPrescriptions.duration} Days`, within($("#Treatments"))).exists())
+    }
 });
+
 
 step("Verify vitals", async function () {
     var vitalFormValues = gauge.dataStore.scenarioStore.get("vitalFormValues")
@@ -122,11 +126,11 @@ step("Verify history & examination in patient clinical dashboard", async functio
     assert.ok(await text(`${historyAndExaminationDetails.Chief_Complaints[0].Chief_Complaint} since ${historyAndExaminationDetails.Chief_Complaints[0].Sign_symptom_duration} ${historyAndExaminationDetails.Chief_Complaints[0].Units}`, toRightOf("Chief Complaint"), within($("#History-and-Examinations"))).exists())
     assert.ok(await text(`${historyAndExaminationDetails.History_of_present_illness}`, within($("#History-and-Examinations")), toRightOf("HPI")).exists())
     assert.ok(await text(`${historyAndExaminationDetails.Smoking_status}`, within($("#History-and-Examinations")), toRightOf("Smoking status")).exists())
-    assert.ok(await $("//a[@class='img-concept']/img").exists(),"Image not displayed on history & examination");
+    assert.ok(await $("//a[@class='img-concept']/img").exists(), "Image not displayed on history & examination");
     await scrollTo($("//a[@class='img-concept']/img"));
     await click($("//a[@class='img-concept']/img"));
     await waitFor(async () => await $(".slide").isVisible())
-    assert.ok(await $(".slide").isVisible(),"Image not opened.");
+    assert.ok(await $(".slide").isVisible(), "Image not opened.");
     await evaluate($(`//button[@class='dialog-close-btn']/i`), (el) => el.click())
     await waitFor(10000)
     assert.ok(await $(`.obs-play-btn`).exists(), "Play button is not available");
@@ -148,5 +152,5 @@ step("Validate the lab tests are available in patient clinical dashboard", async
 });
 
 step("Verify no error displayed on page", async function () {
-   assert.equal(await $("//DIV[@class='message-container error-message-container']").exists(500,1000),false,"Error displayed on page.")
+    assert.equal(await $("//DIV[@class='message-container error-message-container']").exists(500, 1000), false, "Error displayed on page.")
 });

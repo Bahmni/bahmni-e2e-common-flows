@@ -2,6 +2,7 @@
     "drug_name": "Paracetamol 500mg",
     "units": "Capsule(s)",
     "frequency": "Once a day",
-    "dose": "3",
-    "duration": "7"
+    "dose": "1",
+    "duration": "7",
+    "notes": "Thrice a day for 1 week"
 }

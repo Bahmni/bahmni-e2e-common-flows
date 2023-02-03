@@ -42,15 +42,14 @@ step("put medications <prescriptionNames>", async function (prescriptionNames) {
 })
 
 step("Doctor prescribes medicines <prescriptionNames>", async function (prescriptionNames) {
-    if (prescriptionNames.includes(',')) { var prescriptionsList = prescriptionNames.split(',') }
-    else { var prescriptionsList = prescriptionNames.split() }
-    console.log(prescriptionsList)
-    for (var i = 0; i < prescriptionsList.length; i++) {
+    var prescriptionsList = prescriptionNames.split(',')
+    var prescriptionsCount = prescriptionsList.length
+    gauge.dataStore.scenarioStore.put("prescriptionsCount", prescriptionsCount)
+    for (var i = 0; i < prescriptionsCount; i++) {
 
         var prescriptionFile = `./bahmni-e2e-common-flows/data/${prescriptionsList[i]}.json`;
-        gauge.dataStore.scenarioStore.put("prescriptions", prescriptionFile)
+        gauge.dataStore.scenarioStore.put("prescriptions" + i, prescriptionFile)
         var drugName = gauge.dataStore.scenarioStore.get("Drug Name")
-
         var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
         gauge.message(medicalPrescriptions)
 
@@ -64,15 +63,6 @@ step("Doctor prescribes medicines <prescriptionNames>", async function (prescrip
                 await dropDown(toRightOf("Frequency")).select(medicalPrescriptions.frequency)
                 await write(medicalPrescriptions.dose, into(textBox(toRightOf("Dose"))));
                 await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
-                await write(medicalPrescriptions.notes, into(textBox(toRightOf("Additional Instructions"))));
-            }
-            else {
-                await write(drugName, into(textBox(below("Drug Name"))));
-                await click(link(drugName, below("Drug Name")));
-                await dropDown(below("Units")).select(medicalPrescriptions.units);
-                await dropDown(below("Frequency")).select(medicalPrescriptions.frequency)
-                await write(medicalPrescriptions.dose, into(textBox(below("Dose"))));
-                await write(medicalPrescriptions.duration, into(textBox(below("Duration"))));
                 await write(medicalPrescriptions.notes, into(textBox(toRightOf("Additional Instructions"))));
             }
             await click("Add");
