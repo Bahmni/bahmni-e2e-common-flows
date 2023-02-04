@@ -1,4 +1,4 @@
-const { goto, click, waitFor, button, write, evaluate, into, textBox, below, scrollTo, above, toLeftOf, toRightOf, $, text, doubleClick, press, link, client } = require("taiko");
+const { goto, click, waitFor, button, write, evaluate, into, textBox, below, scrollTo, above, toLeftOf, toRightOf, $, text, doubleClick, press, link, client, scrollUp } = require("taiko");
 var fileExtension = require("./util/fileExtension")
 var assert = require("assert")
 var users = require("./util/users");
@@ -60,15 +60,18 @@ step("Add doctor with fees <fees>", async function (fees) {
 });
 
 step("Add a drug with price <price>", async function (price) {
-	var prescriptionFile = gauge.dataStore.scenarioStore.get("prescriptions");
-	var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
-	var drugName = medicalPrescriptions.drug_name;
-	if (! await link(drugName).exists(500, 1000)) {
-		await click(button("Add Item"));
-		await waitFor("New Item")
-		await write(drugName, into(textBox(below("Name"))))
-		await write(price, into(textBox(below("Price"))))
-		await click("Save Item")
+	var prescriptionCount = gauge.dataStore.scenarioStore.get("prescriptionsCount")
+	for (var i = 0; i < prescriptionCount; i++) {
+		var prescriptionFile = gauge.dataStore.scenarioStore.get("prescriptions" + i)
+		var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
+		var drugName = medicalPrescriptions.drug_name;
+		if (! await link(drugName).exists(500, 1000)) {
+			await click(button("Add Item"));
+			await waitFor("New Item")
+			await write(drugName, into(textBox(below("Name"))))
+			await write(price + "00", into(textBox(below("Price"))))
+			await click("Save Item")
+		}
 	}
 });
 
@@ -102,18 +105,25 @@ step("Add a new Item", async function () {
 });
 
 step("Choose the prescibed medicines in paymentlite", async function () {
-	await click(textBox(toLeftOf("1", toLeftOf("$ 0.00"))));
-	var prescriptionFile = gauge.dataStore.scenarioStore.get("prescriptions");
-	var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
-	var drugName = medicalPrescriptions.drug_name;
-	await write(drugName);
-	await waitFor(async () => (await $(`//span[text()='${drugName}']`).isVisible()))
-	await waitFor(200)
-	await evaluate($(`//span[text()='${drugName}']`), (el) => el.click())
+	var prescriptionCount = gauge.dataStore.scenarioStore.get("prescriptionsCount")
+	for (var i = 0; i < prescriptionCount; i++) {
+		await click(textBox(toLeftOf("1", toLeftOf("$ 0.00"))));
+		var prescriptionFile = gauge.dataStore.scenarioStore.get("prescriptions" + i)
+		var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
+		var drugName = medicalPrescriptions.drug_name;
+		await scrollTo("Add New Item")
+		await write(drugName);
+		await waitFor(async () => (await $(`//span[text()='${drugName}']`).isVisible()))
+		await waitFor(200)
+		await evaluate($(`//span[text()='${drugName}']`), (el) => el.click())
+		if (i < prescriptionCount - 1) {
+			await click("Add New Item")
+		}
+	}
 });
 
 step("Save Invoice", async function () {
-	await click(button("Save Invoice"), { waitForNavigation: true })
+	await evaluate(button("Save Invoice"), (el) => el.click())
 });
 
 step("Click Payments", async function () {
