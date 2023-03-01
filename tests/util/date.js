@@ -23,6 +23,14 @@ function getAge(yearOfBirth) {
     dateYearsAgo.setDate(today.getDate() - yearOfBirth.getDate())
     return dateYearsAgo;
 }
+function calculate_age(dob) {
+    var diff_ms = Date.now() - dob.getTime();
+    var age_dt = new Date(diff_ms);
+
+    return Math.abs(age_dt.getUTCFullYear() - 1970);
+}
+
+
 
 function getDateAgo(dateAgo) {
     var days = dateAgo.split("/")[0]
@@ -100,7 +108,7 @@ function nextYear() {
 
 function getShortNameOfMonth(date) {
     const month = date.toLocaleString('default', { month: 'short' });
-    return month.slice(0,3);
+    return month.slice(0, 3);
 }
 
 function minusMinutes(date, minutes) {
@@ -134,5 +142,6 @@ module.exports = {
     minusMinutes: minusMinutes,
     addMinutes: addMinutes,
     getDateInLongFromat: getDateInLongFromat,
-    getddmmmyyyyFormattedDate: getddmmmyyyyFormattedDate
+    getddmmmyyyyFormattedDate: getddmmmyyyyFormattedDate,
+    calculate_age: calculate_age
 }
