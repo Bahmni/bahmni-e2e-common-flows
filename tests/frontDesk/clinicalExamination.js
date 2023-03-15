@@ -143,3 +143,14 @@ step("Doctor notes the diagnosis and condition <filePath>", async function (file
 });
 
 
+
+step("Doctor clicks Add New Obs Form", async function () {
+    await click(button("Add New Obs Form", { force: true, waitForNavigation: true, navigationTimeout: process.env.actionTimeout }));
+    await taikoHelper.repeatUntilNotFound($("#overlay"))
+});
+
+step("Doctor clicks on <Form> form", async function (obsForm) {
+    await click(button(obsForm, { force: true, waitForNavigation: true, navigationTimeout: process.env.actionTimeout }));
+    await taikoHelper.repeatUntilNotFound($("#overlay"))
+});
+

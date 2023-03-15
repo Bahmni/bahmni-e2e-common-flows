@@ -37,6 +37,10 @@ function getDateAgo(dateAgo) {
     dateYearsAgo.setDate(dateYearsAgo.getDate() - parseInt(days))
     return dateYearsAgo;
 }
+function addDaysAndReturnDateInDDMMYYYY(intDays) {
+    return ddmmyyyy(new Date().setDate(new Date().getDate() + parseInt(intDays)))
+}
+
 
 function getDateYearsAgo(numberOfYearsAgo) {
     const today = new Date()
@@ -59,7 +63,7 @@ function tomorrow() {
 }
 
 function ddmmyyyy(dateToBeFormatted) {
-    const date = (dateToBeFormatted == null) ? new Date() : dateToBeFormatted;
+    const date = (dateToBeFormatted == null) ? new Date() : new Date(dateToBeFormatted);
 
     var dd = String(date.getDate()).padStart(2, '0');
     var mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -100,7 +104,7 @@ function nextYear() {
 
 function getShortNameOfMonth(date) {
     const month = date.toLocaleString('default', { month: 'short' });
-    return month.slice(0,3);
+    return month.slice(0, 3);
 }
 
 function minusMinutes(date, minutes) {
@@ -117,6 +121,17 @@ function getDateInLongFromat(date) {
 function getddmmmyyyyFormattedDate(date) {
     return `${date.getDate()}-${date.toLocaleString('en-us', { month: 'short' })}-${date.getFullYear()}`
 }
+// function getDateInShortFormat(date) {
+//     return `${date.getDate().toString().padStart(2, '0')} ${date.toLocaleString('en-us', { month: 'short' })} ${date.getFullYear().toString().slice(2,4)}`
+// }
+function getDateInShortFormat(date) {
+    date = new Date(date)
+    return `${date.getDate().toString().padStart(2, '0')} ${date.toLocaleString('en-us', { month: 'short' })} ${date.getFullYear().toString().slice(2,4)}`
+}
+function addDaysAndReturnDateInShortFormat(intDays) {
+    return getDateInShortFormat(new Date().setDate(new Date().getDate() + parseInt(intDays)))
+}
+
 module.exports = {
     today: today,
     yesterday: yesterday,
@@ -134,5 +149,8 @@ module.exports = {
     minusMinutes: minusMinutes,
     addMinutes: addMinutes,
     getDateInLongFromat: getDateInLongFromat,
-    getddmmmyyyyFormattedDate: getddmmmyyyyFormattedDate
+    getddmmmyyyyFormattedDate: getddmmmyyyyFormattedDate,
+    addDaysAndReturnDateInDDMMYYYY: addDaysAndReturnDateInDDMMYYYY,
+    getDateInShortFormat:getDateInShortFormat,
+    addDaysAndReturnDateInShortFormat:addDaysAndReturnDateInShortFormat
 }

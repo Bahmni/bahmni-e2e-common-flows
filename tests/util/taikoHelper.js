@@ -12,7 +12,7 @@ async function repeatUntilEnabled(element) {
 async function repeatUntilFound(element) {
     var isFound = false;
     do {
-        isFound = await element.exists(500,1000)
+        isFound = await element.exists(500, 1000)
     } while (!isFound)
 }
 
@@ -49,10 +49,7 @@ function getDate(dateValue) {
     if (dateValue == 'Today')
         return date.today();
     else {
-        dateLessThan = dateValue.split("-");
-        if (dateLessThan.length > 1) {
-            return date.getDateAgo(dateLessThan[1]);
-        }
+        return date.getDateAgo(dateLessThan[1]);
     }
     throw "Unexpected date"
 }
@@ -72,24 +69,13 @@ async function executeConfigurations(configurations, observationFormName, isNotO
                 await executeConfigurations(configuration.value, observationFormName, isNotObsForm)
                 break;
             case 'TextArea':
-                if (configuration.proximity != null && configuration.proximity != "") {
-                    switch (configuration.proximity) {
-                        case 'below':
-                            await write(configuration.value, into(textBox(below(configuration.proximityLabel), toRightOf(configuration.label))))
-                            break;
-                        case 'above':
-                            await write(configuration.value, into(textBox(below(configuration.proximityLabel), toRightOf(configuration.label))))
-                            break;
-                        default:
-                            console.log("Unhandled " + configuration.label + ":" + configuration.value)
-                            break;
-                    }
-                }
-                else
-                    await write(configuration.value, into(textBox(toRightOf(configuration.label))))
+                await write(configuration.value, into($("//textarea", toRightOf(configuration.label))))
                 break;
             case 'TextBox':
-                await write(configuration.value, into(textBox(toRightOf(configuration.label+" "+configuration.unit))))
+                if (configuration.unit === undefined)
+                    await write(configuration.value, into(textBox(toRightOf(configuration.label))))
+                else
+                    await write(configuration.value+ " " + configuration.unit, into(textBox(toRightOf(configuration.label))))
                 break;
             case 'Button':
                 {
@@ -101,8 +87,8 @@ async function executeConfigurations(configurations, observationFormName, isNotO
                 }
                 break;
             case 'Date':
-                var dateValue = getDate(configuration.value)
-                await timeField({ type: "date" }, toRightOf(configuration.label)).select(dateValue);
+                var dateValue = date.addDaysAndReturnDateInDDMMYYYY(configuration.value)
+                await write(dateValue, into(timeField(toRightOf(configuration.label))))
                 break;
             default:
                 console.log("Unhandled " + configuration.label + ":" + configuration.value)
@@ -110,11 +96,36 @@ async function executeConfigurations(configurations, observationFormName, isNotO
     }
 }
 
+async function validateFormFromFile(configurations) {
+    // try {
+        for (var configuration of configurations) {
+            var label = configuration.label
+            if (configuration.short_name !== undefined)
+                label = configuration.short_name
+            switch (configuration.type) {
+                case 'Group':
+                    await validateFormFromFile(configuration.value)
+                    break;
+                case 'Date':
+                    var dateFormatted = date.addDaysAndReturnDateInShortFormat(configuration.value)
+                    assert.ok(await text(dateFormatted, toRightOf(label)).exists(), dateFormatted + " To Right of " + label + " is not exist.")
+                    break;
+                default:
+                    assert.ok(await text(configuration.value, toRightOf(label)).exists(), configuration.value + " To Right of " + label + " is not exist.")
+            }
+        }
+    }
+    // catch (e) {
+    //     console.log("validateFormFromFile - " + e.message)
+    // }
+//}
+
 module.exports = {
     selectEntriesTillIterationEnds: selectEntriesTillIterationEnds,
     verifyConfigurations: verifyConfigurations,
     executeConfigurations: executeConfigurations,
     repeatUntilNotFound: repeatUntilNotVisible,
     repeatUntilFound: repeatUntilFound,
-    repeatUntilEnabled: repeatUntilEnabled
+    repeatUntilEnabled: repeatUntilEnabled,
+    validateFormFromFile: validateFormFromFile
 }

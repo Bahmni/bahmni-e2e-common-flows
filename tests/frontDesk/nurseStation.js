@@ -110,12 +110,18 @@ step("Click Admit on popup", async function () {
 	// await click(text('Admit', within($('[ng-click="admitConfirmation()"]'))));
 });
 
-step("Enter Form Values <observationFormFile>", async function (vitalFormFile) {
-	var vitalFormValues = JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${vitalFormFile}.json`))
-	gauge.dataStore.scenarioStore.put("vitalFormValues", vitalFormValues)
+step("Enter Form Values <observationFormFile>", async function (observationFormFile) {
+	var observationFormValues = JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${observationFormFile}.json`))
+	gauge.dataStore.scenarioStore.put("observationFormValues", observationFormValues)
 	await taikoHelper.repeatUntilNotFound($("#overlay"))
-	await taikoHelper.executeConfigurations(vitalFormValues.ObservationFormDetails, vitalFormValues.ObservationFormName)
-
+	if (!await link(observationFormValues.ObservationFormName).exists(500, 1000)) {
+		await click("Add New Obs Form", { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+		await click(button(observationFormValues.ObservationFormName));
+	} else {
+		await click(link(observationFormValues.ObservationFormName));
+	}
+	await taikoHelper.repeatUntilNotFound($("#overlay"))
+	await taikoHelper.executeConfigurations(observationFormValues.ObservationFormDetails, observationFormValues.ObservationFormName)
 	await click("Save", { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
 	await taikoHelper.repeatUntilNotFound($("#overlay"))
 })
