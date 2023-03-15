@@ -23,6 +23,14 @@ function getAge(yearOfBirth) {
     dateYearsAgo.setDate(today.getDate() - yearOfBirth.getDate())
     return dateYearsAgo;
 }
+function calculate_age(dob) {
+    var diff_ms = Date.now() - dob.getTime();
+    var age_dt = new Date(diff_ms);
+
+    return Math.abs(age_dt.getUTCFullYear() - 1970);
+}
+
+
 
 function getDateAgo(dateAgo) {
     var days = dateAgo.split("/")[0]
@@ -152,5 +160,6 @@ module.exports = {
     getddmmmyyyyFormattedDate: getddmmmyyyyFormattedDate,
     addDaysAndReturnDateInDDMMYYYY: addDaysAndReturnDateInDDMMYYYY,
     getDateInShortFormat: getDateInShortFormat,
-    addDaysAndReturnDateInShortFormat: addDaysAndReturnDateInShortFormat
+    addDaysAndReturnDateInShortFormat: addDaysAndReturnDateInShortFormat,
+    calculate_age: calculate_age
 }

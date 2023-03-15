@@ -138,7 +138,7 @@ step("Enter patient name for payment", async function () {
 	var middleName = gauge.dataStore.scenarioStore.get("patientMiddleName")
 	var lastName = gauge.dataStore.scenarioStore.get("patientLastName")
 
-	await write(`${firstName}`, into(textBox(above("Amount"), below("Customer"))))
+	await write(`${firstName} ${middleName} ${lastName}`, into(textBox(above("Amount"), below("Customer"))))
 	await waitFor(async () => (await $(`//span[text()='${firstName} ${middleName} ${lastName}']`).isVisible()))
 	await waitFor(200)
 	await evaluate($(`//span[text()='${firstName} ${middleName} ${lastName}']`), (el) => el.click())
