@@ -75,7 +75,7 @@ async function executeConfigurations(configurations, observationFormName, isNotO
                 if (configuration.unit === undefined)
                     await write(configuration.value, into(textBox(toRightOf(configuration.label))))
                 else
-                    await write(configuration.value+ " " + configuration.unit, into(textBox(toRightOf(configuration.label))))
+                    await write(configuration.value + " " + configuration.unit, into(textBox(toRightOf(configuration.label))))
                 break;
             case 'Button':
                 {
@@ -97,28 +97,23 @@ async function executeConfigurations(configurations, observationFormName, isNotO
 }
 
 async function validateFormFromFile(configurations) {
-    // try {
-        for (var configuration of configurations) {
-            var label = configuration.label
-            if (configuration.short_name !== undefined)
-                label = configuration.short_name
-            switch (configuration.type) {
-                case 'Group':
-                    await validateFormFromFile(configuration.value)
-                    break;
-                case 'Date':
-                    var dateFormatted = date.addDaysAndReturnDateInShortFormat(configuration.value)
-                    assert.ok(await text(dateFormatted, toRightOf(label)).exists(), dateFormatted + " To Right of " + label + " is not exist.")
-                    break;
-                default:
-                    assert.ok(await text(configuration.value, toRightOf(label)).exists(), configuration.value + " To Right of " + label + " is not exist.")
-            }
+    for (var configuration of configurations) {
+        var label = configuration.label
+        if (configuration.short_name !== undefined)
+            label = configuration.short_name
+        switch (configuration.type) {
+            case 'Group':
+                await validateFormFromFile(configuration.value)
+                break;
+            case 'Date':
+                var dateFormatted = date.addDaysAndReturnDateInShortFormat(configuration.value)
+                assert.ok(await text(dateFormatted, toRightOf(label)).exists(), dateFormatted + " To Right of " + label + " is not exist.")
+                break;
+            default:
+                assert.ok(await text(configuration.value, toRightOf(label)).exists(), configuration.value + " To Right of " + label + " is not exist.")
         }
     }
-    // catch (e) {
-    //     console.log("validateFormFromFile - " + e.message)
-    // }
-//}
+}
 
 module.exports = {
     selectEntriesTillIterationEnds: selectEntriesTillIterationEnds,

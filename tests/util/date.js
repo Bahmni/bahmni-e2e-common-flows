@@ -118,16 +118,16 @@ function addMinutes(date, minutes) {
 function getDateInLongFromat(date) {
     return `${date.toLocaleString('en-us', { month: 'long' })} ${("0" + date.getDate()).slice(-2)}, ${date.getFullYear()}`
 }
+
 function getddmmmyyyyFormattedDate(date) {
     return `${date.getDate()}-${date.toLocaleString('en-us', { month: 'short' })}-${date.getFullYear()}`
 }
-// function getDateInShortFormat(date) {
-//     return `${date.getDate().toString().padStart(2, '0')} ${date.toLocaleString('en-us', { month: 'short' })} ${date.getFullYear().toString().slice(2,4)}`
-// }
+
 function getDateInShortFormat(date) {
     date = new Date(date)
-    return `${date.getDate().toString().padStart(2, '0')} ${date.toLocaleString('en-us', { month: 'short' })} ${date.getFullYear().toString().slice(2,4)}`
+    return `${date.getDate().toString().padStart(2, '0')} ${date.toLocaleString('en-us', { month: 'short' })} ${date.getFullYear().toString().slice(2, 4)}`
 }
+
 function addDaysAndReturnDateInShortFormat(intDays) {
     return getDateInShortFormat(new Date().setDate(new Date().getDate() + parseInt(intDays)))
 }
@@ -151,6 +151,6 @@ module.exports = {
     getDateInLongFromat: getDateInLongFromat,
     getddmmmyyyyFormattedDate: getddmmmyyyyFormattedDate,
     addDaysAndReturnDateInDDMMYYYY: addDaysAndReturnDateInDDMMYYYY,
-    getDateInShortFormat:getDateInShortFormat,
-    addDaysAndReturnDateInShortFormat:addDaysAndReturnDateInShortFormat
+    getDateInShortFormat: getDateInShortFormat,
+    addDaysAndReturnDateInShortFormat: addDaysAndReturnDateInShortFormat
 }

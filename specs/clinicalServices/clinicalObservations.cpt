@@ -87,26 +87,9 @@
 * Save data
 * Verify no error displayed on page
 
-
 # Verify diagnosis and condition in patient clinical dashboard
 * Verify diagnosis in patient clinical dashboard
 * Verify condition in patient clinical dashboard
-
-# Enter Admission Letter details <admission_letter>
-* Enter Admission letter details <admission_letter>
-* Save data
-* Verify no error displayed on page
-
-# Enter Death Note details <death_note>
-* Enter Death note detail <death_note>
-* Save data
-* Verify no error displayed on page
-
-# Enter Diabetes Intake <diabetes_intake>
-* Enter Diabetes intake detail <diabetes_intake>
-* Save data
-* Verify no error displayed on page
-
 
 # Enter Form Values and validate no error is displayed on save <formPath>
 * Enter Form Values <formPath>

@@ -37,7 +37,7 @@ step("Click Vitals", async function () {
 
 step("Enter History and examination details <filePath>", async function (filePath) {
     await click(link("History and Examination"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout })
-	await taikoHelper.repeatUntilNotFound($("#overlay"))
+    await taikoHelper.repeatUntilNotFound($("#overlay"))
     var historyAndExaminationFile = `./bahmni-e2e-common-flows/data/${filePath}.json`
 
     var historyAndExaminationDetails = JSON.parse(fileExtension.parseContent(historyAndExaminationFile))
@@ -64,54 +64,4 @@ step("Click patient name", async function () {
 step("Should not find the patient's name", async function () {
     var fullName = gauge.dataStore.scenarioStore.get("patientFullName")
     assert.ok(!await text(fullName).exists())
-});
-
-
-step("Enter Admission letter details <filePath>", async function(filePath) {
-        var admissionLetterFile = `./bahmni-e2e-common-flows/data/${filePath}.json`;
-        gauge.dataStore.scenarioStore.put("admissionLetterFile", admissionLetterFile)
-        var admissionLetterDetails = JSON.parse(fileExtension.parseContent(admissionLetterFile))
-        gauge.dataStore.scenarioStore.put("admissionLetterDetails", admissionLetterDetails)
-        for (var admissionLetter of admissionLetterDetails.ObservationFormDetails) {
-            await write(admissionLetter.value, into(textBox(toRightOf(admissionLetter.label))));
-        }
-    });
-
-
-
-step("Enter Death note detail <filePath>", async function (filePath) {
-	var deathNoteFile = `./bahmni-e2e-common-flows/data/${filePath}.json`;
-        gauge.dataStore.scenarioStore.put("deathNoteFile", deathNoteFile)
-        var deathNoteDetails = JSON.parse(fileExtension.parseContent(deathNoteFile))
-        gauge.dataStore.scenarioStore.put("deathNoteDetails", deathNoteDetails)
-        for (var deathNote of deathNoteDetails.ObservationFormDetails) {
-            await write(deathNote.value, into(timeField(toRightOf(deathNote.label))));
-            await click(deathNote.value, toRightOf(deathNote.label));
-            await click(deathNote.value, toRightOf(deathNote.label));
-        }
-});
-
-step("Enter Diabetes intake detail <filePath>", async function(filePath) {
-	var diabetesIntakeFile = `./bahmni-e2e-common-flows/data/${filePath}.json`;
-        gauge.dataStore.scenarioStore.put("diabetesIntakeFile", diabetesIntakeFile)
-        var diabetesIntakeDetails = JSON.parse(fileExtension.parseContent(diabetesIntakeFile))
-        gauge.dataStore.scenarioStore.put("diabetesIntakeDetails", diabetesIntakeDetails)
-        for (var diabetesIntake of diabetesIntakeDetails.ObservationFormDetails) {
-            await write(diabetesIntake.value, into(timeField(toRightOf(diabetesIntake.label))))
-            await click(diabetesIntake.value, toRightOf(diabetesIntake.label));
-            await click(diabetesIntake.value, toRightOf(diabetesIntake.label));
-            await write(diabetesIntake.value, into(timeField(toRightOf(diabetesIntake.label))));
-            await write(diabetesIntake.value, into(textBox(toRightOf(diabetesIntake.label))));
-            await click(diabetesIntake.value, toRightOf(diabetesIntake.label));
-            await click(diabetesIntake.value, toRightOf(diabetesIntake.label));
-            await click(diabetesIntake.value, toRightOf(diabetesIntake.label));
-            await write(diabetesIntake.value, into(textBox(toRightOf(diabetesIntake.label))));
-            await write(diabetesIntake.value, into(textBox(toRightOf(diabetesIntake.label))));
-            await click(diabetesIntake.value, toRightOf(diabetesIntake.label));
-            await write(diabetesIntake.value, into(textBox(toRightOf(diabetesIntake.label))));
-            await write(diabetesIntake.value, into(textBox(toRightOf(diabetesIntake.label))));
-            await click(diabetesIntake.value, toRightOf(diabetesIntake.label));
-            await write(diabetesIntake.value, into(textBox(toRightOf(diabetesIntake.label))));
-            await write(diabetesIntake.value, into(textBox(toRightOf(diabetesIntake.label))));
-        }
 });
