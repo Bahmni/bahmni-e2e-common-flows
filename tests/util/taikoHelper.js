@@ -102,8 +102,8 @@ async function validateFormFromFile(configurations) {
         if (configuration.short_name !== undefined)
             label = configuration.short_name.trim();
         var value = configuration.value
-        if (configuration.short_value !== undefined)
-            value = configuration.short_value.trim();
+        if (configuration.value_view !== undefined)
+            value = configuration.value_view.trim();
         switch (configuration.type) {
             case 'Group':
                 await validateFormFromFile(value)
