@@ -233,7 +233,7 @@ step("Enter registration fees <arg0>", async function (arg0) {
 
 step("Click back button", async function () {
     await taikoHelper.repeatUntilNotFound($("#overlay"))
-    await click($('.back-btn'), { force: true, waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+    await click($("//A[@class='back-btn']"), { force: true, waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
     await taikoHelper.repeatUntilNotFound($("#overlay"))
 });
 
