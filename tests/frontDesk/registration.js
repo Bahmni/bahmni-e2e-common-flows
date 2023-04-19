@@ -407,6 +407,7 @@ step("Enter random pinCode", async function () {
 step("Enter random Locality/Sector", async function () {
     var locality = gauge.dataStore.scenarioStore.get("locality")
     localitySector = !locality ? faker.address.secondaryAddress() : locality;
+    gauge.dataStore.scenarioStore.put("localitySector",localitySector)
     await write(localitySector, into(textBox(toRightOf("Locality/Sector"))));
     gauge.message(`localitySector ${localitySector}`)
 });
@@ -414,6 +415,7 @@ step("Enter random Locality/Sector", async function () {
 step("Enter random House number/Flat number", async function () {
     var buildingNumber = gauge.dataStore.scenarioStore.get("buildingNumber")
     buildingNumber = !buildingNumber ? faker.address.buildingNumber() : buildingNumber;
+    gauge.dataStore.scenarioStore.put("buildingNumber",buildingNumber)
     await write(buildingNumber, into(textBox(toRightOf("House number/Flat number"))));
     gauge.message(`buildingNumber ${buildingNumber}`)
 });
