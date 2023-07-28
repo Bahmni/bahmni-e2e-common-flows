@@ -164,3 +164,8 @@ step("Validate obs <form> on the patient clinical dashboard", async function (fo
     await taikoHelper.validateFormFromFile(obsFormValues.ObservationFormDetails, obsFormValues.ObservationFormName)
     await click($('.ngdialog-close'))
 });
+
+step("Verify diagnosis in patient dashboard", async function() {
+        var randomDiagnosisData = gauge.dataStore.scenarioStore.get("randomDiagnosisData")
+        assert.ok(await text(randomDiagnosisData, within($("#Diagnoses"))).exists())
+    });

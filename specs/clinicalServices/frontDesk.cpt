@@ -126,3 +126,36 @@
 * wait for overlay to disappear
 * Save visit data
 * wait for overlay to disappear
+
+# Create new patient with random details and start an OPD visit
+* Open "Registration" module
+* Create a new patient with random patient detail
+* Start an OPD Visit
+
+# Create a new patient with random patient detail
+* Click create new patient
+* Enter patient random first name
+* Enter patient random middle name
+* Enter patient random last name
+* Enter patient random gender
+* Enter random age of the patient
+* Enter random village
+* Upload patient image
+* Save the patient data
+* Verify no error displayed on page
+
+# Login to Bahmni snomed location <location> as a <user>
+* Goto Clinical application
+* Check if "Clinical Service" app is opened
+* wait for overlay to disappear
+* Log out if still logged in
+* Login as user <user> with location <location> in bahmni snomed
+
+# Logout and Login to Bahmni snomed location <location> as a <user>
+* Log out if still logged in
+* Login as user <user> with location <location> in bahmni snomed
+
+# Doctor adds random snomed diagnosis <filepath>
+* Random snomed diagnosis is identified and verified in openmrs <filepath>
+* Doctor add the diagnosis
+* Save data

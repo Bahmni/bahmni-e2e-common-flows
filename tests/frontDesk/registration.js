@@ -228,9 +228,9 @@ step("Check login <location>", async function (location) {
     catch (err) { }
 });
 
-step("Enter registration fees <arg0>", async function (arg0) {
-    if (await $("//*[text()='Registration Fee']/following::input[@type='number']").exists(500, 2000)) {
-        await write("100", into(textBox(toRightOf("Registration Fee"))));
+step("Enter registration fees <fees>", async function (fees) {
+    if (await $("//*[text()='REGISTRATION FEES']/following::input[@type='number']").exists(500, 2000)) {
+        await write(fees, into(textBox(toRightOf("REGISTRATION FEES"))));
     }
 });
 
@@ -410,7 +410,7 @@ step("Enter random pinCode", async function () {
 step("Enter random Locality/Sector", async function () {
     var locality = gauge.dataStore.scenarioStore.get("locality")
     localitySector = !locality ? faker.address.secondaryAddress() : locality;
-    gauge.dataStore.scenarioStore.put("localitySector",localitySector)
+    gauge.dataStore.scenarioStore.put("localitySector", localitySector)
     await write(localitySector, into(textBox(toRightOf("Locality/Sector"))));
     gauge.message(`localitySector ${localitySector}`)
 });
@@ -418,7 +418,7 @@ step("Enter random Locality/Sector", async function () {
 step("Enter random House number/Flat number", async function () {
     var buildingNumber = gauge.dataStore.scenarioStore.get("buildingNumber")
     buildingNumber = !buildingNumber ? faker.address.buildingNumber() : buildingNumber;
-    gauge.dataStore.scenarioStore.put("buildingNumber",buildingNumber)
+    gauge.dataStore.scenarioStore.put("buildingNumber", buildingNumber)
     await write(buildingNumber, into(textBox(toRightOf("House number/Flat number"))));
     gauge.message(`buildingNumber ${buildingNumber}`)
 });
@@ -427,4 +427,22 @@ step("Enter random email address", async function () {
     var emailAddress = faker.internet.email()
     await write(emailAddress, into(textBox(toRightOf("Email Address"))));
     gauge.message(`emailAddress ${emailAddress}`)
+});
+
+step("Open patient dashboard", async function () {
+    await taikoHelper.repeatUntilNotFound($("#overlay"))
+    await click($('.back-btn-link'), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+    await taikoHelper.repeatUntilNotFound($("#overlay"))
+});
+
+step("Login as user <user> with location <location> in bahmni snomed", async function (user, location) {
+    if (!textBox(toRightOf("Username")).exists(0, 0)) {
+        await reload()
+    }
+    await write(users.getUserNameFromEncoding(process.env[user]), into(textBox(toRightOf("Username"))));
+    await write(users.getPasswordFromEncoding(process.env[user]), into(textBox(toRightOf("Password"))));
+    await dropDown("Location").select(location);
+    await click(button("Login"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+    await taikoHelper.repeatUntilNotFound(text("BAHMNI EMR LOGIN"))
+    await taikoHelper.repeatUntilNotFound($("#overlay"))
 });

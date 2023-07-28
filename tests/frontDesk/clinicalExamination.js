@@ -21,7 +21,9 @@ const {
 } = require('taiko');
 var fileExtension = require("../util/fileExtension");
 const taikoHelper = require("../util/taikoHelper")
-var date = require("../util/date")
+var date = require("../util/date");
+const requestResponse = require('../util/requestResponse');
+const assert = require("assert");
 
 step("Doctor prescribe tests <prescriptions>", async function (prescriptionFile) {
     var prescriptionFile = `./bahmni-e2e-common-flows/data/${prescriptionFile}.json`;
@@ -141,3 +143,40 @@ step("Doctor notes the diagnosis and condition <filePath>", async function (file
         await click("Add", below("Action"))
     }
 });
+
+step("Random snomed diagnosis is identified and verified in openmrs <filepath>", async function (filepath) {
+    var diseaseFile = `./bahmni-e2e-common-flows/data/${filepath}.json`;
+    await findDiagnosis(diseaseFile)
+});
+
+step("Doctor add the diagnosis", async function () {
+    var randomDiagnosisData = gauge.dataStore.scenarioStore.get("randomDiagnosisData")
+    await write(randomDiagnosisData, into(textBox(below("Diagnoses"))));
+    await waitFor(() => $("(//A[starts-with(text(),\"" + randomDiagnosisData + "\")])[1]").isVisible())
+    await click($("(//A[starts-with(text(),\"" + randomDiagnosisData + "\")])[1]"))
+    await click(button("PRIMARY"), below("Order"));
+    await click(button("CONFIRMED"), below("Certainty"));
+});
+
+step("Verify random snomed diagnosis is added to openmrs database", async function () {
+    const randomDiagnosisData = gauge.dataStore.scenarioStore.get("randomDiagnosisData")
+    assert.ok(await requestResponse.checkDiagnosisInOpenmrs(randomDiagnosisData))
+});
+
+async function findDiagnosis(diseaseFile) {
+    var randomDiagnosisData = await taikoHelper.generateRandomDiagnosis(diseaseFile);
+    const checkDataInOpenmrs = await requestResponse.checkDiagnosisInOpenmrs(randomDiagnosisData);
+    if (checkDataInOpenmrs === false) {
+        gauge.dataStore.scenarioStore.put("randomDiagnosisData", randomDiagnosisData)
+        return randomDiagnosisData;
+    }
+    else {
+        findDiagnosis(diseaseFile)
+    }
+}
+
+
+
+module.exports = {
+    findDiagnosis: findDiagnosis
+}
