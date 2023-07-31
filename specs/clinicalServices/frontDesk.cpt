@@ -155,7 +155,7 @@
 * Log out if still logged in
 * Login as user <user> with location <location> in bahmni snomed
 
-# Doctor adds random snomed diagnosis <filepath>
+# Doctor adds random snomed diagnosis <filepath> which is not present in Openmrs Database
 * Random snomed diagnosis is identified and verified in openmrs <filepath>
 * Doctor add the diagnosis
 * Save data

@@ -158,7 +158,7 @@ step("Doctor add the diagnosis", async function () {
     await click(button("CONFIRMED"), below("Certainty"));
 });
 
-step("Verify random snomed diagnosis is added to openmrs database", async function () {
+step("Verify random snomed diagnosis saved is added to openmrs database with required metadata", async function () {
     const randomDiagnosisData = gauge.dataStore.scenarioStore.get("randomDiagnosisData")
     assert.ok(await requestResponse.checkDiagnosisInOpenmrs(randomDiagnosisData))
 });
