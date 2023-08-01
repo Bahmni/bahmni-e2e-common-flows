@@ -116,11 +116,11 @@ async function updateRoles(username, strRoles) {
     assert.equal(updateUser.status, 200, "Prerequisite Failed - User Role not updated")
 }
 
-async function checkDiagnosisInOpenmrs(randomDiagnosisDataReceived) {
+async function checkDiagnosisInOpenmrs(DiagnosisName) {
     var response = await axios({
         url: 'https://dev.snomed.mybahmni.in/openmrs/ws/rest/v1/concept',
         params: {
-            q: randomDiagnosisDataReceived,
+            q: DiagnosisName,
         },
         method: 'get',
         headers: {

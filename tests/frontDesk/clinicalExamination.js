@@ -144,34 +144,49 @@ step("Doctor notes the diagnosis and condition <filePath>", async function (file
     }
 });
 
-step("Random snomed diagnosis is identified and verified in openmrs <filepath>", async function (filepath) {
+step("Random snomed <diagnosis> is identified and verified in openmrs <filepath>", async function (diagnosis, filepath) {
     var diseaseFile = `./bahmni-e2e-common-flows/data/${filepath}.json`;
-    await findDiagnosis(diseaseFile)
+    await findDiagnosis(diseaseFile, diagnosis)
 });
 
-step("Doctor add the diagnosis", async function () {
-    var randomDiagnosisData = gauge.dataStore.scenarioStore.get("randomDiagnosisData")
-    await write(randomDiagnosisData, into(textBox(below("Diagnoses"))));
-    await waitFor(() => $("(//A[starts-with(text(),\"" + randomDiagnosisData + "\")])[1]").isVisible())
-    await click($("(//A[starts-with(text(),\"" + randomDiagnosisData + "\")])[1]"))
+
+step("Doctor add the diagnosis for <diagnosis>", async function (diagnosis) {
+    var DiagnosisName = gauge.dataStore.scenarioStore.get("DiagnosisName")
+    var DiagnosisCode = gauge.dataStore.scenarioStore.get("DiagnosisCode")
+    if (diagnosis === "diagnosis code") {
+        await write(DiagnosisName, into(textBox(below("Diagnoses"))));
+        await waitFor(() => $("(//A[starts-with(text(),\"" + DiagnosisCode + "\")])[1]").isVisible())
+        await click($("(//A[starts-with(text(),\"" + DiagnosisCode + "\")])[1]"))
+    }
+    else {
+        await write(DiagnosisName, into(textBox(below("Diagnoses"))));
+        await waitFor(() => $("(//A[starts-with(text(),\"" + DiagnosisName + "\")])[1]").isVisible())
+        await click($("(//A[starts-with(text(),\"" + DiagnosisName + "\")])[1]"))
+    }
     await click(button("PRIMARY"), below("Order"));
     await click(button("CONFIRMED"), below("Certainty"));
 });
 
-step("Verify random snomed diagnosis saved is added to openmrs database with required metadata", async function () {
-    const randomDiagnosisData = gauge.dataStore.scenarioStore.get("randomDiagnosisData")
-    assert.ok(await requestResponse.checkDiagnosisInOpenmrs(randomDiagnosisData))
-});
-
-async function findDiagnosis(diseaseFile) {
-    var randomDiagnosisData = await taikoHelper.generateRandomDiagnosis(diseaseFile);
-    const checkDataInOpenmrs = await requestResponse.checkDiagnosisInOpenmrs(randomDiagnosisData);
-    if (checkDataInOpenmrs === false) {
-        gauge.dataStore.scenarioStore.put("randomDiagnosisData", randomDiagnosisData)
-        return randomDiagnosisData;
+step("Verify random snomed <diagnosis name> saved is added to openmrs database with required metadata", async function (diagnosis) {
+    if (diagnosis === "diagnosis code") {
+        const DiagnosisCode = gauge.dataStore.scenarioStore.get("DiagnosisCode")
+        assert.ok(await requestResponse.checkDiagnosisInOpenmrs(DiagnosisCode))
     }
     else {
-        findDiagnosis(diseaseFile)
+        const DiagnosisName = gauge.dataStore.scenarioStore.get("DiagnosisName")
+        assert.ok(await requestResponse.checkDiagnosisInOpenmrs(DiagnosisName))
+    }
+});
+
+async function findDiagnosis(diseaseFile, diagnosis) {
+    var DiagnosisName = await taikoHelper.generateRandomDiagnosis(diseaseFile, diagnosis);
+    const checkDataInOpenmrs = await requestResponse.checkDiagnosisInOpenmrs(DiagnosisName);
+    if (checkDataInOpenmrs === false) {
+        gauge.dataStore.scenarioStore.put("DiagnosisName", DiagnosisName)
+        return DiagnosisName;
+    }
+    else {
+        await findDiagnosis(diseaseFile)
     }
 }
 
@@ -180,3 +195,4 @@ async function findDiagnosis(diseaseFile) {
 module.exports = {
     findDiagnosis: findDiagnosis
 }
+

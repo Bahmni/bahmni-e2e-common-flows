@@ -119,13 +119,21 @@ async function validateFormFromFile(configurations) {
     }
 }
 
-async function generateRandomDiagnosis(diseaseFile){
+async function generateRandomDiagnosis(diseaseFile, diagnosis) {
     const jsonData = JSON.parse(fileExtension.parseContent(diseaseFile))
     const snomedDiagnosesArray = jsonData.expansion.contains
     const randomIndex = Math.floor(Math.random() * snomedDiagnosesArray.length);
     const randomDiagnosis = snomedDiagnosesArray[randomIndex];
-    const randomDiagnosisData = randomDiagnosis.display;
-    return await randomDiagnosisData;
+    if (diagnosis === "diagnosis code") {
+        const DiagnosisCode = randomDiagnosis.display;
+        gauge.dataStore.scenarioStore.put("DiagnosisCode", DiagnosisCode)
+        const DiagnosisName = randomDiagnosis.code;
+        return DiagnosisName;
+    }
+    else {
+        const DiagnosisName = randomDiagnosis.display;
+        return DiagnosisName;
+    }
 }
 
 module.exports = {
@@ -136,5 +144,5 @@ module.exports = {
     repeatUntilFound: repeatUntilFound,
     repeatUntilEnabled: repeatUntilEnabled,
     validateFormFromFile: validateFormFromFile,
-    generateRandomDiagnosis:generateRandomDiagnosis
+    generateRandomDiagnosis: generateRandomDiagnosis
 }
