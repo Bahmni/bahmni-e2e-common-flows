@@ -129,10 +129,10 @@
 
 # Create new patient with random details and start an OPD visit
 * Open "Registration" module
-* Create a new patient with random patient detail
+* Create a new patient with random patient detail for snomed
 * Start an OPD Visit
 
-# Create a new patient with random patient detail
+# Create a new patient with random patient detail for snomed
 * Click create new patient
 * Enter patient random first name
 * Enter patient random middle name
@@ -155,7 +155,7 @@
 * Log out if still logged in
 * Login as user <user> with location <location> in bahmni snomed
 
-# Doctor adds random snomed <diagnosis> <filepath> which is not present in Openmrs Database
-* Random snomed <diagnosis> is identified and verified in openmrs <filepath>
+# Doctor adds random snomed diagnosis from the file <filepath> which is not present in Openmrs Database using <diagnosis> search
+* Random snomed diagnosis is identified and verified in openmrs <filepath>
 * Doctor add the diagnosis for <diagnosis>
 * Save data

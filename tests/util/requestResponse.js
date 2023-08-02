@@ -3,6 +3,7 @@ const axios = require('axios')
 var date = require("./date");
 const assert = require("assert");
 var users = require("./users");
+const endpoints = require('./../../../tests/API/constants/apiConstants').endpoints;
 
 async function getOpenMRSResponse(request) {
     console.log(request)
@@ -118,7 +119,7 @@ async function updateRoles(username, strRoles) {
 
 async function checkDiagnosisInOpenmrs(DiagnosisName) {
     var response = await axios({
-        url: 'https://dev.snomed.mybahmni.in/openmrs/ws/rest/v1/concept',
+        url: process.env.bahmniHost + endpoints.DIAGNOSIS_SEARCH,
         params: {
             q: DiagnosisName,
         },

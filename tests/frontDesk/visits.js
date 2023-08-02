@@ -164,13 +164,3 @@ step("Validate obs <form> on the patient clinical dashboard", async function (fo
     await taikoHelper.validateFormFromFile(obsFormValues.ObservationFormDetails, obsFormValues.ObservationFormName)
     await click($('.ngdialog-close'))
 });
-
-step("Verify diagnosis in patient dashboard", async function () {
-    var DiagnosisName = gauge.dataStore.scenarioStore.get("DiagnosisName")
-    assert.ok(await text(DiagnosisName, within($("#Diagnoses"))).exists())
-});
-
-step("Verify diagnosis saved in patient dashboard", async function () {
-    var DiagnosisCode = gauge.dataStore.scenarioStore.get("DiagnosisCode")
-    assert.ok(await text(DiagnosisCode, within($("#Diagnoses"))).exists())
-});
