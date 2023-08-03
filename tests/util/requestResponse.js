@@ -3,6 +3,7 @@ const axios = require('axios')
 var date = require("./date");
 const assert = require("assert");
 var users = require("./users");
+const endpoints = require('./../../../tests/API/constants/apiConstants').endpoints;
 
 async function getOpenMRSResponse(request) {
     console.log(request)
@@ -116,9 +117,32 @@ async function updateRoles(username, strRoles) {
     assert.equal(updateUser.status, 200, "Prerequisite Failed - User Role not updated")
 }
 
+async function checkDiagnosisInOpenmrs(DiagnosisName) {
+    var response = await axios({
+        url: process.env.bahmniHost + endpoints.DIAGNOSIS_SEARCH,
+        params: {
+            q: DiagnosisName,
+        },
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var resultLength = response.data.results.length
+    if (resultLength === 0) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 module.exports = {
     getOpenMRSResponse: getOpenMRSResponse,
     makeOpenVisitCall: makeOpenVisitCall,
     makeOpenProgramCall: makeOpenProgramCall,
-    setRoles: setRoles
+    setRoles: setRoles,
+    checkDiagnosisInOpenmrs: checkDiagnosisInOpenmrs
 }

@@ -21,7 +21,9 @@ const {
 } = require('taiko');
 var fileExtension = require("../util/fileExtension");
 const taikoHelper = require("../util/taikoHelper")
-var date = require("../util/date")
+var date = require("../util/date");
+const requestResponse = require('../util/requestResponse');
+const assert = require("assert");
 
 step("Doctor prescribe tests <prescriptions>", async function (prescriptionFile) {
     var prescriptionFile = `./bahmni-e2e-common-flows/data/${prescriptionFile}.json`;
@@ -141,3 +143,58 @@ step("Doctor notes the diagnosis and condition <filePath>", async function (file
         await click("Add", below("Action"))
     }
 });
+
+step("Random snomed diagnosis is identified and verified in openmrs <filepath>", async function (filepath) {
+    var diseaseFile = `./bahmni-e2e-common-flows/data/${filepath}.json`;
+    await findDiagnosis(diseaseFile)
+});
+
+
+step("Doctor add the diagnosis for <diagnosis>", async function (diagnosis) {
+     var DiagnosisName = gauge.dataStore.scenarioStore.get("DiagnosisName")
+     var DiagnosisCode = gauge.dataStore.scenarioStore.get("DiagnosisCode")
+    if (diagnosis === "code") {
+        await write(DiagnosisCode, into(textBox(below("Diagnoses"))));
+        }
+    else {
+        await write(DiagnosisName, into(textBox(below("Diagnoses"))));
+    }
+    var diagnosisFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomed_diagnosis.json`;
+    var medicalDiagnosis = JSON.parse(fileExtension.parseContent(diagnosisFile))
+    gauge.dataStore.scenarioStore.put("medicalDiagnosis", medicalDiagnosis)
+    medicalDiagnosis.diagnosis["diagnosisName"] = DiagnosisName;
+    medicalDiagnosis.diagnosis["diagnosisCode"] = DiagnosisCode;
+    await waitFor(() => $("(//A[starts-with(text(),\"" + medicalDiagnosis.diagnosis.diagnosisName + "\")])[1]").isVisible())
+    await click($("(//A[starts-with(text(),\"" + medicalDiagnosis.diagnosis.diagnosisName + "\")])[1]"))
+    await click(medicalDiagnosis.diagnosis.order, below("Order"));
+    await click(medicalDiagnosis.diagnosis.certainty, below("Certainty"));
+});
+
+step("Verify random snomed <diagnosis name> saved is added to openmrs database with required metadata", async function (diagnosis) {
+    if (diagnosis === "code") {
+        const DiagnosisCode = gauge.dataStore.scenarioStore.get("DiagnosisCode")
+        assert.ok(await requestResponse.checkDiagnosisInOpenmrs(DiagnosisCode))
+    }
+    else {
+        const DiagnosisName = gauge.dataStore.scenarioStore.get("DiagnosisName")
+        assert.ok(await requestResponse.checkDiagnosisInOpenmrs(DiagnosisName))
+    }
+});
+
+async function findDiagnosis(diseaseFile) {
+    var DiagnosisName = await taikoHelper.generateRandomDiagnosis(diseaseFile);
+    const checkDataInOpenmrs = await requestResponse.checkDiagnosisInOpenmrs(DiagnosisName);
+    if (checkDataInOpenmrs === false) {
+        return DiagnosisName;
+    }
+    else {
+        await findDiagnosis(diseaseFile)
+    }
+}
+
+
+
+module.exports = {
+    findDiagnosis: findDiagnosis
+}
+

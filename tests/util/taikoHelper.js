@@ -1,6 +1,7 @@
 const { button, toRightOf, textBox, into, write, press, click, timeField, below, scrollTo, text, evaluate, $, checkBox, waitFor, image, within } = require('taiko');
 var date = require("./date");
 var assert = require("assert")
+var fileExtension = require("../util/fileExtension")
 
 async function repeatUntilEnabled(element) {
     var isDisabled = true;
@@ -118,6 +119,19 @@ async function validateFormFromFile(configurations) {
     }
 }
 
+async function generateRandomDiagnosis(diseaseFile) {
+    const jsonData = JSON.parse(fileExtension.parseContent(diseaseFile))
+    const snomedDiagnosesArray = jsonData.expansion.contains
+    const randomIndex = Math.floor(Math.random() * snomedDiagnosesArray.length);
+    const diagnosisData = snomedDiagnosesArray[randomIndex];
+    const DiagnosisCode = diagnosisData.code;
+    gauge.dataStore.scenarioStore.put("DiagnosisCode", DiagnosisCode)
+    const DiagnosisName = diagnosisData.display;
+    gauge.dataStore.scenarioStore.put("DiagnosisName", DiagnosisName)
+    return DiagnosisName;
+    
+}
+
 module.exports = {
     selectEntriesTillIterationEnds: selectEntriesTillIterationEnds,
     verifyConfigurations: verifyConfigurations,
@@ -125,5 +139,6 @@ module.exports = {
     repeatUntilNotFound: repeatUntilNotVisible,
     repeatUntilFound: repeatUntilFound,
     repeatUntilEnabled: repeatUntilEnabled,
-    validateFormFromFile: validateFormFromFile
+    validateFormFromFile: validateFormFromFile,
+    generateRandomDiagnosis: generateRandomDiagnosis
 }
