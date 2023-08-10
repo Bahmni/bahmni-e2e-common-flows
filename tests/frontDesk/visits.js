@@ -14,6 +14,8 @@ const {
     press,
     waitFor,
     scrollTo,
+    near,
+    closeTab,
     highlight,
     link,
     below,
@@ -164,3 +166,33 @@ step("Validate obs <form> on the patient clinical dashboard", async function (fo
     await taikoHelper.validateFormFromFile(obsFormValues.ObservationFormDetails, obsFormValues.ObservationFormName)
     await click($('.ngdialog-close'))
 });
+
+step("Validate the count report generated for <ParentClass> if descendants of <ChildClass> is added.", async function (ParentClass, ChildClass) {
+    var medicalDiagnosis = gauge.dataStore.scenarioStore.get("medicalDiagnosis")
+    var countBeforeAddingDiagnosis = gauge.dataStore.scenarioStore.get(countBeforeAddingDiagnosis)
+    var diagnosis = medicalDiagnosis.diagnosis.diagnosisName
+    if (ParentClass === ChildClass) {
+        var countPos = await taikoHelper.generateXpath()
+        assert.ok(await text(diagnosis, below(text("Diagnosis"))).exists())
+        await highlight($("//TD[normalize-space()='" + diagnosis + "']/../TD[" + countPos + "]"))
+        var countAfterAddingDiagnosis = await $("//TD[normalize-space()='" + diagnosis + "']/../TD[" + countPos + "]").text()
+        assert.ok(countAfterAddingDiagnosis > countBeforeAddingDiagnosis)
+    }
+    else {
+        assert.ok(!await text(diagnosis, below(text("Diagnosis"))).exists())
+    }
+    await closeTab();
+});
+
+step("Validate report before adding diagnosis", async function () {
+    var countBeforeAddingDiagnosis = 0;
+    var diagnosisName = gauge.dataStore.scenarioStore.get("diagnosisName")
+    if (!await text(diagnosisName, below(text("Diagnosis"))).exists() === true) {
+    }
+    else {
+        var countPos = await taikoHelper.generateXpath()
+        var countBeforeAddingDiagnosis = await $("//TD[normalize-space()='" + diagnosisName + "']/../TD[" + countPos + "]").text()
+        gauge.dataStore.scenarioStore.put("countBeforeAddingDiagnosis", countBeforeAddingDiagnosis)
+    }
+    await closeTab();
+})

@@ -119,17 +119,28 @@ async function validateFormFromFile(configurations) {
     }
 }
 
-async function generateRandomDiagnosis(diseaseFile) {
-    const jsonData = JSON.parse(fileExtension.parseContent(diseaseFile))
+async function generateRandomDiagnosis(jsonData) {
     const snomedDiagnosesArray = jsonData.expansion.contains
-    const randomIndex = Math.floor(Math.random() * snomedDiagnosesArray.length);
+    const randomIndex = Math.floor(Math.random() * snomedDiagnosesArray.length - 1);
     const diagnosisData = snomedDiagnosesArray[randomIndex];
-    const DiagnosisCode = diagnosisData.code;
-    gauge.dataStore.scenarioStore.put("DiagnosisCode", DiagnosisCode)
-    const DiagnosisName = diagnosisData.display;
-    gauge.dataStore.scenarioStore.put("DiagnosisName", DiagnosisName)
-    return DiagnosisName;
     
+    const diagnosisCode = diagnosisData.code;
+    gauge.dataStore.scenarioStore.put("diagnosisCode", diagnosisCode)
+    const diagnosisName = diagnosisData.display;
+    gauge.dataStore.scenarioStore.put("diagnosisName", diagnosisName)
+    return diagnosisName;
+
+}
+
+async function generateXpath() {
+    var tableHeaders = await $("//TD[normalize-space()='Count']//..//TD").elements();
+    var countPos = 0;
+    for (var i = 0; i < tableHeaders.length - 1; i++) {
+        if ((await tableHeaders[i].text()).trim().toLowerCase() == "count") {
+            countPos = i + 1;
+            return countPos;
+        }
+    }
 }
 
 module.exports = {
@@ -140,5 +151,7 @@ module.exports = {
     repeatUntilFound: repeatUntilFound,
     repeatUntilEnabled: repeatUntilEnabled,
     validateFormFromFile: validateFormFromFile,
-    generateRandomDiagnosis: generateRandomDiagnosis
+    generateRandomDiagnosis: generateRandomDiagnosis,
+    generateXpath, generateXpath
+
 }

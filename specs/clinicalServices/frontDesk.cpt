@@ -155,7 +155,22 @@
 * Log out if still logged in
 * Login as user <user> with location <location> in bahmni snomed
 
-# Doctor adds random snomed diagnosis from the file <filepath> which is not present in Openmrs Database using <diagnosis> search
-* Random snomed diagnosis is identified and verified in openmrs <filepath>
+# Doctor adds random snomed diagnosis with snomed code <snomedCode> which is not present in Openmrs Database using <diagnosis> search
+* Random snomed diagnosis is identified and verified in openmrs <snomedCode>
 * Doctor add the diagnosis for <diagnosis>
 * Save data
+
+# Doctor add random snomed diagnosis for <diagnosisName> with snomed code <snomedCode> using <type> search
+ * Open clinical tab
+ * Open "Diagnoses" Tab
+ * Doctor add the diagnosis for <type>
+ * Save data
+
+# Doctor checks for the diagnosis in report <reportName>
+* Select start date, end date and "HTML" format for <reportName> and click on run button
+* Validate report before adding diagnosis
+* Click on home page
+
+# Validate the count report for <reportName> before adding the diagnosis <diagnosisName> with snomed code <snomedCode>
+* Random snomed diagnosis for <diagnosisName> with snomed code <snomedCode> is identified
+* Doctor checks for the diagnosis in report <reportName> 
