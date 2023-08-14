@@ -168,7 +168,7 @@
 
 # Doctor checks for the diagnosis in report <reportName>
 * Select start date, end date and "HTML" format for <reportName> and click on run button
-* Validate report before adding diagnosis
+* Validate report and check count before adding diagnosis
 * Click on home page
 
 # Validate the count report for <reportName> before adding the diagnosis <diagnosisName> with snomed code <snomedCode>

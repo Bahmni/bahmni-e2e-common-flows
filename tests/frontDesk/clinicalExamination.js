@@ -181,7 +181,7 @@ step("Verify random snomed <diagnosis name> saved is added to openmrs database w
 });
 
 async function findDiagnosis(snomedCode) {
-    var diagnosisJson=await requestResponse.getDataInJson(snomedCode);
+    var diagnosisJson=await requestResponse.getSnomedDiagnosisDataFromAPI(snomedCode);
     var diagnosisName = await taikoHelper.generateRandomDiagnosis(diagnosisJson);
     const checkDataInOpenmrs = await requestResponse.checkDiagnosisInOpenmrs(diagnosisName);
     if (checkDataInOpenmrs === false) {
@@ -193,7 +193,7 @@ async function findDiagnosis(snomedCode) {
 }
 
 step("Random snomed diagnosis for <diagnosisName> with snomed code <snomedCode> is identified", async function (diagnosisName, snomedCode) {
-	var diagnosisJson=await requestResponse.getDataInJson(snomedCode);
+	var diagnosisJson=await requestResponse.getSnomedDiagnosisDataFromAPI(snomedCode);
     var diagnosisName = await taikoHelper.generateRandomDiagnosis(diagnosisJson);
 });
 

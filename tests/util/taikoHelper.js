@@ -121,7 +121,7 @@ async function validateFormFromFile(configurations) {
 
 async function generateRandomDiagnosis(jsonData) {
     const snomedDiagnosesArray = jsonData.expansion.contains
-    const randomIndex = Math.floor(Math.random() * snomedDiagnosesArray.length - 1);
+    const randomIndex = Math.floor(Math.random() * snomedDiagnosesArray.length);
     const diagnosisData = snomedDiagnosesArray[randomIndex];
     
     const diagnosisCode = diagnosisData.code;
@@ -132,7 +132,7 @@ async function generateRandomDiagnosis(jsonData) {
 
 }
 
-async function generateXpath() {
+async function returnCountPosForTheXpath() {
     var tableHeaders = await $("//TD[normalize-space()='Count']//..//TD").elements();
     var countPos = 0;
     for (var i = 0; i < tableHeaders.length - 1; i++) {
@@ -152,6 +152,6 @@ module.exports = {
     repeatUntilEnabled: repeatUntilEnabled,
     validateFormFromFile: validateFormFromFile,
     generateRandomDiagnosis: generateRandomDiagnosis,
-    generateXpath, generateXpath
+    returnCountPosForTheXpath, returnCountPosForTheXpath
 
 }

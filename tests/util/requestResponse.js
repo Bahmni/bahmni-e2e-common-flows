@@ -138,7 +138,7 @@ async function checkDiagnosisInOpenmrs(diagnosisName) {
         return true;
     }
 }
-async function getDataInJson(snomedCode) {
+async function getSnomedDiagnosisDataFromAPI(snomedCode) {
     var response = await axios({
         url: endpoints.SNOWSTORM_URL,
 
@@ -163,5 +163,5 @@ module.exports = {
     makeOpenProgramCall: makeOpenProgramCall,
     setRoles: setRoles,
     checkDiagnosisInOpenmrs: checkDiagnosisInOpenmrs,
-    getDataInJson: getDataInJson
+    getSnomedDiagnosisDataFromAPI: getSnomedDiagnosisDataFromAPI
 }

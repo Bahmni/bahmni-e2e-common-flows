@@ -167,12 +167,12 @@ step("Validate obs <form> on the patient clinical dashboard", async function (fo
     await click($('.ngdialog-close'))
 });
 
-step("Validate the count report generated for <ParentClass> if descendants of <ChildClass> is added.", async function (ParentClass, ChildClass) {
+step("Validate the count report generated for <ParentClass> when descendants of <ChildClass> is added.", async function (ParentClass, ChildClass) {
     var medicalDiagnosis = gauge.dataStore.scenarioStore.get("medicalDiagnosis")
-    var countBeforeAddingDiagnosis = gauge.dataStore.scenarioStore.get(countBeforeAddingDiagnosis)
+    var countBeforeAddingDiagnosis = gauge.dataStore.scenarioStore.get("countBeforeAddingDiagnosis")
     var diagnosis = medicalDiagnosis.diagnosis.diagnosisName
     if (ParentClass === ChildClass) {
-        var countPos = await taikoHelper.generateXpath()
+        var countPos = await taikoHelper.returnCountPosForTheXpath()
         assert.ok(await text(diagnosis, below(text("Diagnosis"))).exists())
         await highlight($("//TD[normalize-space()='" + diagnosis + "']/../TD[" + countPos + "]"))
         var countAfterAddingDiagnosis = await $("//TD[normalize-space()='" + diagnosis + "']/../TD[" + countPos + "]").text()
@@ -184,13 +184,14 @@ step("Validate the count report generated for <ParentClass> if descendants of <C
     await closeTab();
 });
 
-step("Validate report before adding diagnosis", async function () {
+step("Validate report and check count before adding diagnosis", async function () {
     var countBeforeAddingDiagnosis = 0;
     var diagnosisName = gauge.dataStore.scenarioStore.get("diagnosisName")
     if (!await text(diagnosisName, below(text("Diagnosis"))).exists() === true) {
+        gauge.dataStore.scenarioStore.put("countBeforeAddingDiagnosis", countBeforeAddingDiagnosis)
     }
     else {
-        var countPos = await taikoHelper.generateXpath()
+        var countPos = await taikoHelper.returnCountPosForTheXpath()
         var countBeforeAddingDiagnosis = await $("//TD[normalize-space()='" + diagnosisName + "']/../TD[" + countPos + "]").text()
         gauge.dataStore.scenarioStore.put("countBeforeAddingDiagnosis", countBeforeAddingDiagnosis)
     }
