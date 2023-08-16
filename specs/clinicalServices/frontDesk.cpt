@@ -160,7 +160,7 @@
 * Doctor add the diagnosis for <diagnosis>
 * Save data
 
-# Doctor add random snomed diagnosis for <diagnosisName> with snomed code <snomedCode> using <type> search
+# Doctor add random snomed diagnosis for <diagnosisName> using <type> search
  * Open clinical tab
  * Open "Diagnoses" Tab
  * Doctor add the diagnosis for <type>

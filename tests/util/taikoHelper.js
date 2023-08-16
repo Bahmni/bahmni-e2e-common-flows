@@ -132,8 +132,8 @@ async function generateRandomDiagnosis(jsonData) {
 
 }
 
-async function returnCountPosForTheXpath() {
-    var tableHeaders = await $("//TD[normalize-space()='Count']//..//TD").elements();
+async function returnHeaderPos(columnHeader) {
+    var tableHeaders = await $("//TD[normalize-space()='"+columnHeader+"']//..//TD").elements();
     var countPos = 0;
     for (var i = 0; i < tableHeaders.length - 1; i++) {
         if ((await tableHeaders[i].text()).trim().toLowerCase() == "count") {
@@ -152,6 +152,6 @@ module.exports = {
     repeatUntilEnabled: repeatUntilEnabled,
     validateFormFromFile: validateFormFromFile,
     generateRandomDiagnosis: generateRandomDiagnosis,
-    returnCountPosForTheXpath, returnCountPosForTheXpath
+    returnHeaderPos, returnHeaderPos
 
 }
