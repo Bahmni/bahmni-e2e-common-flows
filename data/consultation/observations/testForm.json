@@ -56,7 +56,7 @@
                     "label": "Coronary Artery Disease, Risk factors",
                     "short_name": "Risk factors",
                     "value": "Structure of apex of heart",
-                    "fullName":"Structure of apex of heart (body structure)"
+                    "fullValue": "Structure of apex of heart (body structure)"
                 },
                 {
                     "type": "Button",

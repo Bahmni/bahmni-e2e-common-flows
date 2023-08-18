@@ -298,12 +298,12 @@ step("Edit form name", async function () {
     await click(link(toRightOf(formName)))
 });
 
-step("Create obs group <arg0> <arg1>", async function (obsName, properties) {
+step("Create obs group <obsName> and add an ecl query for <obsField> <properties>", async function (obsName, obsField, properties) {
     await dragAndDrop("ObsGroup", $(".form-builder-row"));
     await click("Select ObsGroup Source")
     await write(obsName, into(textBox(below("Control Properties"))))
     await press('Enter')
-    await click("Coronary Artery Disease, Risk factors")
+    await click(obsField)
     for (var row of properties.rows) {
         if (row.cells[0] === "Url") {
             await highlight(row.cells[0])
@@ -327,7 +327,6 @@ step("Click on Manage Forms", async function () {
 
 step("Open the form created through form builder", async function () {
     var formName = gauge.dataStore.scenarioStore.get("FormName")
-    await click($("//a[normalize-space()='" + formName + "']"))
     await click(formName)
 });
 
@@ -338,36 +337,32 @@ step("Click on delete form", async function () {
 
 step("Validate the report generated for Snomed form builder form Report <arg0>", async function (observationFormFile) {
     var observationFormValues = JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${observationFormFile}.json`))
-    await verifyReportsFromJsonFile(observationFormValues.ObservationFormDetails)
+    await getValueAndShortNameFromJsonFile(observationFormValues.ObservationFormDetails)
     await closeTab();
 });
 
-async function verifyReportsFromJsonFile(configurations) {
+async function getValueAndShortNameFromJsonFile(configurations) {
     for (var configuration of configurations) {
         if (configuration.type === 'Group') {
-            await verifyReportsFromJsonFile(configuration.value)
+            await getValueAndShortNameFromJsonFile(configuration.value)
         }
         else if (configuration.type === 'Button') {
-            var expected = configuration.shortValue
-            var actual = await getActualResult(configuration.short_name)
-            assert.equal(actual, expected);
+            await validateReport(configuration.shortValue, configuration.short_name)
         }
         else if (configuration.type === 'DropDown') {
-            var expected = configuration.fullName
-            var actual = await getActualResult(configuration.short_name)
-            assert.equal(actual, expected);
+            await validateReport(configuration.fullValue, configuration.short_name)
         }
         else {
-            var expected = configuration.value
-            var actual = await getActualResult(configuration.short_name)
-            assert.equal(actual, expected);
+            await validateReport(configuration.value, configuration.short_name)
         }
     }
 
 }
-async function getActualResult(short_name) {
+
+async function validateReport(value, name) {
     var patientIdentifier = gauge.dataStore.scenarioStore.get("patientIdentifier")
-    var headerPos = await taikoHelper.returnHeaderPos(short_name)
+    var headerPos = await taikoHelper.returnHeaderPos(name)
     var actual = await ($("//TD[normalize-space()='" + patientIdentifier + "']/../TD[" + headerPos + "]")).text()
-    return actual;
+    var expected = value
+    assert.equal(actual, expected);
 }
