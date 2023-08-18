@@ -144,17 +144,17 @@ step("Doctor notes the diagnosis and condition <filePath>", async function (file
     }
 });
 
-step("Random snomed diagnosis is identified and verified in openmrs <snomedCode>", async function (snomedCode) {
-    await findDiagnosis(snomedCode)
+step("Random snomed diagnosis is identified and verified in openmrs <diagnosis_name>", async function (diagnosis_name) {
+    await findDiagnosis(diagnosis_name)
 });
 
 
 step("Doctor add the diagnosis for <diagnosis>", async function (diagnosis) {
-     var diagnosisName = gauge.dataStore.scenarioStore.get("diagnosisName")
-     var diagnosisCode = gauge.dataStore.scenarioStore.get("diagnosisCode")
+    var diagnosisName = gauge.dataStore.scenarioStore.get("diagnosisName")
+    var diagnosisCode = gauge.dataStore.scenarioStore.get("diagnosisCode")
     if (diagnosis === "code") {
         await write(diagnosisCode, into(textBox(below("Diagnoses"))));
-        }
+    }
     else {
         await write(diagnosisName, into(textBox(below("Diagnoses"))));
     }
@@ -180,8 +180,9 @@ step("Verify random snomed <diagnosis name> saved is added to openmrs database w
     }
 });
 
-async function findDiagnosis(snomedCode) {
-    var diagnosisJson=await requestResponse.getSnomedDiagnosisDataFromAPI(snomedCode);
+async function findDiagnosis(diagnosis_name) {
+    var snomedCode = await getSnomedCodeFromSnomedName(diagnosis_name)
+    var diagnosisJson = await requestResponse.getSnomedDiagnosisDataFromAPI(snomedCode);
     var diagnosisName = await taikoHelper.generateRandomDiagnosis(diagnosisJson);
     const checkDataInOpenmrs = await requestResponse.checkDiagnosisInOpenmrs(diagnosisName);
     if (checkDataInOpenmrs === false) {
@@ -192,12 +193,19 @@ async function findDiagnosis(snomedCode) {
     }
 }
 
-step("Random snomed diagnosis for <diagnosisName> with snomed code <snomedCode> is identified", async function (diagnosisName, snomedCode) {
-	var diagnosisJson=await requestResponse.getSnomedDiagnosisDataFromAPI(snomedCode);
+step("Random snomed diagnosis is identified using ECL query for <diagnosis_name>", async function (diagnosis_name) {
+    var snomedCode = await getSnomedCodeFromSnomedName(diagnosis_name)
+    var diagnosisJson = await requestResponse.getSnomedDiagnosisDataFromAPI(snomedCode);
     var diagnosisName = await taikoHelper.generateRandomDiagnosis(diagnosisJson);
 });
 
-module.exports = {
-    findDiagnosis: findDiagnosis
-}
+async function getSnomedCodeFromSnomedName(diagnosis_name) {
+    var snomedCodeFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomed_code.json`;
+    var diagnosisData = JSON.parse(fileExtension.parseContent(snomedCodeFile))
+    for (var i = 0; i < diagnosisData.snomedNameCodeMapping.length; i++) {
+        if (diagnosisData.snomedNameCodeMapping[i].diagnosis_name == diagnosis_name) {
+            return diagnosisData.snomedNameCodeMapping[i].diagnosis_code;
+        }
+    }
 
+}
