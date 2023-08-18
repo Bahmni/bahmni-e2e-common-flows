@@ -1,4 +1,4 @@
-const { button, toRightOf, textBox, into, write, press, click, timeField, below, scrollTo, text, evaluate, $, checkBox, waitFor, image, within } = require('taiko');
+const { button, toRightOf, textBox, into, write, press, click, highlight, timeField, below, scrollTo, text, evaluate, $, checkBox, waitFor, image, within, dropDown } = require('taiko');
 var date = require("./date");
 var assert = require("assert")
 var fileExtension = require("../util/fileExtension")
@@ -63,11 +63,11 @@ async function selectEntriesTillIterationEnds(entrySequence) {
 }
 
 
-async function executeConfigurations(configurations, observationFormName, isNotObsForm) {
+async function executeConfigurations(configurations, observationFormName) {
     for (var configuration of configurations) {
         switch (configuration.type) {
             case 'Group':
-                await executeConfigurations(configuration.value, observationFormName, isNotObsForm)
+                await executeConfigurations(configuration.value, observationFormName)
                 break;
             case 'TextArea':
                 await write(configuration.value, into($("//textarea", toRightOf(configuration.label))))
@@ -79,17 +79,16 @@ async function executeConfigurations(configurations, observationFormName, isNotO
                     await write(configuration.value, into(textBox(toRightOf(configuration.label + " " + configuration.unit))))
                 break;
             case 'Button':
-                {
-                    if (!isNotObsForm)
-                        await scrollTo(text(observationFormName, toRightOf("History and Examination")))
-                    else
-                        await scrollTo(text(observationFormName))
-                    await click(button(configuration.value), toRightOf(configuration.label))
-                }
+                await scrollTo(text(observationFormName))
+                await click(button(configuration.value), toRightOf(configuration.label))
                 break;
             case 'Date':
                 var dateValue = date.addDaysAndReturnDateInDDMMYYYY(configuration.value)
                 await write(dateValue, into(timeField(toRightOf(configuration.label))))
+                break;
+            case 'DropDown':
+                await write(configuration.value, into(textBox(toRightOf(configuration.label))))
+                await click($("//div[@role='option' and text()='" + configuration.value + "']"));
                 break;
             default:
                 console.log("Unhandled " + configuration.label + ":" + configuration.value)
@@ -129,7 +128,17 @@ async function generateRandomDiagnosis(diseaseFile) {
     const DiagnosisName = diagnosisData.display;
     gauge.dataStore.scenarioStore.put("DiagnosisName", DiagnosisName)
     return DiagnosisName;
-    
+
+}
+async function returnHeaderPos(columnHeader) {
+    var tableHeaders = await $("//TD[normalize-space()='" + columnHeader + "']//..//TD").elements();
+    var countPos = 0;
+    for (var i = 0; i < tableHeaders.length - 1; i++) {
+        if ((await tableHeaders[i].text()).trim() == columnHeader) {
+            countPos = i + 1;
+            return countPos;
+        }
+    }
 }
 
 module.exports = {
@@ -140,5 +149,6 @@ module.exports = {
     repeatUntilFound: repeatUntilFound,
     repeatUntilEnabled: repeatUntilEnabled,
     validateFormFromFile: validateFormFromFile,
-    generateRandomDiagnosis: generateRandomDiagnosis
+    generateRandomDiagnosis: generateRandomDiagnosis,
+    returnHeaderPos: returnHeaderPos
 }

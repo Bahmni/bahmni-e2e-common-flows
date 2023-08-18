@@ -50,3 +50,14 @@
 # Navigate to Audit Log module
 * Open "Admin" module
 * Open Audit Log module
+
+# Create a form with form name as <formName>
+* Open Form builder
+* Create a form
+* Enter form name as <formName>
+* start creating a form
+
+# Delete the form from the openMRS
+* Click on Manage Forms
+* Open the form created through form builder
+* Click on delete form
