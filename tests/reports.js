@@ -3,7 +3,7 @@ var assert = require("assert")
 var date = require("./util/date");
 
 step("Select start date, end date and <reportFormat> format for <reportName> and click on run button", async function (reportFormat, reportName) {
-	let startDate = date.today()
+	let startDate = date.yesterday()
 	let endDate = date.today()
 	await timeField(toRightOf(text(reportName)), below(text("Start Date"))).select(startDate)
 	await timeField(toRightOf(text(reportName)), toRightOf(text("Start Date")), below(text("End Date"))).select(endDate)
