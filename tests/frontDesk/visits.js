@@ -14,6 +14,8 @@ const {
     press,
     waitFor,
     scrollTo,
+    near,
+    closeTab,
     highlight,
     link,
     below,
@@ -164,3 +166,34 @@ step("Validate obs <form> on the patient clinical dashboard", async function (fo
     await taikoHelper.validateFormFromFile(obsFormValues.ObservationFormDetails, obsFormValues.ObservationFormName)
     await click($('.ngdialog-close'))
 });
+
+step("Validate the count report for <ParentClass> and check count is increased and the added diagnosis is present in the report when descendents of <ChildClass> is added", async function (arg0, ChildClass) {
+    var medicalDiagnosis = gauge.dataStore.scenarioStore.get("medicalDiagnosis")
+    var countBeforeAddingDiagnosis = gauge.dataStore.scenarioStore.get("countBeforeAddingDiagnosis")
+    var countPos = await taikoHelper.returnHeaderPos("Count")
+    assert.ok(await text(medicalDiagnosis.diagnosis.diagnosisName, below(text("Diagnosis"))).exists())
+    await highlight($("//TD[normalize-space()='" + medicalDiagnosis.diagnosis.diagnosisName + "']/../TD[" + countPos + "]"))
+    var countAfterAddingDiagnosis = await $("//TD[normalize-space()='" + medicalDiagnosis.diagnosis.diagnosisName + "']/../TD[" + countPos + "]").text()
+    assert.ok(countAfterAddingDiagnosis > countBeforeAddingDiagnosis)
+    await closeTab();
+});
+
+step("Validate the count report for <ParentClass>  and check added diagnosis is not present in the report when descendents of <hildClass> is added", async function (ParentClass, hildClass) {
+    var medicalDiagnosis = gauge.dataStore.scenarioStore.get("medicalDiagnosis")
+    assert.ok(!await text(medicalDiagnosis.diagnosis.diagnosisName, below(text("Diagnosis"))).exists())
+    await closeTab();
+});
+
+step("Validate report and check count before adding diagnosis", async function () {
+    var countBeforeAddingDiagnosis = 0;
+    var diagnosisName = gauge.dataStore.scenarioStore.get("diagnosisName")
+    if (!await text(diagnosisName, below(text("Diagnosis"))).exists() === true) {
+        gauge.dataStore.scenarioStore.put("countBeforeAddingDiagnosis", countBeforeAddingDiagnosis)
+    }
+    else {
+        var countPos = await taikoHelper.returnHeaderPos("Count")
+        var countBeforeAddingDiagnosis = await $("//TD[normalize-space()='" + diagnosisName + "']/../TD[" + countPos + "]").text()
+        gauge.dataStore.scenarioStore.put("countBeforeAddingDiagnosis", countBeforeAddingDiagnosis)
+    }
+    await closeTab();
+})

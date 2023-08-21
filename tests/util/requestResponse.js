@@ -117,11 +117,11 @@ async function updateRoles(username, strRoles) {
     assert.equal(updateUser.status, 200, "Prerequisite Failed - User Role not updated")
 }
 
-async function checkDiagnosisInOpenmrs(DiagnosisName) {
+async function checkDiagnosisInOpenmrs(diagnosisName) {
     var response = await axios({
         url: process.env.bahmniHost + endpoints.DIAGNOSIS_SEARCH,
         params: {
-            q: DiagnosisName,
+            q: diagnosisName,
         },
         method: 'get',
         headers: {
@@ -138,11 +138,30 @@ async function checkDiagnosisInOpenmrs(DiagnosisName) {
         return true;
     }
 }
+async function getSnomedDiagnosisDataFromAPI(snomedCode) {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL,
+
+        params: {
+            url: endpoints.ECL_QUERY + snomedCode,
+        },
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    return jsonData;
+
+}
 
 module.exports = {
     getOpenMRSResponse: getOpenMRSResponse,
     makeOpenVisitCall: makeOpenVisitCall,
     makeOpenProgramCall: makeOpenProgramCall,
     setRoles: setRoles,
-    checkDiagnosisInOpenmrs: checkDiagnosisInOpenmrs
+    checkDiagnosisInOpenmrs: checkDiagnosisInOpenmrs,
+    getSnomedDiagnosisDataFromAPI: getSnomedDiagnosisDataFromAPI
 }

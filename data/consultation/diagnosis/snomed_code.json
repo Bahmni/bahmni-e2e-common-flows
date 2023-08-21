@@ -1,0 +1,20 @@
+{
+    "snomedNameCodeMapping": [
+        {
+            "diagnosis_name": "malaria",
+            "diagnosis_code": "61462000"
+        },
+        {
+            "diagnosis_name": "asthma",
+            "diagnosis_code": "195967001"
+        },
+        {
+            "diagnosis_name": "covid-19",
+            "diagnosis_code": "840539006"
+        },
+        {
+            "diagnosis_name": "clinical_finding",
+            "diagnosis_code": "404684003"
+        }
+    ]
+}
