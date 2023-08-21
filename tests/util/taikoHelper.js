@@ -131,16 +131,6 @@ async function generateRandomDiagnosis(jsonData) {
 
 }
 
-// async function returnHeaderPos(columnHeader) {
-//     var tableHeaders = await $("//TD[normalize-space()='" + columnHeader + "']//..//TD").elements();
-//     var countPos = 0;
-//     for (var i = 0; i < tableHeaders.length - 1; i++) {
-//         if ((await tableHeaders[i].text()).trim() == columnHeader) {
-//             countPos = i + 1;
-//             return countPos;
-//         }
-//     }
-// }
 async function returnHeaderPos(columnHeader) {
     var tableHeaders = await $("//TD[normalize-space()='" + columnHeader + "']//..//TD").elements();
     var countPos = 0;
@@ -152,6 +142,17 @@ async function returnHeaderPos(columnHeader) {
     }
 }
 
+async function getSnomedCodeFromSnomedName(diagnosis_name) {
+    var snomedCodeFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomed_code.json`;
+    var diagnosisData = JSON.parse(fileExtension.parseContent(snomedCodeFile))
+    for (var i = 0; i < diagnosisData.snomedNameCodeMapping.length; i++) {
+        if (diagnosisData.snomedNameCodeMapping[i].diagnosis_name == diagnosis_name) {
+            return diagnosisData.snomedNameCodeMapping[i].diagnosis_code;
+        }
+    }
+
+}
+
 module.exports = {
     selectEntriesTillIterationEnds: selectEntriesTillIterationEnds,
     verifyConfigurations: verifyConfigurations,
@@ -161,5 +162,6 @@ module.exports = {
     repeatUntilEnabled: repeatUntilEnabled,
     validateFormFromFile: validateFormFromFile,
     generateRandomDiagnosis: generateRandomDiagnosis,
-    returnHeaderPos: returnHeaderPos
+    returnHeaderPos: returnHeaderPos,
+    getSnomedCodeFromSnomedName:getSnomedCodeFromSnomedName
 }

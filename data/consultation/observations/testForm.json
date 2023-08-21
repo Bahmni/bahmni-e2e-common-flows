@@ -9,6 +9,13 @@
             "unit": ""
         },
         {
+            "type": "Button",
+            "label": "Is admission to hospital required?",
+            "short_name": "Is admission to hospital required?",
+            "value": "Inpatient management not required",
+            "shortValue": "Inpatient management not required (finding)"
+        },
+        {
             "type": "Group",
             "label": "Coronary Artery Disease, Progress",
             "value": [

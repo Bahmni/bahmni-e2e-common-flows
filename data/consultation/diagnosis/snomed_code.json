@@ -15,6 +15,10 @@
         {
             "diagnosis_name": "clinical_finding",
             "diagnosis_code": "404684003"
+        },
+        {
+            "diagnosis_name": "Coronary Artery Disease, Risk factors",
+            "diagnosis_code": "80891009"
         }
     ]
 }
