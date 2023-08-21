@@ -1,0 +1,78 @@
+{
+    "ObservationFormName": "Test Form",
+    "ObservationFormDetails": [
+        {
+            "type": "TextBox",
+            "label": "HEIGHT",
+            "short_name": "HEIGHT",
+            "value": "172",
+            "unit": ""
+        },
+        {
+            "type": "Group",
+            "label": "Coronary Artery Disease, Progress",
+            "value": [
+                {
+                    "type": "TextArea",
+                    "label": "Coronary Artery Disease, EKG",
+                    "short_name": "Last EKG",
+                    "value": "Not found"
+                },
+                {
+                    "type": "TextArea",
+                    "label": "Coronary Artery Disease, If Not Aspirin What is the Contraindication",
+                    "short_name": "If not on aspirin what is the contraindication",
+                    "value": "Paracetamol"
+                },
+                {
+                    "type": "TextArea",
+                    "label": "Coronary Artery Disease, Changes in EKG",
+                    "short_name": "Any changes in EKG",
+                    "value": "No change"
+                },
+                {
+                    "type": "Button",
+                    "label": "Coronary Artery Disease, Symptoms of Angina",
+                    "short_name": "Symptoms of Angina since last visit",
+                    "value": "Yes",
+                    "shortValue": "True"
+                },
+                {
+                    "type": "Button",
+                    "label": "Coronary Artery Disease, Symptoms of Heart Failure",
+                    "short_name": "Symptoms Of Heart Failure Since Last Visit",
+                    "value": "No",
+                    "shortValue": "False"
+                },
+                {
+                    "type": "Button",
+                    "label": "Coronary Artery Disease, Is on Max Dose Anti-Anginal",
+                    "short_name": "Is patient on max dose anti-anginal medicines",
+                    "value": "Yes",
+                    "shortValue": "True"
+                },
+                {
+                    "type": "DropDown",
+                    "label": "Coronary Artery Disease, Risk factors",
+                    "short_name": "Risk factors",
+                    "value": "Structure of apex of heart",
+                    "fullValue": "Structure of apex of heart (body structure)"
+                },
+                {
+                    "type": "Button",
+                    "label": "Coronary Artery Disease, Patient on Atorvastatin",
+                    "short_name": "Is patient on Atorvastatin (at least 20 mg)",
+                    "value": "No",
+                    "shortValue": "False"
+                },
+                {
+                    "type": "Button",
+                    "label": "Coronary Artery Disease, Patient on Low Dose Aspirin",
+                    "short_name": "Is patient on low dose aspirin ?",
+                    "value": "Yes",
+                    "shortValue": "True"
+                }
+            ]
+        }
+    ]
+}

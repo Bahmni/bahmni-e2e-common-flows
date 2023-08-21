@@ -157,7 +157,7 @@ step("Verify no error displayed on page", async function () {
     assert.equal(await $("//DIV[@class='message-container error-message-container']").exists(500, 1000), false, "Error displayed on page.")
 });
 
-step("Validate obs <form> on the patient clinical dashboard", async function (formPath) {
+step("Validate obs <formPath> on the patient clinical dashboard", async function (formPath) {
     var obsFormValues = JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${formPath}.json`))
     gauge.dataStore.scenarioStore.put(obsFormValues.ObservationFormName, obsFormValues)
     await taikoHelper.repeatUntilNotFound($("#overlay"))

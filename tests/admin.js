@@ -8,6 +8,7 @@ const {
     into,
     below,
     waitFor,
+    closeTab,
     checkBox,
     textBox,
     toLeftOf,
@@ -15,6 +16,7 @@ const {
     $,
     text,
     attach,
+    evaluate,
     dragAndDrop,
     confirm,
     accept,
@@ -38,6 +40,7 @@ var taikoHelper = require("./util/taikoHelper");
 var users = require("./util/users");
 const csvConfig = require("./util/csvConfig");
 var date = require("./util/date");
+var fileExtension = require("./util/fileExtension");
 
 
 
@@ -101,7 +104,7 @@ step("edit form <formName>", async function (formName) {
 });
 
 step("create obs <obsName> <properties>", async function (obsName, properties) {
-    await dragAndDrop("Obs", $(".form-builder-row"));
+    await dragAndDrop($("//div[normalize-space()='Obs']"), into($(".form-builder-column")))
     await click("Select Obs Source")
     await write(obsName, into(textBox(below("Control Properties"))))
     await press('Enter')
@@ -284,3 +287,82 @@ step("Verify Event <message> in Audit log for the <user>", async function (strMe
     }
     assert.ok(await text(strMessage, toRightOf(username)).exists());
 });
+
+step("Enter form name as <formName>", async function (formName) {
+    gauge.dataStore.scenarioStore.put("FormName", formName)
+    await write(formName, into(textBox(below("Form Name"))));
+});
+
+step("Edit form name", async function () {
+    var formName = gauge.dataStore.scenarioStore.get("FormName")
+    await click(link(toRightOf(formName)))
+});
+
+step("Create obs group <obsName> and add an ecl query for <obsField> <properties>", async function (obsName, obsField, properties) {
+    await dragAndDrop("ObsGroup", $(".form-builder-row"));
+    await click("Select ObsGroup Source")
+    await write(obsName, into(textBox(below("Control Properties"))))
+    await press('Enter')
+    await click(obsField)
+    for (var row of properties.rows) {
+        if (row.cells[0] === "Url") {
+            await highlight(row.cells[0])
+            await write("http://snomed.info/sct?fhir_vs=ecl/ <80891009", into(textBox(toRightOf(row.cells[0]))))//I didn't had the previous change that is why I'm hardcoding here,will fix it once the code is merged
+        }
+        else {
+
+            await click(checkBox(toRightOf(row.cells[0])));
+        }
+
+    }
+});
+
+step("Click Publish button", async function () {
+    await click("Publish", { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+});
+
+step("Click on Manage Forms", async function () {
+    await click("Manage Forms");
+});
+
+step("Open the form created through form builder", async function () {
+    var formName = gauge.dataStore.scenarioStore.get("FormName")
+    await click(formName)
+});
+
+step("Click on delete form", async function () {
+    confirm('Are you sure you want to delete this entire form AND schema?', async () => await accept());
+    await click($("//input[@value='Delete Form']"))
+});
+
+step("Validate the report generated for Snomed form builder form Report <arg0>", async function (observationFormFile) {
+    var observationFormValues = JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${observationFormFile}.json`))
+    await getValueAndShortNameFromJsonFile(observationFormValues.ObservationFormDetails)
+    await closeTab();
+});
+
+async function getValueAndShortNameFromJsonFile(configurations) {
+    for (var configuration of configurations) {
+        if (configuration.type === 'Group') {
+            await getValueAndShortNameFromJsonFile(configuration.value)
+        }
+        else if (configuration.type === 'Button') {
+            await validateReport(configuration.shortValue, configuration.short_name)
+        }
+        else if (configuration.type === 'DropDown') {
+            await validateReport(configuration.fullValue, configuration.short_name)
+        }
+        else {
+            await validateReport(configuration.value, configuration.short_name)
+        }
+    }
+
+}
+
+async function validateReport(value, name) {
+    var patientIdentifier = gauge.dataStore.scenarioStore.get("patientIdentifier")
+    var headerPos = await taikoHelper.returnHeaderPos(name)
+    var actual = await ($("//TD[normalize-space()='" + patientIdentifier + "']/../TD[" + headerPos + "]")).text()
+    var expected = value
+    assert.equal(actual, expected);
+}
