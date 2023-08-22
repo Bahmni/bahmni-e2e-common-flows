@@ -41,6 +41,7 @@ var users = require("./util/users");
 const csvConfig = require("./util/csvConfig");
 var date = require("./util/date");
 var fileExtension = require("./util/fileExtension");
+const endpoints = require('./../../tests/API/constants/apiConstants').endpoints;
 
 
 
@@ -109,8 +110,17 @@ step("create obs <obsName> <properties>", async function (obsName, properties) {
     await write(obsName, into(textBox(below("Control Properties"))))
     await press('Enter')
     await click(obsName)
-    for (var row of properties.rows) {
-        await click(checkBox(toRightOf(row.cells[0])));
+    for (var row of properties.rows)
+    {
+        if (row.cells[0] === "Url") {
+            await highlight(row.cells[0])
+            await write(endpoints.VALUESET_URL, into(textBox(toRightOf(row.cells[0]))))
+        }
+        else {
+
+            await click(checkBox(toRightOf(row.cells[0])));
+        }
+
     }
 });
 
@@ -307,7 +317,8 @@ step("Create obs group <obsName> and add an ecl query for <obsField> <properties
     for (var row of properties.rows) {
         if (row.cells[0] === "Url") {
             await highlight(row.cells[0])
-            await write("http://snomed.info/sct?fhir_vs=ecl/ <80891009", into(textBox(toRightOf(row.cells[0]))))//I didn't had the previous change that is why I'm hardcoding here,will fix it once the code is merged
+            var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(obsField)
+            await write(endpoints.ECL_QUERY+snomedCode, into(textBox(toRightOf(row.cells[0]))))
         }
         else {
 
@@ -335,7 +346,7 @@ step("Click on delete form", async function () {
     await click($("//input[@value='Delete Form']"))
 });
 
-step("Validate the report generated for Snomed form builder form Report <arg0>", async function (observationFormFile) {
+step("Validate the report generated for Snomed form builder form Report <observationFormFile>", async function (observationFormFile) {
     var observationFormValues = JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${observationFormFile}.json`))
     await getValueAndShortNameFromJsonFile(observationFormValues.ObservationFormDetails)
     await closeTab();
