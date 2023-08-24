@@ -94,3 +94,6 @@
 # Enter Form Values and validate no error is displayed on save <formPath>
 * Enter Form Values <formPath>
 * Verify no error displayed on page
+
+# Doctor adds a drug that has contraindication with the diagnosis <diagnosis_name>
+* Doctor add the drug for <diagnosis_name>

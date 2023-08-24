@@ -122,7 +122,7 @@ async function generateRandomDiagnosis(jsonData) {
     const snomedDiagnosesArray = jsonData.expansion.contains
     const randomIndex = Math.floor(Math.random() * snomedDiagnosesArray.length);
     const diagnosisData = snomedDiagnosesArray[randomIndex];
-    
+
     const diagnosisCode = diagnosisData.code;
     gauge.dataStore.scenarioStore.put("diagnosisCode", diagnosisCode)
     const diagnosisName = diagnosisData.display;
@@ -152,6 +152,16 @@ async function getSnomedCodeFromSnomedName(diagnosis_name) {
     }
 
 }
+async function getContraindicativeDrugFromSnomedDiagnosisName(diagnosis_name) {
+    var snomedCodeFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomed_code.json`;
+    var diagnosisData = JSON.parse(fileExtension.parseContent(snomedCodeFile))
+    var snomedNameCodeMapping = diagnosisData.snomedNameCodeMapping
+    for (var data of snomedNameCodeMapping) {
+        if (data.diagnosis_name == diagnosis_name) {
+            return data.contraindication;
+        }
+    }
+}
 
 module.exports = {
     selectEntriesTillIterationEnds: selectEntriesTillIterationEnds,
@@ -163,5 +173,6 @@ module.exports = {
     validateFormFromFile: validateFormFromFile,
     generateRandomDiagnosis: generateRandomDiagnosis,
     returnHeaderPos: returnHeaderPos,
-    getSnomedCodeFromSnomedName:getSnomedCodeFromSnomedName
+    getSnomedCodeFromSnomedName: getSnomedCodeFromSnomedName,
+    getContraindicativeDrugFromSnomedDiagnosisName: getContraindicativeDrugFromSnomedDiagnosisName
 }

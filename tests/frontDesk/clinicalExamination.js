@@ -17,7 +17,9 @@ const {
     confirm,
     accept,
     button,
-    link
+    link,
+    toLeftOf,
+    closeTab
 } = require('taiko');
 var fileExtension = require("../util/fileExtension");
 const taikoHelper = require("../util/taikoHelper")
@@ -169,7 +171,7 @@ step("Doctor add the diagnosis for <diagnosis>", async function (diagnosis) {
     await click(medicalDiagnosis.diagnosis.certainty, below("Certainty"));
 });
 
-step("Verify random snomed <diagnosis name> saved is added to openmrs database with required metadata", async function (diagnosis) {
+step("Verify random SNOMED <diagnosis name> saved is added to openmrs database with required metadata", async function (diagnosis) {
     if (diagnosis === "code") {
         const diagnosisCode = gauge.dataStore.scenarioStore.get("diagnosisCode")
         assert.ok(await requestResponse.checkDiagnosisInOpenmrs(diagnosisCode))
@@ -193,8 +195,82 @@ async function findDiagnosis(diagnosis_name) {
     }
 }
 
-step("Random snomed diagnosis is identified using ECL query for <diagnosis_name>", async function (diagnosis_name) {
+step("Random SNOMED diagnosis is identified using ECL query for descendants of <diagnosis_name>", async function (diagnosis_name) {
     var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(diagnosis_name)
     var diagnosisJson = await requestResponse.getSnomedDiagnosisDataFromAPI(snomedCode);
     var diagnosisName = await taikoHelper.generateRandomDiagnosis(diagnosisJson);
+});
+
+step("Doctor add the drug for <diagnosis_name>", async function (diagnosis_name) {
+    var drugName = await taikoHelper.getContraindicativeDrugFromSnomedDiagnosisName(diagnosis_name)
+    gauge.dataStore.scenarioStore.put("drugName", drugName)
+    await textBox(toRightOf("Drug Name")).exists()
+    await write(drugName, into(textBox(toRightOf("Drug Name"))));
+    await click(link(drugName, below(textBox(toRightOf("Drug Name")))));
+});
+
+step("Verify alert message with card indicator <cardIndicator> is displayed when drug is selected", async function (cardIndicator) {
+    var alertMessage = await $("div[class='cdss-alert-summary'] span").text()
+    gauge.dataStore.scenarioStore.put("alertMessage", alertMessage)
+    assert.ok(await text(cardIndicator).exists(), below(text("Additional Information ")))
+    assert.ok(await $("div[class='cdss-alert-summary'] span").exists(), below(text("Additional Information ")))
+});
+
+step("Doctor select the reason for dismissal", async function () {
+    await click($("div[class='cdss-alert-summary'] span"))
+    await click($("//i[@class='fa fa-question-circle']"))
+    await closeTab()
+    assert.ok(await $("//select[@id='cdss-audit']").exists())
+    await click($("//select[@id='cdss-audit']"))
+    await dropDown(below($(".fa.fa-question-circle"))).select({ index: '1' });
+});
+
+step("Click on dismiss button", async function () {
+    await click($("//button[normalize-space()='Dismiss']"))
+    assert.ok(!await $("div[class='cdss-alert-summary'] span").exists(), below(text("Additional Information ")))
+});
+
+step("Doctor should be able to add drug after adding the mandatory details", async function () {
+    var prescriptionFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomed_medication.json`;
+    var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
+    gauge.dataStore.scenarioStore.put("medicalPrescriptions", medicalPrescriptions)
+    var drugName = gauge.dataStore.scenarioStore.get("drugName")
+    medicalPrescriptions["drugName"] = drugName;
+    await dropDown(toRightOf("Units")).select(medicalPrescriptions.units);
+    await dropDown(toRightOf("Frequency")).select(medicalPrescriptions.frequency)
+    await write(medicalPrescriptions.dose, into(textBox(toRightOf("Dose"))));
+    await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
+    await click("Add");
+});
+
+step("Verify medication on patient clinical dashboard", async function () {
+    var medicalPrescriptions = gauge.dataStore.scenarioStore.get("medicalPrescriptions")
+    assert.ok(await text(medicalPrescriptions.drugName, within($("#Treatments"))).exists())
+    assert.ok(await text(`${medicalPrescriptions.dose} ${medicalPrescriptions.units}, ${medicalPrescriptions.frequency}`, within($("#Treatments"))).exists())
+    assert.ok(await text(`${medicalPrescriptions.duration} Day(s)`, within($("#Treatments"))).exists())
+});
+
+step("Verify CDSS is enabled in openmrs in order to trigger contraindication alerts", async function () {
+    var cdssEnable = requestResponse.checkCdssIsEnabled()
+    assert.ok(cdssEnable)
+});
+
+step("Verify add button is <buttonType>", async function (buttonType) {
+    const isButtonDisabled=await $("//button[@type='submit']").isDisabled()
+    isButtonDisabled ? assert.ok(buttonType === "disabled" && isButtonDisabled) : assert.ok(buttonType === "enabled" && !isButtonDisabled);
+    isButtonDisabled ? assert.ok(buttonType === "disabled") : assert.ok(buttonType === "enabled");
+});
+
+step("Verify dismissal entry is added in audit log", async function () {
+    var alertMessage = gauge.dataStore.scenarioStore.get("alertMessage").replace(/"/g,"")
+    let patientIdentifier = gauge.dataStore.scenarioStore.get("patientIdentifier")
+    await write(patientIdentifier, into(textBox(toRightOf("Patient ID "))))
+    await click($("//button[normalize-space()='Filter']"))
+    await scrollTo($("//button[@ng-click='next()']"));
+    do {
+        await click($("//button[@ng-click='next()']"))
+      }
+      while (assert.ok(await text("No more events to be displayed !!").exists()));
+    await highlight(text(alertMessage))
+    assert.ok(await text(alertMessage, toRightOf(patientIdentifier)).exists())
 });
