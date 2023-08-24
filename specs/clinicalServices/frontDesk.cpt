@@ -155,8 +155,8 @@
 * Log out if still logged in
 * Login as user <user> with location <location> in bahmni snomed
 
-# Random SNOMED diagnosis is identified using ECL query for <diagnosis_name> which is not present in Openmrs Database and Doctor adds the identified SNOMED diagnosis in bahmni using <type> search
-* Random snomed diagnosis is identified and verified in openmrs <diagnosis_name>
+# Random SNOMED diagnosis is identified using ECL query for <diagnosisName> which is not present in Openmrs Database and Doctor adds the identified SNOMED diagnosis in bahmni using <type> search
+* Random snomed diagnosis is identified and verified in openmrs <diagnosisName>
 * Doctor add the diagnosis for <type>
 * Save data
 

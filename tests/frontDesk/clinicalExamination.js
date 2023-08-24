@@ -146,8 +146,8 @@ step("Doctor notes the diagnosis and condition <filePath>", async function (file
     }
 });
 
-step("Random snomed diagnosis is identified and verified in openmrs <diagnosis_name>", async function (diagnosis_name) {
-    await findDiagnosis(diagnosis_name)
+step("Random snomed diagnosis is identified and verified in openmrs <diagnosisName>", async function (diagnosisName) {
+    await findDiagnosis(diagnosisName)
 });
 
 
@@ -160,7 +160,7 @@ step("Doctor add the diagnosis for <diagnosis>", async function (diagnosis) {
     else {
         await write(diagnosisName, into(textBox(below("Diagnoses"))));
     }
-    var diagnosisFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomed_diagnosis.json`;
+    var diagnosisFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomedDiagnosis.json`;
     var medicalDiagnosis = JSON.parse(fileExtension.parseContent(diagnosisFile))
     gauge.dataStore.scenarioStore.put("medicalDiagnosis", medicalDiagnosis)
     medicalDiagnosis.diagnosis["diagnosisName"] = diagnosisName;
@@ -182,8 +182,8 @@ step("Verify random SNOMED <diagnosis name> saved is added to openmrs database w
     }
 });
 
-async function findDiagnosis(diagnosis_name) {
-    var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(diagnosis_name)
+async function findDiagnosis(diagnosisName) {
+    var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(diagnosisName)
     var diagnosisJson = await requestResponse.getSnomedDiagnosisDataFromAPI(snomedCode);
     var diagnosisName = await taikoHelper.generateRandomDiagnosis(diagnosisJson);
     const checkDataInOpenmrs = await requestResponse.checkDiagnosisInOpenmrs(diagnosisName);
@@ -195,14 +195,14 @@ async function findDiagnosis(diagnosis_name) {
     }
 }
 
-step("Random SNOMED diagnosis is identified using ECL query for descendants of <diagnosis_name>", async function (diagnosis_name) {
-    var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(diagnosis_name)
+step("Random SNOMED diagnosis is identified using ECL query for descendants of <diagnosisName>", async function (diagnosisName) {
+    var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(diagnosisName)
     var diagnosisJson = await requestResponse.getSnomedDiagnosisDataFromAPI(snomedCode);
     var diagnosisName = await taikoHelper.generateRandomDiagnosis(diagnosisJson);
 });
 
-step("Doctor add the drug for <diagnosis_name>", async function (diagnosis_name) {
-    var drugName = await taikoHelper.getContraindicativeDrugFromSnomedDiagnosisName(diagnosis_name)
+step("Doctor add the drug for <diagnosisName>", async function (diagnosisName) {
+    var drugName = await taikoHelper.getContraindicativeDrugFromSnomedDiagnosisName(diagnosisName)
     gauge.dataStore.scenarioStore.put("drugName", drugName)
     await textBox(toRightOf("Drug Name")).exists()
     await write(drugName, into(textBox(toRightOf("Drug Name"))));
@@ -231,7 +231,7 @@ step("Click on dismiss button", async function () {
 });
 
 step("Doctor should be able to add drug after adding the mandatory details", async function () {
-    var prescriptionFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomed_medication.json`;
+    var prescriptionFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomedMedication.json`;
     var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
     gauge.dataStore.scenarioStore.put("medicalPrescriptions", medicalPrescriptions)
     var drugName = gauge.dataStore.scenarioStore.get("drugName")
@@ -257,7 +257,6 @@ step("Verify CDSS is enabled in openmrs in order to trigger contraindication ale
 
 step("Verify add button is <buttonType>", async function (buttonType) {
     const isButtonDisabled=await $("//button[@type='submit']").isDisabled()
-    isButtonDisabled ? assert.ok(buttonType === "disabled" && isButtonDisabled) : assert.ok(buttonType === "enabled" && !isButtonDisabled);
     isButtonDisabled ? assert.ok(buttonType === "disabled") : assert.ok(buttonType === "enabled");
 });
 
