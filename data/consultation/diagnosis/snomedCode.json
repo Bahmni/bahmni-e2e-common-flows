@@ -7,7 +7,7 @@
         {
             "diagnosis_name": "asthma",
             "diagnosis_code": "195967001",
-            "contraindication": "Propranolol 40 mg"
+            "contraindication": "Propranolol hydrochloride 80 mg oral tablet"
         },
         {
             "diagnosis_name": "covid-19",
@@ -24,7 +24,7 @@
         {
             "diagnosis_name": "Disease of liver",
             "diagnosis_code": "235856003",
-            "contraindication": "Atorvastatin 10 mg"
+            "contraindication": "Atorvastatin (as atorvastatin calcium) 10 mg oral tablet"
         }
     ]
 }
