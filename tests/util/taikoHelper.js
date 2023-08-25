@@ -159,7 +159,7 @@ async function getContraindicativeDrugFromSnomedDiagnosisName(diagnosisName) {
     var snomedNameCodeMapping = diagnosisData.snomedNameCodeMapping
     for (var data of snomedNameCodeMapping) {
         if (data.diagnosis_name == diagnosisName) {
-            return data.contraindication;
+            return data.contraindication_drug;
         }
     }
 }
