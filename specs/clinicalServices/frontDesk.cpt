@@ -144,23 +144,23 @@
 * Save the patient data
 * Verify no error displayed on page
 
-# Login to Bahmni snomed location <location> as a <user>
+# Login to Bahmni SNOMED location <location> as a <user>
 * Goto Clinical application
 * Check if "Clinical Service" app is opened
 * wait for overlay to disappear
 * Log out if still logged in
 * Login as user <user> with location <location> in bahmni snomed
 
-# Logout and Login to Bahmni snomed location <location> as a <user>
+# Logout and Login to Bahmni SNOMED location <location> as a <user>
 * Log out if still logged in
 * Login as user <user> with location <location> in bahmni snomed
 
-# Random snomed diagnosis is identified using ECL query for <diagnosis_name> which is not present in Openmrs Database and Doctor adds the identified snomed diagnosis in bahmni using <type> search
-* Random snomed diagnosis is identified and verified in openmrs <diagnosis_name>
+# Random SNOMED diagnosis is identified using ECL query for <diagnosisName> which is not present in Openmrs Database and Doctor adds the identified SNOMED diagnosis in bahmni using <type> search
+* Random snomed diagnosis is identified and verified in openmrs <diagnosisName>
 * Doctor add the diagnosis for <type>
 * Save data
 
-# Doctor add random snomed diagnosis for <diagnosisName> using <type> search
+# Doctor adds the random SNOMED descendant of <diagnosisName> using <type> search
  * Open clinical tab
  * Open "Diagnoses" Tab
  * Doctor add the diagnosis for <type>
@@ -172,5 +172,5 @@
 * Click on home page
 
 # Validate the count report for <reportName> before adding the identified diagnosis <diagnosisName>
-* Random snomed diagnosis is identified using ECL query for <diagnosisName>
+* Random SNOMED diagnosis is identified using ECL query for descendants of <diagnosisName>
 * Doctor checks for the diagnosis in report <reportName> 

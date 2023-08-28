@@ -156,6 +156,20 @@ async function getSnomedDiagnosisDataFromAPI(snomedCode) {
     return jsonData;
 
 }
+async function checkCdssIsEnabled() {
+    var response = await axios({
+        url: process.env.bahmniHost + endpoints.CDSS_ENABLE_URL,
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    return jsonData;
+
+}
 
 module.exports = {
     getOpenMRSResponse: getOpenMRSResponse,
@@ -163,5 +177,6 @@ module.exports = {
     makeOpenProgramCall: makeOpenProgramCall,
     setRoles: setRoles,
     checkDiagnosisInOpenmrs: checkDiagnosisInOpenmrs,
-    getSnomedDiagnosisDataFromAPI: getSnomedDiagnosisDataFromAPI
+    getSnomedDiagnosisDataFromAPI: getSnomedDiagnosisDataFromAPI,
+    checkCdssIsEnabled: checkCdssIsEnabled
 }

@@ -122,7 +122,7 @@ async function generateRandomDiagnosis(jsonData) {
     const snomedDiagnosesArray = jsonData.expansion.contains
     const randomIndex = Math.floor(Math.random() * snomedDiagnosesArray.length);
     const diagnosisData = snomedDiagnosesArray[randomIndex];
-    
+
     const diagnosisCode = diagnosisData.code;
     gauge.dataStore.scenarioStore.put("diagnosisCode", diagnosisCode)
     const diagnosisName = diagnosisData.display;
@@ -142,15 +142,26 @@ async function returnHeaderPos(columnHeader) {
     }
 }
 
-async function getSnomedCodeFromSnomedName(diagnosis_name) {
-    var snomedCodeFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomed_code.json`;
+async function getSnomedCodeFromSnomedName(diagnosisName) {
+    var snomedCodeFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomedCode.json`;
     var diagnosisData = JSON.parse(fileExtension.parseContent(snomedCodeFile))
-    for (var i = 0; i < diagnosisData.snomedNameCodeMapping.length; i++) {
-        if (diagnosisData.snomedNameCodeMapping[i].diagnosis_name == diagnosis_name) {
-            return diagnosisData.snomedNameCodeMapping[i].diagnosis_code;
+    var snomedNameCodeMapping = diagnosisData.snomedNameCodeMapping
+    for (var data of snomedNameCodeMapping) {
+        if (data.diagnosis_name == diagnosisName) {
+            return data.diagnosis_code;
         }
     }
 
+}
+async function getContraindicativeDrugFromSnomedDiagnosisName(diagnosisName) {
+    var snomedCodeFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomedCode.json`;
+    var diagnosisData = JSON.parse(fileExtension.parseContent(snomedCodeFile))
+    var snomedNameCodeMapping = diagnosisData.snomedNameCodeMapping
+    for (var data of snomedNameCodeMapping) {
+        if (data.diagnosis_name == diagnosisName) {
+            return data.contraindication_drug;
+        }
+    }
 }
 
 module.exports = {
@@ -163,5 +174,6 @@ module.exports = {
     validateFormFromFile: validateFormFromFile,
     generateRandomDiagnosis: generateRandomDiagnosis,
     returnHeaderPos: returnHeaderPos,
-    getSnomedCodeFromSnomedName:getSnomedCodeFromSnomedName
+    getSnomedCodeFromSnomedName: getSnomedCodeFromSnomedName,
+    getContraindicativeDrugFromSnomedDiagnosisName: getContraindicativeDrugFromSnomedDiagnosisName
 }
