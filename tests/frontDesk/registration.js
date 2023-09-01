@@ -121,6 +121,7 @@ step("Enter random age of the patient", async function () {
     }
     gauge.dataStore.scenarioStore.put("patientAge", age)
     var birthDate = await timeField(toRightOf("Date of Birth")).value();
+    gauge.dataStore.scenarioStore.put("patientBirthDate", birthDate)
     gauge.dataStore.scenarioStore.put("patientBirthYear", birthDate.split("-")[0])
     gauge.message(`age ${age}`)
 });
@@ -296,6 +297,7 @@ step("Verify correct patient form is open", async function () {
 
 step("Enter random village", async function () {
     var village = faker.address.cityName();
+    gauge.dataStore.scenarioStore.put("village", village)
     if (gauge.dataStore.scenarioStore.get("isNewPatient"))
         await write(village, into(textBox(toRightOf("Village"))))
     gauge.message(`village ${village}`)

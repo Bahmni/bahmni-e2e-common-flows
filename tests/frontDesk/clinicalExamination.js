@@ -169,6 +169,8 @@ step("Doctor add the diagnosis for <diagnosis>", async function (diagnosis) {
     await click($("(//A[starts-with(text(),\"" + medicalDiagnosis.diagnosis.diagnosisName + "\")])[1]"))
     await click(medicalDiagnosis.diagnosis.order, below("Order"));
     await click(medicalDiagnosis.diagnosis.certainty, below("Certainty"));
+    let dateTime = date.getDateAndTime(date.today());
+    gauge.dataStore.scenarioStore.put("dateTime", dateTime)
 });
 
 step("Verify random SNOMED <diagnosis name> saved is added to openmrs database with required metadata", async function (diagnosis) {
@@ -197,6 +199,7 @@ async function findDiagnosis(diagnosisName) {
 
 step("Random SNOMED diagnosis is identified using ECL query for descendants of <diagnosisName>", async function (diagnosisName) {
     var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(diagnosisName)
+    gauge.dataStore.scenarioStore.put("snomedCode", snomedCode)
     var diagnosisJson = await requestResponse.getSnomedDiagnosisDataFromAPI(snomedCode);
     var diagnosisName = await taikoHelper.generateRandomDiagnosis(diagnosisJson);
 });
@@ -256,20 +259,20 @@ step("Verify CDSS is enabled in openmrs in order to trigger contraindication ale
 });
 
 step("Verify add button is <buttonType>", async function (buttonType) {
-    const isButtonDisabled=await $("//button[@type='submit']").isDisabled()
+    const isButtonDisabled = await $("//button[@type='submit']").isDisabled()
     isButtonDisabled ? assert.ok(buttonType === "disabled") : assert.ok(buttonType === "enabled");
 });
 
 step("Verify dismissal entry is added in audit log", async function () {
-    var alertMessage = gauge.dataStore.scenarioStore.get("alertMessage").replace(/"/g,"")
+    var alertMessage = gauge.dataStore.scenarioStore.get("alertMessage").replace(/"/g, "")
     let patientIdentifier = gauge.dataStore.scenarioStore.get("patientIdentifier")
     await write(patientIdentifier, into(textBox(toRightOf("Patient ID "))))
     await click($("//button[normalize-space()='Filter']"))
     await scrollTo($("//button[@ng-click='next()']"));
     do {
         await click($("//button[@ng-click='next()']"))
-      }
-      while (assert.ok(await text("No more events to be displayed !!").exists()));
+    }
+    while (assert.ok(await text("No more events to be displayed !!").exists()));
     await highlight(text(alertMessage))
     assert.ok(await text(alertMessage, toRightOf(patientIdentifier)).exists())
 });
