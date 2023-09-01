@@ -173,4 +173,39 @@
 
 # Validate the count report for <reportName> before adding the identified diagnosis <diagnosisName>
 * Random SNOMED diagnosis is identified using ECL query for descendants of <diagnosisName>
-* Doctor checks for the diagnosis in report <reportName> 
+* Doctor checks for the diagnosis in report <reportName>
+
+# Validate the SNOMED diagnosis line report for Malaria
+* Validate "Patient Name" on diagnosis line reports
+* Validate "Gender" on diagnosis line reports
+* Validate "Date of Birth" on diagnosis line reports
+* Validate "Diagnosis" on diagnosis line reports
+* Validate "SNOMED Code" on diagnosis line reports
+* Validate "Date & Time of Diagnosis" on diagnosis line reports
+* close tab
+
+# Validate the SNOMED diagnosis line report for Asthma
+* Validate "Patient Name" on diagnosis line reports
+* Validate "Gender" on diagnosis line reports
+* Validate "education" on diagnosis line reports
+* Validate "class" on diagnosis line reports
+* Validate "city_village" on diagnosis line reports
+* Validate "Date of Birth" on diagnosis line reports
+* Validate "Diagnosis" on diagnosis line reports
+* Validate "SNOMED Code" on diagnosis line reports
+* Validate "Date & Time of Diagnosis" on diagnosis line reports
+* close tab
+
+# Validate the SNOMED diagnosis line report for COVID-19
+* Validate "Patient Name" on diagnosis line reports
+* Validate "Gender" on diagnosis line reports
+* Validate "education" on diagnosis line reports
+* Validate "class" on diagnosis line reports
+* Validate "occupation" on diagnosis line reports
+* Validate "city_village" on diagnosis line reports
+* Validate "address1" on diagnosis line reports
+* Validate "Date of Birth" on diagnosis line reports
+* Validate "Diagnosis" on diagnosis line reports
+* Validate "SNOMED Code" on diagnosis line reports
+* Validate "Date & Time of Diagnosis" on diagnosis line reports
+* close tab

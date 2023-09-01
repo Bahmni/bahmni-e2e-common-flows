@@ -140,6 +140,11 @@ function addDaysAndReturnDateInShortFormat(intDays) {
     return getDateInShortFormat(new Date().setDate(new Date().getDate() + parseInt(intDays)))
 }
 
+function getDateAndTime(date) {
+    var today = new Date();
+    return `${date.getDate().toString().padStart(2, '0')}-${date.toLocaleString('en-us', { month: 'short' })}-${date.getFullYear()} ${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}`
+}
+
 module.exports = {
     today: today,
     yesterday: yesterday,
@@ -161,5 +166,6 @@ module.exports = {
     addDaysAndReturnDateInDDMMYYYY: addDaysAndReturnDateInDDMMYYYY,
     getDateInShortFormat: getDateInShortFormat,
     addDaysAndReturnDateInShortFormat: addDaysAndReturnDateInShortFormat,
-    calculate_age: calculate_age
+    calculate_age: calculate_age,
+    getDateAndTime:getDateAndTime
 }

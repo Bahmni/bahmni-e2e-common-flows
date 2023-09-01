@@ -23,6 +23,7 @@ const {
 } = require('taiko');
 const taikoHelper = require("../util/taikoHelper")
 var fileExtension = require("../util/fileExtension")
+var date = require("../util/date");
 var assert = require('assert');
 
 step("Click Start IPD Visit", async function () {
@@ -197,3 +198,48 @@ step("Validate report and check count before adding diagnosis", async function (
     }
     await closeTab();
 })
+
+step("Validate <patientDetail> on diagnosis line reports", async function (patientDetail) {
+    let patientIdentifier = gauge.dataStore.scenarioStore.get("patientIdentifier")
+    var countPos = await taikoHelper.returnHeaderPos(patientDetail)
+    var actual = await $("//TD[normalize-space()='" + patientIdentifier + "']/../TD[" + countPos + "]").text()
+    switch (patientDetail) {
+        case 'Patient Name':
+            let firstName = gauge.dataStore.scenarioStore.get("patientFirstName")
+            let lastName = gauge.dataStore.scenarioStore.get("patientLastName")
+            let expectedPatientName = `${firstName} ${lastName}`
+            assert.equal(actual, expectedPatientName)
+            break;
+        case 'Gender':
+            let expectedGender = (gauge.dataStore.scenarioStore.get("patientGender") == "Female") ? "F" : "M";
+            assert.equal(actual, expectedGender)
+            break;
+        case 'Date of Birth':
+            let expectedBirthDate = gauge.dataStore.scenarioStore.get("patientBirthDate")
+            assert.equal(actual, expectedBirthDate)
+            break;
+        case 'Diagnosis':
+            let expectedDiagnosisName = gauge.dataStore.scenarioStore.get("diagnosisName")
+            assert.equal(actual, expectedDiagnosisName)
+            break;
+        case 'SNOMED Code':
+            let expectedDiagnosisCode = gauge.dataStore.scenarioStore.get("diagnosisCode")
+            assert.equal(actual, expectedDiagnosisCode)
+            break;
+        case 'city_village':
+            let expectedVillage = gauge.dataStore.scenarioStore.get("village")
+            assert.equal(actual, expectedVillage)
+            break;
+        case 'class':
+            let expectedClass = "General"
+            assert.equal(actual, expectedClass)
+            break;
+        case 'Date & Time of Diagnosis':
+            let dateTime=gauge.dataStore.scenarioStore.get("dateTime")
+            assert.equal(actual, dateTime)
+            break;
+        default:
+            assert.equal(actual, "")
+            break;
+    }
+});
