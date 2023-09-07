@@ -164,6 +164,25 @@ async function getContraindicativeDrugFromSnomedDiagnosisName(diagnosisName) {
     }
 }
 
+
+async function generateRandomProcedure(jsonData) {
+    const snomedDiagnosesArray = jsonData.entry
+    const randomIndex = Math.floor(Math.random() * snomedDiagnosesArray.length);
+    const procedureData = snomedDiagnosesArray[randomIndex];
+    //console.log(diagnosisData)
+    const procedureName=procedureData.resource.name
+    const procedureTitle=procedureData.resource.title
+     gauge.dataStore.scenarioStore.put("procedureName", procedureName)
+      gauge.dataStore.scenarioStore.put("procedureTitle", procedureTitle)
+    //console.log(procedureName)
+    // const diagnosisCode = diagnosisData.code;
+    // gauge.dataStore.scenarioStore.put("diagnosisCode", diagnosisCode)
+    // const diagnosisName = diagnosisData.display;
+    // gauge.dataStore.scenarioStore.put("diagnosisName", diagnosisName)
+     return procedureName;
+
+}
+
 module.exports = {
     selectEntriesTillIterationEnds: selectEntriesTillIterationEnds,
     verifyConfigurations: verifyConfigurations,
@@ -175,5 +194,6 @@ module.exports = {
     generateRandomDiagnosis: generateRandomDiagnosis,
     returnHeaderPos: returnHeaderPos,
     getSnomedCodeFromSnomedName: getSnomedCodeFromSnomedName,
-    getContraindicativeDrugFromSnomedDiagnosisName: getContraindicativeDrugFromSnomedDiagnosisName
+    getContraindicativeDrugFromSnomedDiagnosisName: getContraindicativeDrugFromSnomedDiagnosisName,
+    generateRandomProcedure:generateRandomProcedure
 }

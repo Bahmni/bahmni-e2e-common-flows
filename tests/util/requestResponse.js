@@ -170,6 +170,69 @@ async function checkCdssIsEnabled() {
     return jsonData;
 
 }
+async function getProcedureDataFromValuesetURL() {
+    //console.log("endpoint  " + endpoints.SNOWSTORM_URL.split('$')[0])
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0],
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    return jsonData;
+
+}
+
+async function uploadProcedureOrders(procedureOrders) {
+    //var url1: "https://dev.snomed.mybahmni.in/openmrs/ws/rest/v1/terminologyServices/valueSet?valueSetId=" + procedureOrders + "&locale=en&conceptClass=Procedure&conceptDatatype=N/A&contextRoot=Procedure Orders"
+    //console.log("url  " + url1)
+    //console.log(process.env.bahmniHost + endpoints.PROCEDURE_ORDERS)
+    let response = await axios({
+        //url: "https://dev.snomed.mybahmni.in/openmrs/ws/rest/v1/terminologyServices/valueSet?valueSetId=" + procedureOrders + "&locale=en&conceptClass=Procedure&conceptDatatype=N/A&contextRoot=Procedure Orders",
+        url: process.env.bahmniHost + endpoints.PROCEDURE_ORDERS,
+        data: null,
+        params: {
+            valueSetId: procedureOrders,
+            locale: "en",
+            conceptClass: "Procedure",
+            conceptDatatype: "N/A",
+            contextRoot: "Procedure Orders",
+        },
+        method: 'post',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    //console.log("response " + response)
+    var taskLink = response.data
+    return taskLink;
+}
+async function checkStatusForProcedure(endpoint) {
+    //console.log("endpoint  "+endpoints.SNOWSTORM_URL.split('$')[0])
+    // console.log(endpoint.replace("http","https"))
+    // console.log("endpoint123 " + endpoint)
+    var response = await axios({
+       // endpointendpoint.replace("http","https")
+        url: endpoint.replace("http","https"),
+        method: 'get',
+       // maxRedirects: 10,
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    //console.log(jsonData)
+    var status = jsonData.status
+    return status;
+
+}
 
 module.exports = {
     getOpenMRSResponse: getOpenMRSResponse,
@@ -178,5 +241,8 @@ module.exports = {
     setRoles: setRoles,
     checkDiagnosisInOpenmrs: checkDiagnosisInOpenmrs,
     getSnomedDiagnosisDataFromAPI: getSnomedDiagnosisDataFromAPI,
-    checkCdssIsEnabled: checkCdssIsEnabled
+    checkCdssIsEnabled: checkCdssIsEnabled,
+    getProcedureDataFromValuesetURL: getProcedureDataFromValuesetURL,
+    uploadProcedureOrders: uploadProcedureOrders,
+    checkStatusForProcedure: checkStatusForProcedure
 }

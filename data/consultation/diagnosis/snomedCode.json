@@ -25,6 +25,10 @@
             "diagnosis_name": "Disease of liver",
             "diagnosis_code": "235856003",
             "contraindication_drug": "Atorvastatin (as atorvastatin calcium) 10 mg oral tablet"
+        },
+        {
+            "diagnosis_name": "procedure",
+            "diagnosis_code": "404684003"
         }
     ]
 }
