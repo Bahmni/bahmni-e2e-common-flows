@@ -1,8 +1,11 @@
-const path = require('path');
+const {
+    waitFor,
+} = require('taiko');const path = require('path');
 const axios = require('axios')
 var date = require("./date");
 const assert = require("assert");
 var users = require("./users");
+const uuid = require('uuid');
 const endpoints = require('./../../../tests/API/constants/apiConstants').endpoints;
 
 async function getOpenMRSResponse(request) {
@@ -171,7 +174,6 @@ async function checkCdssIsEnabled() {
 
 }
 async function getProcedureDataFromValuesetURL() {
-    //console.log("endpoint  " + endpoints.SNOWSTORM_URL.split('$')[0])
     var response = await axios({
         url: endpoints.SNOWSTORM_URL.split('$')[0],
         method: 'get',
@@ -187,13 +189,8 @@ async function getProcedureDataFromValuesetURL() {
 }
 
 async function uploadProcedureOrders(procedureOrders) {
-    //var url1: "https://dev.snomed.mybahmni.in/openmrs/ws/rest/v1/terminologyServices/valueSet?valueSetId=" + procedureOrders + "&locale=en&conceptClass=Procedure&conceptDatatype=N/A&contextRoot=Procedure Orders"
-    //console.log("url  " + url1)
-    //console.log(process.env.bahmniHost + endpoints.PROCEDURE_ORDERS)
     let response = await axios({
-        //url: "https://dev.snomed.mybahmni.in/openmrs/ws/rest/v1/terminologyServices/valueSet?valueSetId=" + procedureOrders + "&locale=en&conceptClass=Procedure&conceptDatatype=N/A&contextRoot=Procedure Orders",
-        url: process.env.bahmniHost + endpoints.PROCEDURE_ORDERS,
-        data: null,
+        url: `${process.env.bahmniHost}${endpoints.PROCEDURE_ORDERS}`,
         params: {
             valueSetId: procedureOrders,
             locale: "en",
@@ -208,30 +205,51 @@ async function uploadProcedureOrders(procedureOrders) {
             'Authorization': `Basic ${process.env.admin}`
         }
     });
-    //console.log("response " + response)
     var taskLink = response.data
     return taskLink;
 }
 async function checkStatusForProcedure(endpoint) {
-    //console.log("endpoint  "+endpoints.SNOWSTORM_URL.split('$')[0])
-    // console.log(endpoint.replace("http","https"))
-    // console.log("endpoint123 " + endpoint)
-    var response = await axios({
-       // endpointendpoint.replace("http","https")
-        url: endpoint.replace("http","https"),
-        method: 'get',
-       // maxRedirects: 10,
-        headers: {
-            'accept': `application/json`,
-            'Content-Type': `application/json`,
-            'Authorization': `Basic ${process.env.admin}`
+    var status = ""
+    while (true) {
+        var response = await axios({
+            url: endpoint.replace("http", "https"),
+            method: 'get',
+            headers: {
+                'accept': `application/json`,
+                'Content-Type': `application/json`,
+                'Authorization': `Basic ${process.env.admin}`
+            }
+        });
+
+        var jsonData = response.data
+        status = jsonData.status
+        if (status == "completed" || status == "rejected") {
+            break;
         }
-    });
-    var jsonData = response.data
-    //console.log(jsonData)
-    var status = jsonData.status
+        await waitFor(2000)
+    }
+
     return status;
 
+}
+
+async function createValueSet(jsonFile) {
+    var randomUUID=uuid.v4();
+    jsonFile.id=`bahmni-procedures-head${randomUUID}`;
+    jsonFile.name = `bahmni-procedures-head${randomUUID}`;
+    jsonFile.title = `head-procedure-automation`;
+    jsonFile.url = `${endpoints.VALUESET_URL_PROCEDURE}${randomUUID}`;
+    var body=jsonFile; 
+    let response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0],
+        method: 'post',
+        data: body,
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`
+        }
+    });
+    return jsonFile;
 }
 
 module.exports = {
@@ -244,5 +262,6 @@ module.exports = {
     checkCdssIsEnabled: checkCdssIsEnabled,
     getProcedureDataFromValuesetURL: getProcedureDataFromValuesetURL,
     uploadProcedureOrders: uploadProcedureOrders,
-    checkStatusForProcedure: checkStatusForProcedure
+    checkStatusForProcedure: checkStatusForProcedure,
+    createValueSet: createValueSet
 }

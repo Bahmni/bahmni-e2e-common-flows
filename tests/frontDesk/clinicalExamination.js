@@ -273,39 +273,12 @@ step("Verify dismissal entry is added in audit log", async function () {
     await highlight(text(alertMessage))
     assert.ok(await text(alertMessage, toRightOf(patientIdentifier)).exists())
 });
-step("Random snomed procedure is identified and verified in openmrs", async function () {
-    var diagnosisJson = await requestResponse.getProcedureDataFromValuesetURL();
 
-    var procedureName = await findProcedure(diagnosisJson)
-    // const checkDataInOpenmrs = await requestResponse.checkDiagnosisInOpenmrs(diagnosisName);
-    // if (checkDataInOpenmrs === false) {
-    //     return diagnosisName;
-    // }
-    // else {
-    //     await findDiagnosis(diagnosisJson)
-    // }
-});
-
-async function findProcedure(diagnosisJson) {
-    var procedureName = await taikoHelper.generateRandomProcedure(diagnosisJson);
-    const checkDataInOpenmrs = await requestResponse.checkDiagnosisInOpenmrs(procedureName);
-    //console.log("checkDataInOpenmrs  " + checkDataInOpenmrs)
-    if (checkDataInOpenmrs === false) {
-        return procedureName;
-    }
-    else {
-        await findProcedure(diagnosisJson)
-    }
-}
-
-step("Identified Procedure is uploaded in bahmni", async function () {
+step("Procedure created is uploaded in Bahmni", async function () {
     var procedureName = gauge.dataStore.scenarioStore.get("procedureName")
     var taskLink = await requestResponse.uploadProcedureOrders(procedureName);
-    //console.log("taskLink  " + taskLink)
     var statusOfProcedure = await requestResponse.checkStatusForProcedure(taskLink);
-    //var statusOfProcedure = await requestResponse.checkStatusForProcedure(taskLink);
-    //console.log("statusOfProcedure  " + statusOfProcedure)
-    assert.equal(statusOfProcedure, "accepted")
+    assert.equal(statusOfProcedure, "completed")
 });
 
 step("Click on Procedure", async function() {
@@ -313,25 +286,26 @@ step("Click on Procedure", async function() {
     await click(" Procedures ")
 });
 
-step("Add Procedures", async function() {
+step("Add Procedure", async function () {
 	var procedureTitle = gauge.dataStore.scenarioStore.get("procedureTitle")
     await click(procedureTitle)
-    //await click(" Peripheral Vessels ")
+    await scrollTo(" Procedures ")
     var clinicalProcedure = await $("section[class='orders-section-right'] li:nth-child(1) a:nth-child(1)").text();
     gauge.dataStore.scenarioStore.put("clinicalProcedure",clinicalProcedure)
-    //console.log("clinicalProcedure  " + clinicalProcedure)
     await click(clinicalProcedure)
     await click("Save")
-    // await click(" Skin & Mucous Membranes ")
-    // var clinicalProcedure = await $("section[class='orders-section-right'] li:nth-child(1) a:nth-child(1)").text();
-    // console.log("clinicalProcedure  " + clinicalProcedure)
-    // await click(clinicalProcedure)
-    // await click("Save")
-    //section[class='orders-section-right'] li:nth-child(1) a:nth-child(1)
-    //await click (button(below("Describes a clinical procedure"),toRightOf(procedureName)))
 });
 
-step("Verify procedure on patient clinical dashboard", async function() {
+step("Verify Procedure on patient clinical dashboard", async function () {
     var clinicalProcedure = gauge.dataStore.scenarioStore.get("clinicalProcedure")
     assert.ok(await text(clinicalProcedure, below($("//h2[normalize-space()='Procedure Orders']"))).exists())
+});
+
+step("Create ValueSet for a procedure <filePath>", async function (filePath) {
+    var jsonFile=JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${filePath}.json`))
+    var procedureValueSet=await requestResponse.createValueSet(jsonFile)
+    var procedureName = procedureValueSet['name']
+    var procedureTitle = procedureValueSet['title']
+    gauge.dataStore.scenarioStore.put("procedureName", procedureName) 
+    gauge.dataStore.scenarioStore.put("procedureTitle", procedureTitle) 
 });

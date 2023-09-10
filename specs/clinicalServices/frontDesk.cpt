@@ -77,7 +77,7 @@
 * wait for overlay and Saved to disappear
 * Click back button
 
-# visit is closed at the front desk
+# Visit is closed at the front desk
 * Open "Registration" module
 * Open newly created patient details by search
 * Enter visit details
