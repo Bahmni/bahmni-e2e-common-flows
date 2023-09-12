@@ -41,6 +41,7 @@ var users = require("./util/users");
 const csvConfig = require("./util/csvConfig");
 var date = require("./util/date");
 var fileExtension = require("./util/fileExtension");
+const requestResponse = require('./util/requestResponse');
 const endpoints = require('./../../tests/API/constants/apiConstants').endpoints;
 
 
@@ -377,3 +378,20 @@ async function validateReport(value, name) {
     var expected = value
     assert.equal(actual, expected);
 }
+
+step("Search procedure name and delete it", async function () {
+	var procedureTitle = gauge.dataStore.scenarioStore.get("procedureTitle")
+    var procedureName = gauge.dataStore.scenarioStore.get("procedureName")
+    await write(procedureTitle, into(textBox(below("Find Concept(s)"))));
+    await click(button("Search"));
+    await click(procedureName)
+    await click($("//a[@id='editConcept']"));
+    confirm('Are you sure you want to delete this ENTIRE CONCEPT', async () => await accept());
+    await click($("//input[@value='Delete Concept']"))
+});
+
+step("Delete the procedure from snowstorm", async function() {
+    var procedureValueSetURL=gauge.dataStore.scenarioStore.get("procedureValueSetURL")
+	var procedureID= await requestResponse.getIDFromProcedureValueset(procedureValueSetURL)
+    await requestResponse.deleteProcedureValueset(procedureID)
+});

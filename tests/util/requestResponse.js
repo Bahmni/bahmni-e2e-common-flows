@@ -1,6 +1,6 @@
 const {
     waitFor,
-} = require('taiko');const path = require('path');
+} = require('taiko'); const path = require('path');
 const axios = require('axios')
 var date = require("./date");
 const assert = require("assert");
@@ -252,6 +252,41 @@ async function createValueSet(jsonFile) {
     return jsonFile;
 }
 
+async function getIDFromProcedureValueset(procedureUrl) {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL,
+        params: {
+            url: procedureUrl,
+        },
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data.id
+    console.log("asd " + response.data.id)
+    console.log(response.data)
+    return jsonData;
+
+}
+async function deleteProcedureValueset(procedureID) {
+    console.log("delete " + endpoints.SNOWSTORM_URL.split('$')[0] + procedureID)
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0] + procedureID,
+        method: 'delete',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    return jsonData;
+
+}
+
 module.exports = {
     getOpenMRSResponse: getOpenMRSResponse,
     makeOpenVisitCall: makeOpenVisitCall,
@@ -263,5 +298,7 @@ module.exports = {
     getProcedureDataFromValuesetURL: getProcedureDataFromValuesetURL,
     uploadProcedureOrders: uploadProcedureOrders,
     checkStatusForProcedure: checkStatusForProcedure,
-    createValueSet: createValueSet
+    createValueSet: createValueSet,
+    getIDFromProcedureValueset: getIDFromProcedureValueset,
+    deleteProcedureValueset: deleteProcedureValueset
 }

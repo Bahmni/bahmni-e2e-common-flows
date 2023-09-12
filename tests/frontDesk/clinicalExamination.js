@@ -277,6 +277,7 @@ step("Verify dismissal entry is added in audit log", async function () {
 step("Procedure created is uploaded in Bahmni", async function () {
     var procedureName = gauge.dataStore.scenarioStore.get("procedureName")
     var taskLink = await requestResponse.uploadProcedureOrders(procedureName);
+    console.log(taskLink)
     var statusOfProcedure = await requestResponse.checkStatusForProcedure(taskLink);
     assert.equal(statusOfProcedure, "completed")
 });
@@ -304,8 +305,14 @@ step("Verify Procedure on patient clinical dashboard", async function () {
 step("Create ValueSet for a procedure <filePath>", async function (filePath) {
     var jsonFile=JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${filePath}.json`))
     var procedureValueSet=await requestResponse.createValueSet(jsonFile)
+    console.log(procedureValueSet)
+    var procedureValueSetURL=procedureValueSet.url
+    gauge.dataStore.scenarioStore.put("procedureValueSetURL", procedureValueSetURL)
+    console.log(procedureValueSet.url)
     var procedureName = procedureValueSet['name']
     var procedureTitle = procedureValueSet['title']
+    console.log(procedureName)
+    console.log(procedureTitle)
     gauge.dataStore.scenarioStore.put("procedureName", procedureName) 
     gauge.dataStore.scenarioStore.put("procedureTitle", procedureTitle) 
 });

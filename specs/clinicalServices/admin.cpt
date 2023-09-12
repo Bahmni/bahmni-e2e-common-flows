@@ -61,3 +61,7 @@
 * Click on Manage Forms
 * Open the form created through form builder
 * Click on delete form
+
+# Delete the procedure from openMRS
+* Goto Dictionary
+* Search procedure name and delete it
