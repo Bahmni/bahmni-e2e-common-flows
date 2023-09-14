@@ -97,3 +97,15 @@
 
 # Doctor adds a drug that has contraindication with the diagnosis <diagnosisName>
 * Doctor add the drug for <diagnosisName>
+
+# Goto ICD Mappings Demonstrator and get the ICD-10 codes for the <diagnosisName>
+* Goto ICD Mappings Demonstrator portal
+* Enter <diagnosisName>
+* Get the ICD-10 code for the SNOMED diagnosis
+
+# Doctor add diagnosis <diagnosis_name> with <mapRule with age condition>
+ * Open clinical tab
+ * Open "Diagnoses" Tab
+ * Doctor add the diagnosis for <diagnosis_name> having ICD-10 codes
+ * Save data
+

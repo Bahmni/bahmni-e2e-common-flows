@@ -6,12 +6,14 @@ const {
     toRightOf,
     textBox,
     into,
+    goto,
     write,
     dropDown,
     highlight,
     below,
     within,
     scrollTo,
+    clear,
     $,
     text,
     confirm,
@@ -19,7 +21,8 @@ const {
     button,
     link,
     toLeftOf,
-    closeTab
+    closeTab,
+    openTab
 } = require('taiko');
 var fileExtension = require("../util/fileExtension");
 const taikoHelper = require("../util/taikoHelper")
@@ -275,4 +278,54 @@ step("Verify dismissal entry is added in audit log", async function () {
     while (assert.ok(await text("No more events to be displayed !!").exists()));
     await highlight(text(alertMessage))
     assert.ok(await text(alertMessage, toRightOf(patientIdentifier)).exists())
+});
+
+step("Goto ICD Mappings Demonstrator portal", async function () {
+    await openTab()
+    await goto(process.env.icdMappingDemonstratorUrl, { waitForNavigation: true, navigationTimeout: process.env.loginTimeout });
+});
+
+step("Enter <diagnosisName>", async function (diagnosisName) {
+    let patientGender = gauge.dataStore.scenarioStore.get("patientGender")
+    let patientAge = gauge.dataStore.scenarioStore.get("patientAge")
+    await clear($("//input[@id='mat-input-0']"), { waitForNavigation: false, navigationTimeout: 3000 })
+    switch (diagnosisName) {
+        case 'Pelvic peritonitis':
+            await click($("//div[@id='mat-select-value-1']"))
+            await click($("//span[normalize-space()='" + patientGender + "']"))
+            break;
+        case 'Bronchitis':
+            await write(patientAge, into(textBox(toRightOf("Age: "))))
+            break;
+    }
+    await write(diagnosisName, into(textBox({ "placeholder": "Search..." })), { force: true })
+    await waitFor(() => $("//span[@class='mdc-list-item__primary-text']").isVisible(), 40000)
+    await click($("//span[@class='mdc-list-item__primary-text']"))
+
+});
+
+step("Get the ICD-10 code for the SNOMED diagnosis", async function () {
+    await waitFor(() => $("//p[@class='ng-star-inserted']").isVisible(), 40000)
+    var icd10Code = await ($("//p[@class='ng-star-inserted']")).text()
+    icd10Code = icd10Code.split(":")[1].replace(/\s+/g, '');
+    gauge.dataStore.scenarioStore.put("icd10Code", icd10Code)
+    await closeTab()
+
+});
+
+step("Doctor add the diagnosis for <diagnosisName> having ICD-10 codes", async function (diagnosisName) {
+    gauge.dataStore.scenarioStore.put("diagnosisName", diagnosisName)
+    var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(diagnosisName)
+    gauge.dataStore.scenarioStore.put("diagnosisCode", snomedCode)
+    var diagnosisFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomedDiagnosis.json`;
+    var medicalDiagnosis = JSON.parse(fileExtension.parseContent(diagnosisFile))
+    gauge.dataStore.scenarioStore.put("medicalDiagnosis", medicalDiagnosis)
+    medicalDiagnosis.diagnosis["diagnosisName"] = diagnosisName;
+    await write(diagnosisName, into(textBox(below("Diagnoses"))));
+    await waitFor(() => $("(//A[starts-with(text(),\"" + medicalDiagnosis.diagnosis.diagnosisName + "\")])[1]").isVisible())
+    await click($("(//A[starts-with(text(),\"" + medicalDiagnosis.diagnosis.diagnosisName + "\")])[1]"))
+    await click(button(medicalDiagnosis.diagnosis.order), below("Order"));
+    await click(button(medicalDiagnosis.diagnosis.certainty), below("Certainty"));
+    let dateTime = date.getDateAndTime(date.today());
+    gauge.dataStore.scenarioStore.put("dateTime", dateTime)
 });

@@ -235,8 +235,12 @@ step("Validate <patientDetail> on diagnosis line reports", async function (patie
             assert.equal(actual, expectedClass)
             break;
         case 'Date & Time of Diagnosis':
-            let dateTime=gauge.dataStore.scenarioStore.get("dateTime")
-            assert.equal(actual, dateTime)
+            let dateTime = gauge.dataStore.scenarioStore.get("dateTime")
+            date.validateTime(actual, dateTime)
+            break;
+        case 'ICD10 Code(s)':
+            let icd10Code = gauge.dataStore.scenarioStore.get("icd10Code")
+            assert.equal(actual.trim(), icd10Code.trim())
             break;
         default:
             assert.equal(actual, "")
