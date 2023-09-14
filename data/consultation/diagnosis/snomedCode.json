@@ -25,6 +25,18 @@
             "diagnosis_name": "Disease of liver",
             "diagnosis_code": "235856003",
             "contraindication_drug": "Atorvastatin (as atorvastatin calcium) 10 mg oral tablet"
+        },
+        {
+            "diagnosis_name": "SARS-CoV-2 breakthrough infection",
+            "diagnosis_code": "1217296006"
+        },
+        {
+            "diagnosis_name": "Bronchitis",
+            "diagnosis_code": "32398004"
+        },
+        {
+            "diagnosis_name": "Pelvic peritonitis",
+            "diagnosis_code": "788010000"
         }
     ]
 }
