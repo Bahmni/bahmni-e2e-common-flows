@@ -61,3 +61,11 @@
 * Click on Manage Forms
 * Open the form created through form builder
 * Click on delete form
+
+# Export anonymised data with <arg0>
+* Hit the endpoint
+
+# Validate ndjson file for <anonymised> data
+* Validate patient ndjson file for <anonymised> data
+* Validate condition ndjson file for <anonymised> data
+* Validate medication ndjson file for <anonymised> data

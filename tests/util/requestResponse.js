@@ -1,8 +1,15 @@
+const {
+    waitFor,
+} = require('taiko');
 const path = require('path');
 const axios = require('axios')
+//require("../../data")
 var date = require("./date");
 const assert = require("assert");
+const unzipper = require('unzipper');
 var users = require("./users");
+const { url } = require('inspector');
+const fs = require('fs');
 const endpoints = require('./../../../tests/API/constants/apiConstants').endpoints;
 
 async function getOpenMRSResponse(request) {
@@ -171,6 +178,148 @@ async function checkCdssIsEnabled() {
 
 }
 
+async function createFHIRExport() {
+    let response = await axios({
+        url: "https://dev.snomed.mybahmni.in/openmrs/ws/rest/v1/fhirexport",
+        method: 'post',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    return response.data.link;
+}
+
+async function getURLToDownloadNDJSONFile(taskLink) {
+    var status = "";
+    while (true) {
+        let response = await axios({
+            url: taskLink.replace("http", "https"),
+            method: 'get',
+            headers: {
+                'accept': `application/json`,
+                'Content-Type': `application/json`,
+                'Authorization': `Basic ${process.env.admin}`
+            }
+        });
+        console.log(response.data);
+        var jsonData = response.data
+        status = jsonData.status
+        if (status == "completed" || status == "rejected") {
+            console.log("output " + jsonData.output[0].valueString)
+            break;
+        }
+        await waitFor(2000);
+    }
+    return jsonData.output[0].valueString;
+}
+
+
+async function downloadFile(fileUrl) {
+    console.log("file url " + fileUrl);
+    let response = await axios({
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: fileUrl.replace("http", "https"),
+        responseType: 'blob',
+        headers: {
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    //function to download file and extract zip file
+    fs.writeFileSync(path.resolve(__dirname, 'test.ndjson.zip'), response.data);
+    fs.createReadStream(path.resolve(__dirname, 'test.ndjson.zip'))
+        .pipe(unzipper.Extract({ path: path.resolve(__dirname, 'test.ndjson') }))
+    console.log('Downloading and extracting...');
+      console.log('Extraction completed.');
+    fs.createReadStream(path.resolve(__dirname, 'test.ndjson.zip'))
+        .pipe(unzipper.Parse())
+        .on('entry', function (entry) {
+            // Check if the required files are present
+    const requiredFiles = ['Condition.ndjson', 'MedicationRequest.ndjson', 'Patient.ndjson'];
+    //check if the required files is present in the fil     
+    for (const files of requiredFiles) {
+        if (entry.path.includes(files)) {
+            console.log(`Found ${files}`);
+            //save the file to the current directory with file name
+            entry.pipe(fs.createWriteStream(path.resolve(__dirname, entry.path)));
+            entry.autodrain();
+
+        }
+        else {
+            console.log(`Missing ${files}`);
+        }
+    }
+            var fileName = entry.path;
+            var type = entry.type; // 'Directory' or 'File'
+            var size = entry.vars.uncompressedSize; // There is also compressedSize;
+            console.log("file name " + fileName)
+            console.log("type " + type);
+            console.log("size " + size);
+            entry.pipe(fs.createWriteStream('output/path'));
+            
+            entry.autodrain();
+        });
+    await waitFor(2000);
+    fs.unlinkSync(path.resolve(__dirname, 'test.ndjson.zip'));
+    return downloadPath;
+}
+
+async function downloadFiles(fileUrl) {
+    console.log("file url " + fileUrl);
+    let response = await axios({
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: fileUrl.replace("http", "https"),
+        responseType: 'stream',
+        headers: {
+            'Authorization': `Basic ${process.env.admin}`
+        },
+    });
+    //function to download file and extract zip file
+    const outputDirectory = './extracted';
+    // Function to download and extract the zip file
+
+    try {
+       response.data.pipe(unzipper.Extract({ path: outputDirectory }));
+    //response.data.pipe(unzipper.Extract({ path: path.resolve(__dirname, outputDirectory) }));
+    console.log('Downloading and extracting...');
+    await new Promise((resolve) => {
+      response.data.on('end', resolve);
+    });
+
+    console.log('Extraction completed.');
+    const requiredFiles = ['Condition.ndjson', 'MedicationRequest.ndjson', 'Patient.ndjson'];
+    const extractedFiles = fs.readdirSync(outputDirectory);
+    //open the required files and validate the data
+    
+
+    for (const file of requiredFiles) {
+      if (!extractedFiles.includes(file)) {
+        console.error(`Required file '${file}' not found.`);
+      } else {
+        console.log(`Found file: ${file}`);
+      //open ndjson file and validate the data
+    //   const data = fs.readFileSync(path.resolve( outputDirectory, file), 'utf8');
+    //     const lines = data.split('\n');
+    //     console.log(`Found ${lines.length} lines.`);
+    //     for (const line of lines) {
+    //       const json = JSON.parse(line);
+    //       console.log(json);
+    //     }
+
+      }
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
+
+
+
+
+
 module.exports = {
     getOpenMRSResponse: getOpenMRSResponse,
     makeOpenVisitCall: makeOpenVisitCall,
@@ -178,5 +327,10 @@ module.exports = {
     setRoles: setRoles,
     checkDiagnosisInOpenmrs: checkDiagnosisInOpenmrs,
     getSnomedDiagnosisDataFromAPI: getSnomedDiagnosisDataFromAPI,
-    checkCdssIsEnabled: checkCdssIsEnabled
+    checkCdssIsEnabled: checkCdssIsEnabled,
+    createFHIRExport: createFHIRExport,
+    getURLToDownloadNDJSONFile: getURLToDownloadNDJSONFile,
+    downloadFile: downloadFile,
+    downloadFiles:downloadFiles
 }
+

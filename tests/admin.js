@@ -39,8 +39,10 @@ var assert = require("assert");
 var taikoHelper = require("./util/taikoHelper");
 var users = require("./util/users");
 const csvConfig = require("./util/csvConfig");
+const fs = require('fs');
 var date = require("./util/date");
 var fileExtension = require("./util/fileExtension");
+const requestResponse = require('./util/requestResponse');
 const endpoints = require('./../../tests/API/constants/apiConstants').endpoints;
 
 
@@ -110,8 +112,7 @@ step("create obs <obsName> <properties>", async function (obsName, properties) {
     await write(obsName, into(textBox(below("Control Properties"))))
     await press('Enter')
     await click(obsName)
-    for (var row of properties.rows)
-    {
+    for (var row of properties.rows) {
         if (row.cells[0] === "Url") {
             await highlight(row.cells[0])
             await write(endpoints.VALUESET_URL, into(textBox(toRightOf(row.cells[0]))))
@@ -318,7 +319,7 @@ step("Create obs group <obsName> and add an ecl query for <obsField> <properties
         if (row.cells[0] === "Url") {
             await highlight(row.cells[0])
             var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(obsField)
-            await write(endpoints.ECL_QUERY+snomedCode, into(textBox(toRightOf(row.cells[0]))))
+            await write(endpoints.ECL_QUERY + snomedCode, into(textBox(toRightOf(row.cells[0]))))
         }
         else {
 
@@ -376,4 +377,137 @@ async function validateReport(value, name) {
     var actual = await ($("//TD[normalize-space()='" + patientIdentifier + "']/../TD[" + headerPos + "]")).text()
     var expected = value
     assert.equal(actual, expected);
+}
+
+step("Hit the endpoint", async function () {
+    let taskLink = await requestResponse.createFHIRExport();
+    console.log(taskLink);
+    let urlToDownloadFile = await requestResponse.getURLToDownloadNDJSONFile(taskLink);
+    console.log(urlToDownloadFile);
+    await requestResponse.downloadFiles(urlToDownloadFile);
+    //await requestResponse.downloadAndExtractZipFile(urlToDownloadFile);
+
+});
+
+step("Validate files", async function () {
+    var data = fs.readFileSync(path.resolve('./extracted/Patient.ndjson'), 'utf8');
+    //console.log(data)
+    const lines = data.split('\n');
+    console.log(`Found ${lines.length} lines.`);
+    for (const line of lines) {
+        const json = JSON.parse(line);
+        if (json.identifier[0].value === 'GAN203006') {
+            console.log(json);
+            assert.ok(!json.name)
+            assert.ok(!json.telecom)
+            assert.ok(!json.address)
+            console.log("done")
+        }
+    }
+});
+
+step("Validate patient ndjson file for <anonymised> data", async function (anonymised) {
+    var data = fs.readFileSync(path.resolve('./extracted/Patient.ndjson'), 'utf8');
+    var patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
+    console.log(patientIdentifierValue)
+    //console.log(data)
+    const lines = data.split('\n');
+    console.log(`Found ${lines.length} lines.`);
+    for (const line of lines) {
+        console.log("line  "+line)
+        // if(!line.trim() )
+        // {
+        //     continue;
+        // }
+        let json = JSON.parse(line);
+        console.log(json);
+        if (json.identifier[0].value === 'GAN203017') {
+            console.log("json  "+json)
+            switch (anonymised) {
+                case 'redacted':
+                    validateJSON(json)
+                    break;
+                case 'Fixed':
+                    assert.ok(!json.name)
+                    assert.ok(!json.telecom)
+                    assert.ok(!json.address)
+                    assert.ok(!json.address)
+                    assert.ok(json.identifier[1])
+                    console.log("done")
+                    break;
+                default:
+                    console.log("default")
+                    break;
+
+            }
+        }
+    
+    }
+});
+
+
+
+step("Validate condition ndjson file for <anonymised> data", async function (anonymised) {
+    var data = fs.readFileSync(path.resolve('./extracted/Condition.ndjson'), 'utf8');
+    var patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
+    //console.log(data)
+    const lines = data.split('\n');
+    console.log(`Found ${lines.length} lines.`);
+    for (const line of lines) {
+        const json = JSON.parse(line);
+        console.log(json.subject.display.split(":", [1]))
+        if (json.subject.display.split(":", [1]) === patientIdentifierValue) {
+            switch (anonymised) {
+                case 'Redacted':
+                    console.log(json);
+                    assert.ok(!json.subject.recordedDate)
+                    assert.ok(!json.recorder)
+                    console.log("done")
+                    break;
+                default:
+                    break;
+
+            }
+        }
+        break;
+    }
+});
+step("Validate medication ndjson file for <anonymised> data", async function (anonymised) {
+    var data = fs.readFileSync(path.resolve('./extracted/Condition.ndjson'), 'utf8');
+    var patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
+    //console.log(data)
+    const lines = data.split('\n');
+    console.log(`Found ${lines.length} lines.`);
+    for (const line of lines) {
+        const json = JSON.parse(line);
+        console.log(json.subject.display.split(":", [1]))
+        if (json.subject.display.split(":", [1]) === patientIdentifierValue) {
+            switch (anonymised) {
+                case 'Redacted':
+                    console.log(json);
+                    assert.ok(!json.priority)
+                    assert.ok(!json.encounter)
+                    assert.ok(!json.recorder)
+                    assert.ok(!json.authoredOn)
+                    assert.ok(!json.requester)
+                    assert.ok(!json.dosageInstruction)
+                    console.log("done")
+                    break;
+                default:
+                    break;
+
+            }
+        }
+        break;
+    }
+});
+
+async function validateJSON(json) {
+    console.log(json.identifier[0].value )
+    assert.ok(!json.name)
+    assert.ok(!json.telecom)
+    assert.ok(!json.address)
+    assert.ok(!json.address)
+    assert.ok(!json.identifier[1])
+    console.log("done")
 }
