@@ -103,9 +103,9 @@
 * Enter <diagnosisName>
 * Get the ICD-10 code for the SNOMED diagnosis
 
-# Doctor add diagnosis <diagnosis_name> with <mapRule with age condition>
+# Doctor add diagnosis <diagnosisName> with <mapRuleCondition>
  * Open clinical tab
  * Open "Diagnoses" Tab
- * Doctor add the diagnosis for <diagnosis_name> having ICD-10 codes
+ * Doctor add the diagnosis for <diagnosisName> having ICD-10 codes
  * Save data
 
