@@ -130,6 +130,7 @@
 # Create new patient with random details and start an OPD visit
 * Open "Registration" module
 * Create a new patient with random patient detail for snomed
+  Save National ID
 * Start an OPD Visit
 
 # Create a new patient with random patient detail for snomed
@@ -139,6 +140,7 @@
 * Enter patient random last name
 * Enter patient random gender
 * Enter random age of the patient
+* Enter patient random mobile number
 * Enter random village
 * Upload patient image
 * Save the patient data

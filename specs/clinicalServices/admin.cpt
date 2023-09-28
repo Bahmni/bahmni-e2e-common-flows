@@ -62,10 +62,30 @@
 * Open the form created through form builder
 * Click on delete form
 
-# Export anonymised data with <arg0>
-* Hit the endpoint
+# Export Anonymised data using <anonymise> method
+* Configue global variable for <anonymise> method
+* Invoke endpoint for anonymised export
+Invoke endpoint for anonymised export
 
-# Validate ndjson file for <anonymised> data
+# Validate <anonymised> fields from ndjson output
+* Validate medication ndjson file for <anonymised> data
 * Validate patient ndjson file for <anonymised> data
 * Validate condition ndjson file for <anonymised> data
-* Validate medication ndjson file for <anonymised> data
+
+# Configue global variable for <anonymise> method
+Configue global variable for <anonymiseMethod>
+* Login to openMRS as user "admin"
+* Goto Administration
+* Open Settings
+* Click on fhir global properties and add config path for <anonymise> method
+click on fhir global properties and add config path for <anonymiseMethod>
+
+
+# Export Non-anonymised data
+* Invoke endpoint for non-anonymised export
+  Hit the endpoint for non-anonymised data
+
+# Validate Non-anonymised fields from ndjson file export
+* Validate medication ndjson file
+* Validate patient ndjson file 
+* Validate condition ndjson file 
