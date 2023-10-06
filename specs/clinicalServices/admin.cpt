@@ -64,8 +64,7 @@
 
 # Export Anonymised data using <anonymise> method
 * Configue global variable for <anonymise> method
-* Invoke endpoint for anonymised export
-Invoke endpoint for anonymised export
+* Invoke endpoint for "anonymised" export
 
 # Validate <anonymised> fields from ndjson output
 * Validate medication ndjson file for <anonymised> data
@@ -73,19 +72,37 @@ Invoke endpoint for anonymised export
 * Validate condition ndjson file for <anonymised> data
 
 # Configue global variable for <anonymise> method
-Configue global variable for <anonymiseMethod>
 * Login to openMRS as user "admin"
 * Goto Administration
 * Open Settings
 * Click on fhir global properties and add config path for <anonymise> method
-click on fhir global properties and add config path for <anonymiseMethod>
 
 
 # Export Non-anonymised data
-* Invoke endpoint for non-anonymised export
-  Hit the endpoint for non-anonymised data
+* Invoke endpoint for "non-anonymised" export
 
 # Validate Non-anonymised fields from ndjson file export
 * Validate medication ndjson file
 * Validate patient ndjson file 
-* Validate condition ndjson file 
+* Validate condition ndjson file
+
+# Create user and role to export Anonymised and Non-anonymised data
+* Create "defaultFhirExport" user <file:bahmni-e2e-common-flows/data/fhirExportUser/defaultExporter.json> and role <file:bahmni-e2e-common-flows/data/fhirExportUser/defaultExporterRole.json> to export data
+* Create "plainFhirExport" user <file:bahmni-e2e-common-flows/data/fhirExportUser/plainExporter.json> and role <file:bahmni-e2e-common-flows/data/fhirExportUser/plainExporterRole.json> to export data
+
+
+# Create <fhirExport> user <filePathUser> and role <filePathRole> to export data
+* Manage Roles
+* Add Role <filePathRole> if not already exists
+* Manage Users
+* Add <fhirExport> user <filePathUser>
+* Enter <fhirExport> user's personal details
+* Enter <fhirExport> user's details
+* Select <filePathRole> role
+* Save hospital user
+
+# Delete user
+* Login to openMRS as user "admin"
+* Goto Administration
+* Manage Users
+* Find "defaultExporter" user and delete it

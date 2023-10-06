@@ -246,7 +246,7 @@ step("Doctor should be able to add drug after adding the mandatory details", asy
     await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
     await click("Add");
     const currentPageUrl = await evaluate(() => window.location.href);
-    console.log("dfg " + currentPageUrl);
+    //console.log("dfg " + currentPageUrl);
     gauge.dataStore.scenarioStore.put("currentPageUrl", currentPageUrl)
 });
 

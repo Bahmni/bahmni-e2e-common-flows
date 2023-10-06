@@ -1,0 +1,9 @@
+{
+    "name": "anonymised",
+    "inheritedRoles": [
+        "Clinical-App"
+    ],
+    "priviliges": [
+        "Export Patient Data"
+    ]
+}
