@@ -181,7 +181,6 @@
 * Validate "Date of Birth" on diagnosis line reports
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
-* Validate "Date & Time of Diagnosis" on diagnosis line reports
 * close tab
 
 # Validate the SNOMED diagnosis line report for Asthma
@@ -193,7 +192,6 @@
 * Validate "Date of Birth" on diagnosis line reports
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
-* Validate "Date & Time of Diagnosis" on diagnosis line reports
 * close tab
 
 # Validate the SNOMED diagnosis line report for COVID-19
@@ -207,7 +205,6 @@
 * Validate "Date of Birth" on diagnosis line reports
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
-* Validate "Date & Time of Diagnosis" on diagnosis line reports
 * close tab
 
 # Validate the SNOMED diagnosis line report for COVID-19 with ICD-10 code
@@ -216,7 +213,6 @@
 * Validate "Date of Birth" on diagnosis line reports
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
-* Validate "Date & Time of Diagnosis" on diagnosis line reports
 * Validate "ICD10 Code(s)" on diagnosis line reports
 * close tab
 
@@ -226,7 +222,6 @@
 * Validate "Date of Birth" on diagnosis line reports
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
-* Validate "Date & Time of Diagnosis" on diagnosis line reports
 * Validate "ICD10 Code(s)" on diagnosis line reports
 * close tab
 
@@ -239,6 +234,5 @@
 * Validate "Date of Birth" on diagnosis line reports
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
-* Validate "Date & Time of Diagnosis" on diagnosis line reports
 * Validate "ICD10 Code(s)" on diagnosis line reports
 * close tab 

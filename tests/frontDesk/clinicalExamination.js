@@ -172,8 +172,6 @@ step("Doctor add the diagnosis for <diagnosis>", async function (diagnosis) {
     await click($("(//A[starts-with(text(),\"" + medicalDiagnosis.diagnosis.diagnosisName + "\")])[1]"))
     await click(medicalDiagnosis.diagnosis.order, below("Order"));
     await click(medicalDiagnosis.diagnosis.certainty, below("Certainty"));
-    let dateTime = date.getDateAndTime(date.today());
-    gauge.dataStore.scenarioStore.put("dateTime", dateTime)
 });
 
 step("Verify random SNOMED <diagnosis name> saved is added to openmrs database with required metadata", async function (diagnosis) {
@@ -328,6 +326,4 @@ step("Doctor add the diagnosis for <diagnosisName> having ICD-10 codes", async f
     await click($("(//A[starts-with(text(),\"" + medicalDiagnosis.diagnosis.diagnosisName + "\")])[1]"))
     await click(button(medicalDiagnosis.diagnosis.order), below("Order"));
     await click(button(medicalDiagnosis.diagnosis.certainty), below("Certainty"));
-    let dateTime = date.getDateAndTime(date.today());
-    gauge.dataStore.scenarioStore.put("dateTime", dateTime)
 });
