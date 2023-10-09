@@ -280,29 +280,31 @@ step("Verify dismissal entry is added in audit log", async function () {
     assert.ok(await text(alertMessage, toRightOf(patientIdentifier)).exists())
 });
 
-step("Goto ICD Mappings Demonstrator portal", async function () {
+step("Navigate to ICD Mappings Demonstrator portal", async function () {
     await openTab()
     await goto(process.env.icdMappingDemonstratorUrl, { waitForNavigation: true, navigationTimeout: process.env.loginTimeout });
 });
 
-step("Enter <diagnosisName>", async function (diagnosisName) {
+step("Enter <diagnosisName> with <mapRuleCondition>", async function (diagnosisName, mapRuleCondition) {
+    await getICD10Code(diagnosisName,mapRuleCondition)
+});
+
+
+async function getICD10Code(diagnosisName,mapRuleCondition) {
     let patientGender = gauge.dataStore.scenarioStore.get("patientGender")
     let patientAge = gauge.dataStore.scenarioStore.get("patientAge")
     await clear($("//input[@id='mat-input-0']"), { waitForNavigation: false, navigationTimeout: 3000 })
-    switch (diagnosisName) {
-        case 'Pelvic peritonitis':
-            await click($("//div[@id='mat-select-value-1']"))
-            await click($("//span[normalize-space()='" + patientGender + "']"))
-            break;
-        case 'Bronchitis':
-            await write(patientAge, into(textBox(toRightOf("Age: "))))
-            break;
+    if (mapRuleCondition=="age") {
+        await write(patientAge, into(textBox(toRightOf("Age: "))))
+    }
+    else if (mapRuleCondition=="gender") {
+        await click($("//div[@id='mat-select-value-1']"))
+        await click($("//span[normalize-space()='" + patientGender + "']"))
     }
     await write(diagnosisName, into(textBox({ "placeholder": "Search..." })), { force: true })
     await waitFor(() => $("//span[@class='mdc-list-item__primary-text']").isVisible(), 40000)
     await click($("//span[@class='mdc-list-item__primary-text']"))
-
-});
+}
 
 step("Get the ICD-10 code for the SNOMED diagnosis", async function () {
     await waitFor(() => $("//p[@class='ng-star-inserted']").isVisible(), 40000)

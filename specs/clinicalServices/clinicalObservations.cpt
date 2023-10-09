@@ -98,12 +98,12 @@
 # Doctor adds a drug that has contraindication with the diagnosis <diagnosisName>
 * Doctor add the drug for <diagnosisName>
 
-# Goto ICD Mappings Demonstrator and get the ICD-10 codes for the <diagnosisName>
-* Goto ICD Mappings Demonstrator portal
-* Enter <diagnosisName>
+# Navigate to the ICD Mappings Demonstrator and retrieve the ICD-10 codes for <diagnosisName> using the mapRule associated with the <mapRuleCondition> condition
+* Navigate to ICD Mappings Demonstrator portal
+* Enter <diagnosisName> with <mapRuleCondition>
 * Get the ICD-10 code for the SNOMED diagnosis
 
-# Doctor add diagnosis <diagnosisName> with <mapRuleCondition>
+# Doctor add diagnosis <diagnosisName>
  * Open clinical tab
  * Open "Diagnoses" Tab
  * Doctor add the diagnosis for <diagnosisName> having ICD-10 codes
