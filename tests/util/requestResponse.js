@@ -266,13 +266,10 @@ async function getIDFromProcedureValueset(procedureUrl) {
         }
     });
     var jsonData = response.data.id
-    console.log("asd " + response.data.id)
-    console.log(response.data)
     return jsonData;
 
 }
 async function deleteProcedureValueset(procedureID) {
-    console.log("delete " + endpoints.SNOWSTORM_URL.split('$')[0] + procedureID)
     var response = await axios({
         url: endpoints.SNOWSTORM_URL.split('$')[0] + procedureID,
         method: 'delete',
