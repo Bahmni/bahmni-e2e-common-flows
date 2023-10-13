@@ -1,4 +1,4 @@
-
+const {format} = require('date-fns')
 function yesterday() {
     const today = new Date()
     const yesterday = new Date(today)
@@ -49,6 +49,10 @@ function addDaysAndReturnDateInDDMMYYYY(intDays) {
     return ddmmyyyy(new Date().setDate(new Date().getDate() + parseInt(intDays)))
 }
 
+
+function addDaysAndReturnDateInddMMMyyyy(intDays) {
+    return format(new Date().setDate(new Date().getDate() + parseInt(intDays)),'dd MMM yyyy')
+}
 
 function getDateYearsAgo(numberOfYearsAgo) {
     const today = new Date()
@@ -162,5 +166,6 @@ module.exports = {
     addDaysAndReturnDateInDDMMYYYY: addDaysAndReturnDateInDDMMYYYY,
     getDateInShortFormat: getDateInShortFormat,
     addDaysAndReturnDateInShortFormat: addDaysAndReturnDateInShortFormat,
-    calculate_age: calculate_age
+    calculate_age: calculate_age,
+    addDaysAndReturnDateInddMMMyyyy:addDaysAndReturnDateInddMMMyyyy
 }

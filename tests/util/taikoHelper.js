@@ -109,7 +109,7 @@ async function validateFormFromFile(configurations) {
                 await validateFormFromFile(value)
                 break;
             case 'Date':
-                var dateFormatted = date.addDaysAndReturnDateInShortFormat(value)
+                var dateFormatted = date.addDaysAndReturnDateInddMMMyyyy(value)
                 assert.ok(await $(`//LABEL[contains(normalize-space(), "${label}")]/../following-sibling::SPAN/PRE[normalize-space() = "${dateFormatted}"]`).exists(), dateFormatted + " To Right of " + label + " is not exist.")
                 break;
             default:
