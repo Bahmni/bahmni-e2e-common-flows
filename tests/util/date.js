@@ -59,7 +59,6 @@ function getDateYearsAgo(numberOfYearsAgo) {
 }
 function today() {
     const today = new Date()
-    today.setHours(0, 0, 0, 0);
     return today
 }
 
