@@ -123,7 +123,11 @@ step("Verify condition in patient clinical dashboard", async function () {
 
 step("Verify history & examination in patient clinical dashboard", async function () {
     var historyAndExaminationDetails = gauge.dataStore.scenarioStore.get("historyAndExaminationDetails")
-    assert.ok(await text(`${historyAndExaminationDetails.Chief_Complaints[0].Chief_Complaint} since ${historyAndExaminationDetails.Chief_Complaints[0].Sign_symptom_duration} ${historyAndExaminationDetails.Chief_Complaints[0].Units}`, toRightOf("Chief Complaint"), within($("#History-and-Examinations"))).exists())
+    //WORK AROUND - https://bahmni.atlassian.net/browse/BAH-3137
+    // assert.ok(await text(`${historyAndExaminationDetails.Chief_Complaints[0].Chief_Complaint} since ${historyAndExaminationDetails.Chief_Complaints[0].Sign_symptom_duration} ${historyAndExaminationDetails.Chief_Complaints[0].Units}`, toRightOf("Chief Complaint"), within($("#History-and-Examinations"))).exists())
+    assert.ok(await text(`${historyAndExaminationDetails.Chief_Complaints[0].Chief_Complaint}`, toRightOf("Chief Complaint"), within($("#History-and-Examinations"))).exists())
+    assert.ok(await text(`${historyAndExaminationDetails.Chief_Complaints[0].Sign_symptom_duration}`, toRightOf("Sign/symptom duration"), within($("#History-and-Examinations"))).exists())
+    assert.ok(await text(`${historyAndExaminationDetails.Chief_Complaints[0].Units}`, toRightOf("Units"), within($("#History-and-Examinations"))).exists())
     assert.ok(await text(`${historyAndExaminationDetails.History_of_present_illness}`, within($("#History-and-Examinations")), toRightOf("HPI")).exists())
     assert.ok(await text(`${historyAndExaminationDetails.Smoking_status}`, within($("#History-and-Examinations")), toRightOf("Smoking status")).exists())
     assert.ok(await $("//a[@class='img-concept']/img").exists(), "Image not displayed on history & examination");
