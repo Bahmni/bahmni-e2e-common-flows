@@ -40,7 +40,7 @@ gauge.customScreenshotWriter = async function () {
     return path.basename(screenshotFilePath);
 };
 
-step("reload the page", async function () {
+step("Reload the page", async function () {
     await reload({ waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
 });
 

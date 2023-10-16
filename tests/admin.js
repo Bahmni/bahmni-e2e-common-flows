@@ -29,9 +29,12 @@ const {
     highlight,
     mouseAction,
     currentURL,
+    switchTo,
     radioButton,
     fileField,
     tableCell,
+    clear,
+    to,
 } = require('taiko');
 
 const path = require('path');
@@ -111,8 +114,7 @@ step("create obs <obsName> <properties>", async function (obsName, properties) {
     await write(obsName, into(textBox(below("Control Properties"))))
     await press('Enter')
     await click(obsName)
-    for (var row of properties.rows)
-    {
+    for (var row of properties.rows) {
         if (row.cells[0] === "Url") {
             await highlight(row.cells[0])
             await write(endpoints.VALUESET_URL, into(textBox(toRightOf(row.cells[0]))))
@@ -170,7 +172,7 @@ step("select the type of concept being created as <conceptType>", async function
     await dropDown(toRightOf("Class")).select(conceptType);
 });
 
-step("save the concept", async function () {
+step("Save the concept", async function () {
     await click("Save Concept");
 });
 
@@ -319,7 +321,7 @@ step("Create obs group <obsName> and add an ecl query for <obsField> <properties
         if (row.cells[0] === "Url") {
             await highlight(row.cells[0])
             var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(obsField)
-            await write(endpoints.ECL_QUERY+snomedCode, into(textBox(toRightOf(row.cells[0]))))
+            await write(endpoints.ECL_QUERY + snomedCode, into(textBox(toRightOf(row.cells[0]))))
         }
         else {
 
@@ -379,19 +381,56 @@ async function validateReport(value, name) {
     assert.equal(actual, expected);
 }
 
-step("Search procedure name and delete it", async function () {
-	var procedureTitle = gauge.dataStore.scenarioStore.get("procedureTitle")
+step("Search Body Site name", async function () {
+    var procedureTitle = gauge.dataStore.scenarioStore.get("procedureTitle")
     var procedureName = gauge.dataStore.scenarioStore.get("procedureName")
     await write(procedureTitle, into(textBox(below("Find Concept(s)"))));
     await click(button("Search"));
     await click(procedureName)
-    await click($("//a[@id='editConcept']"));
-    confirm('Are you sure you want to delete this ENTIRE CONCEPT', async () => await accept());
-    await click($("//input[@value='Delete Concept']"))
+
 });
 
-step("Delete the procedure from snowstorm", async function() {
-    var procedureValueSetURL=gauge.dataStore.scenarioStore.get("procedureValueSetURL")
-	var procedureID= await requestResponse.getIDFromProcedureValueset(procedureValueSetURL)
-    await requestResponse.deleteProcedureValueset(procedureID)
+step("Update the procedure name", async function () {
+    await clear($("input[value='Reattachment of muscle']"), toRightOf("Short Name"), { waitForNavigation: false, navigationTimeout: 3000 })
+    var updatedProcedureName = users.randomName(10)
+    gauge.dataStore.scenarioStore.put("updatedProcedureName", updatedProcedureName)
+    await write(updatedProcedureName, into(textBox(toRightOf("Short Name"))))
+    var openmrsURL = await currentURL()
+    gauge.dataStore.scenarioStore.put("openmrsURL", openmrsURL)
+
+});
+
+step("Click on Procedure name", async function () {
+    var clinicalProcedure = gauge.dataStore.scenarioStore.get("clinicalProcedure")
+    await click(clinicalProcedure)
+
+});
+
+step("Click on Edit", async function () {
+    await click($("//a[@id='editConcept']"));
+});
+
+step("Switch to <tabName> tab", async function (tabName) {
+    var bahmniURL = gauge.dataStore.scenarioStore.get("bahmniURL")
+    var openmrsURL = gauge.dataStore.scenarioStore.get("openmrsURL")
+    if (tabName == "openMRS") {
+        openmrsURL = openmrsURL.replace("form", "htm")
+        await switchTo(openmrsURL)
+    }
+    else {
+        await switchTo(bahmniURL)
+    }
+});
+
+
+step("Remove the procedure from openMRS", async function () {
+    await write("Procedure Orders", into(textBox(toLeftOf($("//input[@value='Search']")))));
+    await click(button("Search"));
+    await click($("//span[normalize-space()='Procedure Orders']"))
+    await click($("//a[@id='editConcept']"));
+    await highlight($("//select[@id='conceptSetsNames']"))
+    await click($("//tr[12]//td//tr//td[1]//*[contains(text(),'bahmni-procedures-head')]"))
+    await click(button("Remove"))
+    await click("Save Concept");
+    await closeTab();
 });

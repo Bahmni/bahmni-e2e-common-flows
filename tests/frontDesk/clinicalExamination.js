@@ -19,6 +19,7 @@ const {
     button,
     link,
     toLeftOf,
+    currentURL,
     closeTab
 } = require('taiko');
 var fileExtension = require("../util/fileExtension");
@@ -299,6 +300,8 @@ step("Add Procedure", async function () {
 step("Verify Procedure on patient clinical dashboard", async function () {
     var clinicalProcedure = gauge.dataStore.scenarioStore.get("clinicalProcedure")
     assert.ok(await text(clinicalProcedure, below($("//h2[normalize-space()='Procedure Orders']"))).exists())
+    var bahmniURL=await currentURL();
+    gauge.dataStore.scenarioStore.put("bahmniURL", bahmniURL)
 });
 
 step("Create ValueSet for a procedure <filePath>", async function (filePath) {
@@ -310,4 +313,10 @@ step("Create ValueSet for a procedure <filePath>", async function (filePath) {
     var procedureTitle = procedureValueSet['title']
     gauge.dataStore.scenarioStore.put("procedureName", procedureName) 
     gauge.dataStore.scenarioStore.put("procedureTitle", procedureTitle) 
+});
+
+step("Verify the updated procedure name", async function() {
+    var updatedProcedureName=gauge.dataStore.scenarioStore.get("updatedProcedureName")
+    var updatedClinicalProcedure = await $("section[class='orders-section-right'] li:nth-child(1) a:nth-child(1)").text();
+    assert.equal(updatedClinicalProcedure, updatedProcedureName)
 });
