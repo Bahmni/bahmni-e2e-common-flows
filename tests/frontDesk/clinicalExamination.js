@@ -213,16 +213,22 @@ step("Doctor add the drug for <diagnosisName>", async function (diagnosisName) {
 });
 
 step("Verify alert message with card indicator <cardIndicator> is displayed when drug is selected", async function (cardIndicator) {
-    var alertMessage = await $("div[class='cdss-alert-summary'] span").text()
+    var alertMessage = await $("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]").text();
+    var drugName = gauge.dataStore.scenarioStore.get("drugName")
     gauge.dataStore.scenarioStore.put("alertMessage", alertMessage)
-    assert.ok(await text(cardIndicator).exists(), below(text("Additional Information ")))
-    assert.ok(await $("div[class='cdss-alert-summary'] span").exists(), below(text("Additional Information ")))
+    console.log(alertMessage)
+    if (cardIndicator === "Critical") {
+        //assert.ok(await text(cardIndicator).exists(), below(text("Additional Information ")))
+        assert.ok(await $("//i[@class='fa critical fa-exclamation-triangle']").exists())
+    }
+    else if (cardIndicator === "Warning") {
+        assert.ok(await $("//i[@class='fa critical fa-exclamation-triangle warning']").exists())
+    }
+   // assert.ok(await $("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]").exists(), below(drugName))
 });
 
 step("Doctor select the reason for dismissal", async function () {
-    await click($("div[class='cdss-alert-summary'] span"))
-    await click($("//i[@class='fa fa-question-circle']"))
-    await closeTab()
+    await click($("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]"))
     assert.ok(await $("//select[@id='cdss-audit']").exists())
     await click($("//select[@id='cdss-audit']"))
     await dropDown(below($(".fa.fa-question-circle"))).select({ index: '1' });
@@ -230,7 +236,9 @@ step("Doctor select the reason for dismissal", async function () {
 
 step("Click on dismiss button", async function () {
     await click($("//button[normalize-space()='Dismiss']"))
-    assert.ok(!await $("div[class='cdss-alert-summary'] span").exists(), below(text("Additional Information ")))
+    assert.ok(await $("//i[@class='fa fa-exclamation-circle cdss-icon-medication']").exists())
+    //assert.ok(!await $("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]").exists(), below(drugName))
+    //assert.ok(await $("//i[@class='fa fa-exclamation-circle cdss-icon-medication']").exists(),toLeftOf(drugName))
 });
 
 step("Doctor should be able to add drug after adding the mandatory details", async function () {
@@ -275,4 +283,40 @@ step("Verify dismissal entry is added in audit log", async function () {
     while (assert.ok(await text("No more events to be displayed !!").exists()));
     await highlight(text(alertMessage))
     assert.ok(await text(alertMessage, toRightOf(patientIdentifier)).exists())
+});
+
+step("Verify the question icon is displayed in the alert message", async function() {
+    await click($("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]"))
+    await click($("//i[@class='fa fa-question-circle']"))
+    await closeTab()
+});
+
+step("Doctor add the drug <drugName>", async function(drugName) {
+	await taikoHelper.getContraindicativeDrugs()
+    if(drugName === "drug1") {
+        drugName = gauge.dataStore.scenarioStore.get("drug1")
+    }
+    else if(drugName === "drug2") {
+        drugName = gauge.dataStore.scenarioStore.get("drug2")
+    }
+    else{
+        console.log("drugName is defined")
+        drugName = gauge.dataStore.scenarioStore.get("drug_dosage")
+        console.log("a "+drugName)
+    }
+    //var drugName = gauge.dataStore.scenarioStore.get("drug1")
+    await textBox(toRightOf("Drug Name")).exists()
+    await write(drugName, into(textBox(toRightOf("Drug Name"))));
+    await click(link(drugName, below(textBox(toRightOf("Drug Name")))));
+});
+
+step("Verify alert message with card indicator <arg0> is displayed when two contraindicative drug is selected", async function(arg0) {
+    var alertMessage = await $("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]").text();
+    var drugName1 = gauge.dataStore.scenarioStore.get("drug1")
+    var drugName2 = gauge.dataStore.scenarioStore.get("drug2")
+    gauge.dataStore.scenarioStore.put("alertMessage", alertMessage)
+    console.log(alertMessage)
+    assert.ok(await $("//i[@class='fa critical fa-info-circle info']").exists())
+    assert.ok(await $("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]").exists(), below(drugName1))
+    assert.ok(await $("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]").exists(), below(drugName2))
 });

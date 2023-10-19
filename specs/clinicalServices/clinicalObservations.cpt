@@ -97,3 +97,13 @@
 
 # Doctor adds a drug that has contraindication with the diagnosis <diagnosisName>
 * Doctor add the drug for <diagnosisName>
+
+# Doctor add drugs which are contraindicative with each other
+* Doctor add the drug "drug1"
+* Doctor should be able to add drug after adding the mandatory details
+* Doctor add the drug "drug2"
+* Doctor should be able to add drug after adding the mandatory details
+
+# Doctor add a drug with high dosage <drug_name> alert
+* Doctor add the drug <drug_name>
+* Doctor should be able to add drug after adding the mandatory details

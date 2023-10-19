@@ -46,7 +46,7 @@
 * Goto appointments's date
 * Click patient name
 * Cancel the appointment
-* reload the page
+* Reload the page
 
 
 # Receptionist cancels all the appointments
@@ -56,7 +56,7 @@
 * Click patient name
 * Click Cancel
 * Click Cancel all
-* reload the page
+* Reload the page
 
 # Receptionist creates a teleconsultation appointment <appointmentTime>
 * Open "Appointment scheduling" module

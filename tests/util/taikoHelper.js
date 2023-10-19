@@ -164,6 +164,15 @@ async function getContraindicativeDrugFromSnomedDiagnosisName(diagnosisName) {
     }
 }
 
+async function getContraindicativeDrugs()
+{
+    var snomedCodeFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomedCode.json`;
+    var diagnosisData = JSON.parse(fileExtension.parseContent(snomedCodeFile))
+    gauge.dataStore.scenarioStore.put("drug1",diagnosisData.drug1);
+    gauge.dataStore.scenarioStore.put("drug2",diagnosisData.drug2);
+    gauge.dataStore.scenarioStore.put("drug_dosage",diagnosisData.drug_dosage);
+}
+
 module.exports = {
     selectEntriesTillIterationEnds: selectEntriesTillIterationEnds,
     verifyConfigurations: verifyConfigurations,
@@ -175,5 +184,6 @@ module.exports = {
     generateRandomDiagnosis: generateRandomDiagnosis,
     returnHeaderPos: returnHeaderPos,
     getSnomedCodeFromSnomedName: getSnomedCodeFromSnomedName,
-    getContraindicativeDrugFromSnomedDiagnosisName: getContraindicativeDrugFromSnomedDiagnosisName
+    getContraindicativeDrugFromSnomedDiagnosisName: getContraindicativeDrugFromSnomedDiagnosisName,
+    getContraindicativeDrugs:getContraindicativeDrugs
 }

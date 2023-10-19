@@ -26,5 +26,8 @@
             "diagnosis_code": "235856003",
             "contraindication_drug": "Atorvastatin (as atorvastatin calcium) 10 mg oral tablet"
         }
-    ]
+    ],
+    "drug1": "Amiodarone hydrochloride 100 mg oral tablet",
+    "drug2": "Albendazole 400 mg chewable tablet",
+    "drug_dosage": "Ranitidine (as ranitidine hydrochloride) 150 mg oral tablet "
 }
