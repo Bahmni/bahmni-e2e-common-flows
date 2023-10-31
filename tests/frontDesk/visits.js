@@ -90,7 +90,7 @@ step("Verify medical prescription in patient clinical dashboard", async function
         var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
         assert.ok(await text(medicalPrescriptions.drug_name, within($("#Treatments"))).exists())
         assert.ok(await text(`${medicalPrescriptions.dose} ${medicalPrescriptions.units}, ${medicalPrescriptions.frequency}`, within($("#Treatments"))).exists())
-        assert.ok(await text(`${medicalPrescriptions.duration} Days`, within($("#Treatments"))).exists())
+        assert.ok(await text(`${medicalPrescriptions.duration} Day(s)`, within($("#Treatments"))).exists())
     }
 });
 

@@ -161,8 +161,6 @@
 * Save data
 
 # Doctor adds the random SNOMED descendant of <diagnosisName> using <type> search
- * Open clinical tab
- * Open "Diagnoses" Tab
  * Doctor add the diagnosis for <type>
  * Save data
 
