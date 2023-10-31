@@ -67,7 +67,6 @@ step("Doctor prescribes medicines <prescriptionNames>", async function (prescrip
                 await dropDown(toRightOf("Frequency")).select(medicalPrescriptions.frequency)
                 await write(medicalPrescriptions.dose, into(textBox(toRightOf("Dose"))));
                 await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
-                await write(medicalPrescriptions.notes, into(textBox(toRightOf("Additional Instructions"))));
             }
             await click("Add");
         }
@@ -204,21 +203,11 @@ step("Random SNOMED diagnosis is identified using ECL query for descendants of <
     var diagnosisName = await taikoHelper.generateRandomDiagnosis(diagnosisJson);
 });
 
-step("Doctor add the drug for <diagnosisName>", async function (diagnosisName) {
-    var drugName = await taikoHelper.getContraindicativeDrugFromSnomedDiagnosisName(diagnosisName)
-    gauge.dataStore.scenarioStore.put("drugName", drugName)
-    await textBox(toRightOf("Drug Name")).exists()
-    await write(drugName, into(textBox(toRightOf("Drug Name"))));
-    await click(link(drugName, below(textBox(toRightOf("Drug Name")))));
-});
-
 step("Verify that a <cardIndicator> alert message is displayed after the drug is added", async function (cardIndicator) {
     var alertMessage = await $("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]").text();
     var drugName = gauge.dataStore.scenarioStore.get("drugName")
     gauge.dataStore.scenarioStore.put("alertMessage", alertMessage)
-    console.log(alertMessage)
     if (cardIndicator === "Critical") {
-        //assert.ok(await text(cardIndicator).exists(), below(text("Additional Information ")))
         assert.ok(await $("//i[@class='fa critical fa-exclamation-triangle']").exists())
     }
     else if (cardIndicator === "Warning") {
@@ -227,53 +216,17 @@ step("Verify that a <cardIndicator> alert message is displayed after the drug is
     else {
         assert.ok(await $("//i[@class='fa critical fa-info-circle info']").exists())
     }
-    // assert.ok(await $("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]").exists(), below(drugName))
-
 });
-
-// step("Doctor select the reason for dismissal", async function () {
-//     await click($("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]"))
-//     assert.ok(await $("//select[@id='cdss-audit']").exists())
-//     await click($("//select[@id='cdss-audit']"))
-//     await dropDown(below($(".fa.fa-question-circle"))).select({ index: '1' });
-// });
 
 step("Click on dismiss button", async function () {
     await click($("//button[normalize-space()='Dismiss']"))
     assert.ok(await $("//i[@class='fa fa-exclamation-circle cdss-icon-medication']").exists())
-    //assert.ok(!await $("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]").exists(), below(drugName))
-    //assert.ok(await $("//i[@class='fa fa-exclamation-circle cdss-icon-medication']").exists(),toLeftOf(drugName))
 });
-
-step("Doctor should be able to add drug after adding the mandatory details", async function () {
-    var prescriptionFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomedMedication.json`;
-    var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
-    gauge.dataStore.scenarioStore.put("medicalPrescriptions", medicalPrescriptions)
-    var drugName = gauge.dataStore.scenarioStore.get("drugName")
-    medicalPrescriptions["drugName"] = drugName;
-    await dropDown(toRightOf("Units")).select(medicalPrescriptions.units);
-    await dropDown(toRightOf("Frequency")).select(medicalPrescriptions.frequency)
-    await write(medicalPrescriptions.dose, into(textBox(toRightOf("Dose"))));
-    await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
-    await click("Add");
-});
-
-// step("Verify medication on patient clinical dashboard", async function () {
-//     var medicalPrescriptions = gauge.dataStore.scenarioStore.get("medicalPrescriptions")
-//     assert.ok(await text(medicalPrescriptions.drugName, within($("#Treatments"))).exists())
-//     assert.ok(await text(`${medicalPrescriptions.dose} ${medicalPrescriptions.units}, ${medicalPrescriptions.frequency}`, within($("#Treatments"))).exists())
-//     assert.ok(await text(`${medicalPrescriptions.duration} Day(s)`, within($("#Treatments"))).exists())
-// });
 
 step("Verify CDSS is enabled in openMRS in order to trigger contraindication alerts", async function () {
     var cdssEnable = requestResponse.checkCdssIsEnabled()
     assert.ok(cdssEnable)
 });
-
-// step("Verify add button is <buttonType>", async function (buttonType) {
-//     const isButtonDisabled = await $("//button[@type='submit']").isDisabled()
-//     isButtonDisabled ? assert.ok(buttonType === "disabled") : assert.ok(buttonType === "enabled");
-// });
 
 step("Verify dismissal entry is added in audit log", async function () {
     var alertMessage = gauge.dataStore.scenarioStore.get("alertMessage").replace(/"/g, "")
@@ -294,36 +247,13 @@ step("Verify the question icon with contraindication information link is display
     await click($("//i[@class='fa fa-question-circle']"))
     await closeTab()
 });
-
-// step("Doctor add the drug <drugName>", async function(drugName) {
-// 	await taikoHelper.getContraindicativeDrugs()
-//     if(drugName === "drug1") {
-//         drugName = gauge.dataStore.scenarioStore.get("drug1")
-//     }
-//     else if(drugName === "drug2") {
-//         drugName = gauge.dataStore.scenarioStore.get("drug2")
-//     }
-//     else{
-//         console.log("drugName is defined")
-//         drugName = gauge.dataStore.scenarioStore.get("drug_dosage")
-//         console.log("a "+drugName)
-//     }
-//     //var drugName = gauge.dataStore.scenarioStore.get("drug1")
-//     await textBox(toRightOf("Drug Name")).exists()
-//     await write(drugName, into(textBox(toRightOf("Drug Name"))));
-//     await click(link(drugName, below(textBox(toRightOf("Drug Name")))));
-// });
-
 step("Verify alert message with card indicator <cardIndicator> is displayed against added contraindicative drugs <drugName1> and <drugName2>", async function (cardIndicator, drugName1, drugName2) {
     var alertMessage = await $("//p[@ng-class=\"{'strike-text': !alert.isActive}\"]").text();
-    //var drugName1 = gauge.dataStore.scenarioStore.get("drug1")
-    //var drugName2 = gauge.dataStore.scenarioStore.get("drug2")
     gauge.dataStore.scenarioStore.put("alertMessage", alertMessage)
-    console.log(alertMessage)
     if (cardIndicator === "Info") {
         assert.ok(await $("//i[@class='fa critical fa-info-circle info']").exists())
     }
-    else if (cardIndicator === "critical") {
+    else if (cardIndicator === "Critical") {
         assert.ok(await $("//i[@class='fa critical fa-exclamation-triangle']").exists())
     }
     else {
@@ -338,8 +268,8 @@ step("Verify that the medication is striked off", async function () {
     assert.ok(await $("//p[@class='strike-text']").exists())
 });
 
-step("Click on cross button on the medication", async function () {
-    await click($("(//button[@type='button'][normalize-space()='x'])[1]"))
+step("Click on cross button to close the alert", async function () {
+    await click($("//div[@class='alert-controls']//button[@type='button'][normalize-space()='x']"))
 });
 
 step("Verify that a list of reasons for dismissal is displayed", async function () {
@@ -350,4 +280,25 @@ step("Verify that a list of reasons for dismissal is displayed", async function 
 step("Doctor is able to select the reason for dismissal", async function () {
     await click($("//select[@id='cdss-audit']"))
     await dropDown(below($(".fa.fa-question-circle"))).select({ index: '1' });
+});
+
+step("Verify the dosage alert message for the substances <drugName>", async function (drugName) {
+    var prescriptionFile ="./bahmni-e2e-common-flows/data/consultation/medications/Colchicine.json"
+    var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
+    var data = fileExtension.parseContent("./bahmni-e2e-common-flows/data/consultation/medications/verifyDrugDosageAlertMessage.txt")
+    if (drugName == "Probenecid") {
+        var expected = data.replace('<substanceName>', drugName)
+        .replace('<prescribedDose>', medicalPrescriptions.PrescribedDoseForProbenecid)
+        .replace('<recommendedDose>', medicalPrescriptions.RecommendedDoseForProbenecid)
+        //await click($("//p[@ng-class=\"{'strike-text': !alert.isActive}\"][1]"))
+        await click($("//div[@class='active-drug-alert bg-warning']"))
+    }
+    else {
+        var expected = data.replace('<substanceName>', drugName)
+        .replace('<prescribedDose>', medicalPrescriptions.PrescribedDoseForColchicine)
+        .replace('<recommendedDose>', medicalPrescriptions.RecommendedDoseForColchicine)
+        await click($("//div[@class='active-drug-alert bg-warning']"))
+    }
+    var actual = await $("//div[@class='cdss-alert-details']//div[@class='alert-detail']").text()
+    assert.equal(actual, expected)
 });

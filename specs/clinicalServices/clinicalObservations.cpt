@@ -95,11 +95,8 @@
 * Enter Form Values <formPath>
 * Verify no error displayed on page
 
-# Doctor adds a drug that has contraindication with the diagnosis <diagnosisName>
-* Doctor add the drug for <diagnosisName>
-
 # Verify that the medication is striked off after it is dismissed
-* Click on cross button on the medication
+* Click on cross button to close the alert
 * Verify that the medication is striked off
 
 # Doctor add drugs <medications> which are contraindicative with each other
@@ -117,3 +114,7 @@
 # Doctor prescribes a drug <medications> that is contraindicated for the patient's diagnosis
 * Open "Medications" Tab
 * Doctor prescribes medicines <medications>
+
+# Verify the dosage alert message is displayed for the substance <drugName>
+* Verify the dosage alert message for the substances <drugName>
+* Click on cross button to close the alert
