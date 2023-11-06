@@ -33,6 +33,8 @@ const {
     fileField,
     tableCell,
     clear,
+    timeField,
+    client
 } = require('taiko');
 
 const path = require('path');
@@ -46,6 +48,9 @@ const ndjson = require('ndjson')
 var fileExtension = require("./util/fileExtension");
 const requestResponse = require('./util/requestResponse');
 const endpoints = require('./../../tests/API/constants/apiConstants').endpoints;
+const puppeteer = require('puppeteer');
+const AdmZip = require('adm-zip');
+
 
 
 
@@ -382,141 +387,14 @@ async function validateReport(value, name) {
 }
 
 step("Invoke endpoint for <fhirType> export", async function (fhirType) {
-    const currentPageUrl = await evaluate(() => window.location.href);
-    gauge.dataStore.scenarioStore.put("currentPageUrl", currentPageUrl)
-    let taskLink = fhirType=="anonymised" ? await requestResponse.createFHIRExport(true) : await requestResponse.createFHIRExport(false)
+   // const currentPageUrl = await evaluate(() => window.location.href);
+   // gauge.dataStore.scenarioStore.put("currentPageUrl", currentPageUrl)
+    //console.log("currentPageUrl " + currentPageUrl)
+    let taskLink = fhirType == "anonymised" ? await requestResponse.createFHIRExport(true) : await requestResponse.createFHIRExport(false)
     let urlToDownloadFile = await requestResponse.getURLToDownloadNDJSONFile(taskLink);
     await requestResponse.downloadAndProcessData(urlToDownloadFile);
 
 });
-
-step("Validate patient ndjson file for <anonymised> data", async function (anonymised) {
-    var patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
-    var city = gauge.dataStore.scenarioStore.get("village")
-    var mobileNumber = gauge.dataStore.scenarioStore.get("patientMobileNumber")
-    const fileStream = fs.createReadStream('./extracted_data/Patient.ndjson');
-    fileStream
-        .pipe(ndjson.parse())
-        .on('data', function (obj) {
-            //console.log(obj.identifier[0].value);
-            if (obj.identifier[0].value === patientIdentifierValue) {
-                //console.log("obj " + obj.id);
-                //console.log("obj is " + obj);
-                //console.log("obj " + obj.id)
-                switch (anonymised) {
-                    case 'Redacted':
-                        assert.ok(!obj.name)
-                        assert.ok(!obj.telecom)
-                        assert.ok(!obj.address)
-                        //console.log("done patient redact")
-                        break;
-                    case 'Randomized':
-                        assert.notEqual(obj.address[0].city, city)
-                        assert.notEqual(obj.telecom[0].value, mobileNumber)
-                       // console.log("done patient randomize")
-                    case 'Fixed':
-                    case 'Correlated':
-                    default:
-                        break;
-
-                }
-            }
-        }
-        )
-})
-
-
-
-
-step("Validate condition ndjson file for <anonymised> data", async function (anonymised) {
-    let currentUrl = gauge.dataStore.scenarioStore.get("currentPageUrl");
-    const fileStream = fs.createReadStream('./extracted_data/Condition.ndjson');
-    fileStream
-        .pipe(ndjson.parse())
-        .on('data', function (obj) {
-            var diagnosisNameExpected = gauge.dataStore.scenarioStore.get("diagnosisName")
-            var diagnosisNameActual = obj.code.text.replace(/\([^)]*\)/g, '')
-            //console.log("as  " + diagnosisNameActual)
-            if (diagnosisNameExpected.trim() === diagnosisNameActual.trim()) {
-                switch (anonymised) {
-                    case 'Redacted':
-                        //console.log(obj);
-                        assert.ok(!obj.subject.recordedDate)
-                        assert.ok(!obj.recorder)
-                        //console.log("done condition redact")
-                        break;
-                    case 'Randomized':
-                        break;
-                    case 'Fixed':
-                        break;
-                    case 'Correlated':
-                        const subjectReference = obj.subject.reference;
-                        //console.log("subjectReference " + subjectReference)
-                        assert.ok(!subjectReference.includes('-'))
-                        const regex = /\/patient\/([^/]+)\//;
-                        const expectedPatientID = currentUrl.match(regex);
-                        let patientReference = obj.subject.reference;
-                        let actualPatientID = patientReference.split('/').pop();
-                        assert.notEqual(actualPatientID, expectedPatientID);
-                        //console.log("done condition correlate")
-                        break;
-                    default:
-                        break;
-
-                }
-            }
-        }
-        )
-});
-step("Validate medication ndjson file for <anonymised> data", async function (anonymised) {
-    const fileStream = fs.createReadStream('./extracted_data/MedicationRequest.ndjson');
-    fileStream
-        .pipe(ndjson.parse())
-        .on('data', function (obj) {
-            let patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
-            let currentUrl = gauge.dataStore.scenarioStore.get("currentPageUrl");
-            let text = obj.subject.display;
-            //console.log("text " + text)
-            let match = text.match(/Patient Identifier: (\w+)/);
-            //console.log("match " + match)
-            let identifier = match[1];
-            //console.log(identifier);
-            if (identifier == patientIdentifierValue) {
-                switch (anonymised) {
-                    case 'Redacted':
-                       // console.log("inside medication");
-                        assert.ok(!obj.priority)
-                        assert.ok(!obj.encounter)
-                        assert.ok(!obj.recorder)
-                        assert.ok(!obj.authoredOn)
-                        assert.ok(!obj.requester)
-                        assert.ok(!obj.dosageInstruction)
-                       // console.log("done medication redact for anonymised")
-                        break;
-                    case 'Randomized':
-                        break;
-                    case 'Fixed':
-                        break;
-                    case 'Correlated':
-                        const subjectReference = obj.subject.reference;
-                        assert.ok(!subjectReference.includes('-'))
-                        const regex = /\/patient\/([^/]+)\//;
-                        const expectedPatientID = currentUrl.match(regex);
-                       // console.log("expectedPatientID " + expectedPatientID)
-                        const actualPatientID = obj.subject.reference.split('/').pop();
-                        //console.log("actualPatientID " + actualPatientID)
-                        assert.notEqual(actualPatientID, expectedPatientID);
-                       // console.log("done medication correlate")
-                        break;
-                    default:
-                        break;
-
-                }
-            }
-        }
-        )
-});
-
 
 step("Open Settings", async function () {
     await click($("//a[@href='/openmrs/admin/maintenance/settings.list']"));
@@ -564,7 +442,7 @@ step("Validate patient ndjson file", async function () {
                 assert.equal(obj.birthDate, birthYear)
                 assert.equal(obj.address[0].city, city)
                 assert.equal(obj.telecom[0].value, mobileNumber)
-                //console.log("done patient non anonymised")
+                console.log("done patient non anonymised")
 
             }
         }
@@ -582,13 +460,12 @@ step("Validate medication ndjson file", async function () {
             let identifier = match[1];
             var medicalPrescriptions = gauge.dataStore.scenarioStore.get("medicalPrescriptions")
             if (identifier == patientIdentifierValue) {
-                //console.log("inside medication");
                 assert.equal(obj.medicationCodeableConcept.text, gauge.dataStore.scenarioStore.get("drugName"))
                 assert.equal(obj.dosageInstruction[0].timing.code.text, medicalPrescriptions.frequency)
                 assert.equal(obj.dosageInstruction[0].doseAndRate[0].doseQuantity.value, medicalPrescriptions.dose)
                 assert.equal(obj.dosageInstruction[0].doseAndRate[0].doseQuantity.unit, medicalPrescriptions.units)
                 assert.equal(obj.dosageInstruction[0].timing.repeat.duration, medicalPrescriptions.duration)
-               // console.log("done medication non anonymised")
+                console.log("done medication non anonymised")
             }
         }
 
@@ -601,8 +478,13 @@ step("Validate condition ndjson file", async function () {
         .pipe(ndjson.parse())
         .on('data', function (obj) {
             var diagnosisName = gauge.dataStore.scenarioStore.get("diagnosisName")
-            if (diagnosisName === obj.code.text) {
-                assert.ok(obj.code.text)
+            console.log("diagnosisName " + diagnosisName)
+            console.log("obj.code.text " + obj.code.text)
+            if (diagnosisName === obj.code.text.replace(/\s*\(disorder\)/, '')) {
+                assert.ok(obj.code.text.replace(/\s*\(disorder\)/, ''))
+                var referenceID = obj.id
+                gauge.dataStore.scenarioStore.put("referenceID", referenceID)
+                console.log("done condition non anonymised")
             }
         }
 
@@ -611,4 +493,175 @@ step("Validate condition ndjson file", async function () {
 
 step("Click on FHIR Export module", async function () {
     await click("FHIR Export");
+});
+
+step("Validate condition ndjson file for anonymised data", async function () {
+    var referenceID = gauge.dataStore.scenarioStore.get("referenceID")
+    let currentUrl = gauge.dataStore.scenarioStore.get("currentPageUrl");
+    console.log("referenceID " + referenceID)
+    const fileStream = fs.createReadStream('./extracted_data/Condition.ndjson');
+    fileStream
+        .pipe(ndjson.parse())
+        .on('data', function (obj) {
+            console.log("obj.id " + obj.id)
+            if (obj.id === referenceID) {
+                console.log("Inside condition")
+                var correlatedId = obj["subject"]["reference"].split("/")[1]
+                console.log("correlatedId " + correlatedId )
+                gauge.dataStore.scenarioStore.put("correlatedId ", correlatedId )
+                assert.ok(!obj.subject.recordedDate)
+                assert.ok(!obj.recorder)
+                assert.ok(!obj.encounter)
+                const subjectReference = obj.subject.reference;
+                console.log("subjectReference " + subjectReference)
+                assert.ok(!subjectReference.includes('-'))
+                const regex = /\/patient\/([^/]+)\//;
+                const expectedPatientID = currentUrl.match(regex);
+                let patientReference = obj.subject.reference;
+                let actualPatientID = patientReference.split('/').pop();
+                assert.notEqual(actualPatientID, expectedPatientID);
+                console.log("done condition anonymised")
+
+            }
+        }
+        )
+});
+
+step("Validate medication ndjson file for anonymised data", async function () {
+    var correlatedId  = gauge.dataStore.scenarioStore.get("correlatedId")
+    let currentUrl = gauge.dataStore.scenarioStore.get("currentPageUrl");
+    const fileStream = fs.createReadStream('./extracted_data/Patient.ndjson');
+    fileStream
+        .pipe(ndjson.parse())
+        .on('data', function (obj) {
+            if (obj.id === correlatedId) {
+                console.log("Inside medication")
+                assert.ok(!obj.priority)
+                assert.ok(!obj.encounter)
+                assert.ok(!obj.authoredOn)
+                assert.ok(!obj.requester)
+                assert.ok(!obj.dosageInstruction)
+                    const actualPatientID = correlatedId ;
+                    assert.ok(!actualPatientID .includes('-'));
+                    const regex = /\/patient\/([^/]+)\//;
+                    const expectedPatientID = currentUrl.match(regex);
+                    console.log("expectedPatientID " + expectedPatientID);
+                    console.log("actualPatientID " + actualPatientID);
+                    assert.notEqual(actualPatientID, expectedPatientID);
+                console.log("done medication correlate")
+            }
+        }
+        )
+});
+
+step("Validate patient ndjson file for anonymised data", async function () {
+    var correlatedId  = gauge.dataStore.scenarioStore.get("correlatedId ")
+    let currentUrl = gauge.dataStore.scenarioStore.get("currentPageUrl");
+    const fileStream = fs.createReadStream('./extracted_data/Patient.ndjson');
+    fileStream
+        .pipe(ndjson.parse())
+        .on('data', function (obj) {
+            if (obj.id === correlatedId ) {
+                console.log("Inside patient")
+                assert.ok(!obj.identifier)
+                assert.ok(!obj.address)
+                assert.ok(!obj.name)
+                assert.ok(!obj.telecom)
+                var birth_date = obj["birthDate"]
+                var parsed_date = birth_date.split('-')
+                var birthData = parsed_date[1]
+                var birthMonth = parsed_date[2]
+                assert.equal(birthData, "01")
+                assert.equal(birthMonth, "01")
+                const actualPatientID = obj.id;
+                console.log("actualPatientID " + actualPatientID);
+                assert.ok(!actualPatientID.includes('-'))
+                const regex = /\/patient\/([^/]+)\//;
+                const expectedPatientID = currentUrl.match(regex);
+                console.log("expectedPatientID " + expectedPatientID);
+                assert.notEqual(actualPatientID, expectedPatientID);
+                console.log("done patient anonymised")
+
+            }
+        }
+        )
+});
+
+step("Validate privilege to export data", async function () {
+    assert.ok(await text("You do not have sufficient privilege to export data").exists())
+    assert.ok(await $("//aria-hidde[@class='ng-binding']").isDisabled())
+    assert.ok(await $("//button[normalize-space()='Refresh']").isDisabled())
+
+});
+
+step("Select start date,end date and <FHIRExportType> option to export data", async function (FHIRExportType) {
+    let startDate = date.yesterday()
+    let endDate = date.today()
+    await timeField(toRightOf(text("Start Date"))).select(startDate)
+    await timeField(toRightOf(text("End Date"))).select(endDate)
+    if (FHIRExportType === "Non-Anonymised") {
+        await click(checkBox(toLeftOf("Anonymise")))
+    }
+    const zipFilePath = './data.zip';
+    const extractionPath = './extracted_data';
+    await click($("//aria-hidde[@class='ng-binding']"))
+    await click($("//button[normalize-space()='Refresh']"))
+    await requestResponse.deleteIfExists(zipFilePath);
+    await requestResponse.deleteIfExists(extractionPath);
+    //await waitFor(5000);
+});
+
+
+step("Download Zip file,rename it and extract the files present in it", async function () {
+    const requiredFiles = ['Condition.ndjson', 'MedicationRequest.ndjson', 'Patient.ndjson'];
+    var downloadDirectory = path.resolve(__dirname, '../data', 'downloaded');
+    console.log('Download directory:', downloadDirectory);
+    const extractionPath = './extracted_data';
+    console.log('Extraction directory:', extractionPath);
+    fileExtension.removeDir(downloadDirectory);
+
+    await client().send('Page.setDownloadBehavior', {
+        behavior: 'allow',
+        downloadPath: downloadDirectory,
+    });
+
+    await click($("//tbody/tr[1]/td[7]/a[1]"));
+    await waitFor(1000);
+
+    fs.readdir(downloadDirectory, (err, files) => {
+        if (err) {
+            console.error('Error reading directory:', err);
+        } else {
+            console.log('List of files in the downloaded folder:');
+            files.forEach((file) => {
+                var originalFileName = file;
+                console.log(file);
+                const newFileName = 'data.zip';
+                const originalFilePath = path.join(downloadDirectory, originalFileName);
+                const newFilePath = path.join(downloadDirectory, newFileName);
+                fs.rename(originalFilePath, newFilePath, (renameError) => {
+                    if (renameError) {
+                        console.error('Error renaming the file:', renameError);
+                    } else {
+                        console.log('File renamed to "data.zip"');
+                        const zip = new AdmZip(newFilePath);
+                        zip.extractAllTo(extractionPath, true);
+                        fs.readdir(extractionPath, (extractionError, extractedFiles) => {
+                            if (extractionError) {
+                                console.error('Error reading extraction directory:', extractionError);
+                            } else {
+                                for (const file of requiredFiles) {
+                                    if (!extractedFiles.includes(file)) {
+                                        console.error(`Required file '${file}' not found.`);
+                                    } else {
+                                        console.log(`Found file: ${file}`);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        }
+    });
 });

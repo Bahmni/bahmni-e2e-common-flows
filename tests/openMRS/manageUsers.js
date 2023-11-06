@@ -8,6 +8,9 @@ const {
     scrollTo,
     text,
     link,
+    checkBox,
+    toLeftOf,
+    button,
 } = require('taiko');
 var users = require("../util/users");
 
@@ -67,27 +70,27 @@ step("Select <file1> role", async function (roleDetailsFile) {
 });
 
 step("Add <fhirExport> user <filePath>", async function (fhirExport, filePath) {
-
-	await click("Add User");
+    await click("Add User");
     await click("Next", below("Create a new person"));
     gauge.dataStore.scenarioStore.put(fhirExport, filePath)
+    await click(checkBox(toLeftOf("Create a Provider account for this user")))
     //console.log("fhirExport: " + fhirExport)
 });
 
 step("Enter <fhirExportUser> user's personal details", async function (fhirExportUser) {
-	var fhirExportUser = JSON.parse(gauge.dataStore.scenarioStore.get(fhirExportUser))
+    var fhirExportUser = JSON.parse(gauge.dataStore.scenarioStore.get(fhirExportUser))
     await write(fhirExportUser.name, into(textBox(toRightOf("Given"))));
     await click(fhirExportUser.gender);
 });
 
 step("Enter <fhirExportUser> user's details", async function (fhirExportUser) {
-	var fhirExportUser = JSON.parse(gauge.dataStore.scenarioStore.get(fhirExportUser))
+    var fhirExportUser = JSON.parse(gauge.dataStore.scenarioStore.get(fhirExportUser))
     await write(users.getUserNameFromEncoding(fhirExportUser.userDetails), into(textBox(toRightOf("Username"))));
     await write(users.getPasswordFromEncoding(fhirExportUser.userDetails), into(textBox(toRightOf("User's Password"))));
     await write(users.getPasswordFromEncoding(fhirExportUser.userDetails), into(textBox(toRightOf("Confirm Password"))));
 });
 
-step("Find <user1> user and delete it", async function(user1) {
+step("Find <user1> user and delete it", async function (user1) {
     await write(user1, into(textBox(toRightOf("Find User on Name"))));
     await click(button("Search"));
     await click(link(below("System Id")))

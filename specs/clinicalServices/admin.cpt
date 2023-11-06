@@ -62,15 +62,6 @@
 * Open the form created through form builder
 * Click on delete form
 
-# Export Anonymised data using <anonymise> method
-* Configue global variable for <anonymise> method
-* Invoke endpoint for "anonymised" export
-
-# Validate <anonymised> fields from ndjson output
-* Validate medication ndjson file for <anonymised> data
-* Validate patient ndjson file for <anonymised> data
-* Validate condition ndjson file for <anonymised> data
-
 # Configue global variable for <anonymise> method
 * Login to openMRS as user "admin"
 * Goto Administration
@@ -101,8 +92,8 @@
 * Select <filePathRole> role
 * Save hospital user
 
-# Delete user
-* Login to openMRS as user "admin"
-* Goto Administration
-* Manage Users
-* Find "defaultExporter" user and delete it
+# Validate Anonymised fields from ndjson file export
+
+* Validate condition ndjson file for anonymised data
+* Validate medication ndjson file for anonymised data
+*  Validate patient ndjson file for anonymised data

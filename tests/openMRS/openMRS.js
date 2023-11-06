@@ -6,6 +6,7 @@ const {
     into,
     textBox,
     press,
+    openTab,
     text,
 } = require('taiko');
 const taikoHelper = require("../util/taikoHelper")
@@ -22,6 +23,7 @@ step("Goto Administration", async function () {
 });
 
 step("Goto openMRS", async function () {
+    await openTab()
     await goto(process.env.bahmniHost + "/openmrs", { waitForNavigation: true, navigationTimeout: process.env.loginTimeout });
 });
 

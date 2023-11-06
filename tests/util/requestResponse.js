@@ -302,6 +302,7 @@ module.exports = {
     checkCdssIsEnabled: checkCdssIsEnabled,
     getURLToDownloadNDJSONFile: getURLToDownloadNDJSONFile,
     downloadAndProcessData: downloadAndProcessData,
-    createFHIRExport:createFHIRExport
+    createFHIRExport:createFHIRExport,
+    deleteIfExists:deleteIfExists
 }
 
