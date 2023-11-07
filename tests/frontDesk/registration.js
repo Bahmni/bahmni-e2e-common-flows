@@ -23,12 +23,13 @@ const {
     press,
     scrollTo,
     reload,
-    timeField
+    timeField,
+    evaluate
 } = require('taiko');
 var users = require("../util/users");
 var date = require("../util/date");
 const taikoHelper = require("../util/taikoHelper")
-
+const { faker } = require('@faker-js/faker/locale/en_IND');
 var assert = require("assert");
 
 step("Open <moduleName> module", async function (moduleName) {
@@ -152,8 +153,19 @@ step("Login as user <user> with location <location>", async function (user, loca
     }
     await write(users.getUserNameFromEncoding(process.env[user]), into(textBox(toRightOf("Username"))));
     await write(users.getPasswordFromEncoding(process.env[user]), into(textBox(toRightOf("Password"))));
-    await dropDown("Location").select(location);
     await click(button("Login"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+    var loginLocation = gauge.dataStore.scenarioStore.get("loginLocation")
+    if (loginLocation) {
+        await dropDown("Location").select(loginLocation);
+    } else {
+        var randomIndex = (faker.datatype.number({ min: 2, max: (await dropDown('Location').options()).length }) - 1)
+        await dropDown("Location").select({ index: randomIndex });
+        gauge.dataStore.scenarioStore.put("loginLocation", await evaluate(() => {
+            const dropdown = document.querySelector('#location');
+            return dropdown.options[dropdown.selectedIndex].text;
+        }));
+    }
+    await click(button("Submit Location"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
     await taikoHelper.repeatUntilNotFound(text("BAHMNI EMR LOGIN"))
     await taikoHelper.repeatUntilNotFound($("#overlay"))
 });
@@ -164,8 +176,19 @@ step("Login as user <user>", async function (user) {
     }
     await write(users.getUserNameFromEncoding(process.env[user]), into(textBox(toRightOf("Username"))));
     await write(users.getPasswordFromEncoding(process.env[user]), into(textBox(toRightOf("Password"))));
-    await dropDown("Location").select({ index: '1' });
     await click(button("Login"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+    var loginLocation = gauge.dataStore.scenarioStore.get("loginLocation")
+    if (loginLocation) {
+        await dropDown("Location").select(loginLocation);
+    } else {
+        var randomIndex = (faker.datatype.number({ min: 2, max: (await dropDown('Location').options()).length }) - 1)
+        await dropDown("Location").select({ index: randomIndex });
+        gauge.dataStore.scenarioStore.put("loginLocation", await evaluate(() => {
+            const dropdown = document.querySelector('#location');
+            return dropdown.options[dropdown.selectedIndex].text;
+        }));
+    }
+    await click(button("Submit Location"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
     await taikoHelper.repeatUntilNotFound(text("BAHMNI EMR LOGIN"))
     await taikoHelper.repeatUntilNotFound($("#overlay"))
 });
