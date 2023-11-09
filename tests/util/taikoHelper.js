@@ -175,5 +175,5 @@ module.exports = {
     generateRandomDiagnosis: generateRandomDiagnosis,
     returnHeaderPos: returnHeaderPos,
     getSnomedCodeFromSnomedName: getSnomedCodeFromSnomedName,
-    getContraindicativeDrugFromSnomedDiagnosisName: getContraindicativeDrugFromSnomedDiagnosisName
+    getContraindicativeDrugFromSnomedDiagnosisName: getContraindicativeDrugFromSnomedDiagnosisName,
 }

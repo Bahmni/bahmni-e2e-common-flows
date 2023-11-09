@@ -1,8 +1,11 @@
-const path = require('path');
+const {
+    waitFor,
+} = require('taiko'); const path = require('path');
 const axios = require('axios')
 var date = require("./date");
 const assert = require("assert");
 var users = require("./users");
+const uuid = require('uuid');
 const endpoints = require('./../../../tests/API/constants/apiConstants').endpoints;
 
 async function getOpenMRSResponse(request) {
@@ -170,6 +173,116 @@ async function checkCdssIsEnabled() {
     return jsonData;
 
 }
+async function getProcedureDataFromValuesetURL() {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0],
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    return jsonData;
+
+}
+
+async function uploadProcedureOrders(procedureOrders) {
+    let response = await axios({
+        url: `${process.env.bahmniHost}${endpoints.PROCEDURE_ORDERS}`,
+        params: {
+            valueSetId: procedureOrders,
+            locale: "en",
+            conceptClass: "Procedure",
+            conceptDatatype: "N/A",
+            contextRoot: "Procedure Orders",
+        },
+        method: 'post',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var taskLink = response.data
+    return taskLink;
+}
+async function checkStatusForProcedure(endpoint) {
+    var status = ""
+    while (true) {
+        var response = await axios({
+            url: endpoint.replace("http", "https"),
+            method: 'get',
+            headers: {
+                'accept': `application/json`,
+                'Content-Type': `application/json`,
+                'Authorization': `Basic ${process.env.admin}`
+            }
+        });
+
+        var jsonData = response.data
+        status = jsonData.status
+        if (status == "completed" || status == "rejected") {
+            break;
+        }
+        await waitFor(2000)
+    }
+
+    return status;
+
+}
+
+async function createValueSet(jsonFile) {
+    var randomUUID=uuid.v4();
+    jsonFile.id=`bahmni-procedures-head${randomUUID}`;
+    jsonFile.name = `bahmni-procedures-head${randomUUID}`;
+    jsonFile.title = `head-procedure-automation`;
+    jsonFile.url = `${endpoints.VALUESET_URL_PROCEDURE}${randomUUID}`;
+    var body=jsonFile; 
+    let response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0],
+        method: 'post',
+        data: body,
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`
+        }
+    });
+    return jsonFile;
+}
+
+async function getIDFromProcedureValueset(procedureUrl) {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL,
+        params: {
+            url: procedureUrl,
+        },
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data.id
+    return jsonData;
+
+}
+async function deleteProcedureValueset(procedureID) {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0] + procedureID,
+        method: 'delete',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    return jsonData;
+
+}
 
 module.exports = {
     getOpenMRSResponse: getOpenMRSResponse,
@@ -178,5 +291,11 @@ module.exports = {
     setRoles: setRoles,
     checkDiagnosisInOpenmrs: checkDiagnosisInOpenmrs,
     getSnomedDiagnosisDataFromAPI: getSnomedDiagnosisDataFromAPI,
-    checkCdssIsEnabled: checkCdssIsEnabled
+    checkCdssIsEnabled: checkCdssIsEnabled,
+    getProcedureDataFromValuesetURL: getProcedureDataFromValuesetURL,
+    uploadProcedureOrders: uploadProcedureOrders,
+    checkStatusForProcedure: checkStatusForProcedure,
+    createValueSet: createValueSet,
+    getIDFromProcedureValueset: getIDFromProcedureValueset,
+    deleteProcedureValueset: deleteProcedureValueset
 }

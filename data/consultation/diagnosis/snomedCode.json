@@ -27,6 +27,10 @@
             "contraindication_drug": "Atorvastatin (as atorvastatin calcium) 10 mg oral tablet"
         },
         {
+            "diagnosis_name": "procedure",
+            "diagnosis_code": "404684003"
+        },
+        {
             "diagnosis_name": "SARS-CoV-2 breakthrough infection",
             "diagnosis_code": "1217296006"
         },

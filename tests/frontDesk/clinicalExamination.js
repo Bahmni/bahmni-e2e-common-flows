@@ -21,6 +21,7 @@ const {
     button,
     link,
     toLeftOf,
+    currentURL,
     closeTab,
     openTab
 } = require('taiko');
@@ -276,6 +277,52 @@ step("Verify dismissal entry is added in audit log", async function () {
     while (assert.ok(await text("No more events to be displayed !!").exists()));
     await highlight(text(alertMessage))
     assert.ok(await text(alertMessage, toRightOf(patientIdentifier)).exists())
+});
+
+step("Procedure created is uploaded in Bahmni", async function () {
+    var procedureName = gauge.dataStore.scenarioStore.get("procedureName")
+    var taskLink = await requestResponse.uploadProcedureOrders(procedureName);
+    var statusOfProcedure = await requestResponse.checkStatusForProcedure(taskLink);
+    assert.equal(statusOfProcedure, "completed")
+});
+
+step("Click on Procedure", async function() {
+	await scrollTo(" Procedures ")
+    await click(" Procedures ")
+});
+
+step("Add Procedure", async function () {
+	var procedureTitle = gauge.dataStore.scenarioStore.get("procedureTitle")
+    await click(procedureTitle)
+    await scrollTo(" Procedures ")
+    var clinicalProcedure = await $("section[class='orders-section-right'] li:nth-child(1) a:nth-child(1)").text();
+    gauge.dataStore.scenarioStore.put("clinicalProcedure",clinicalProcedure)
+    await click(clinicalProcedure)
+    await click("Save")
+});
+
+step("Verify Procedure on patient clinical dashboard", async function () {
+    var clinicalProcedure = gauge.dataStore.scenarioStore.get("clinicalProcedure")
+    assert.ok(await text(clinicalProcedure, below($("//h2[normalize-space()='Procedure Orders']"))).exists())
+    var bahmniURL=await currentURL();
+    gauge.dataStore.scenarioStore.put("bahmniURL", bahmniURL)
+});
+
+step("Create ValueSet for a procedure <filePath>", async function (filePath) {
+    var jsonFile=JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${filePath}.json`))
+    var procedureValueSet=await requestResponse.createValueSet(jsonFile)
+    var procedureValueSetURL=procedureValueSet.url
+    gauge.dataStore.scenarioStore.put("procedureValueSetURL", procedureValueSetURL)
+    var procedureName = procedureValueSet['name']
+    var procedureTitle = procedureValueSet['title']
+    gauge.dataStore.scenarioStore.put("procedureName", procedureName) 
+    gauge.dataStore.scenarioStore.put("procedureTitle", procedureTitle) 
+});
+
+step("Verify the updated procedure name", async function() {
+    var updatedProcedureName=gauge.dataStore.scenarioStore.get("updatedProcedureName")
+    var updatedClinicalProcedure = await $("section[class='orders-section-right'] li:nth-child(1) a:nth-child(1)").text();
+    assert.equal(updatedClinicalProcedure, updatedProcedureName)
 });
 
 step("Navigate to ICD Mappings Demonstrator portal", async function () {
