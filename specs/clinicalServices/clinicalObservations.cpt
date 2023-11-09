@@ -118,3 +118,15 @@
 # Verify the dosage alert message is displayed for the substance <drugName>
 * Verify the dosage alert message for the substances <drugName>
 * Click on cross button to close the alert
+
+# Navigate to the ICD Mappings Demonstrator and retrieve the ICD-10 codes for <diagnosisName> using the mapRule associated with the <mapRuleCondition> condition
+* Navigate to ICD Mappings Demonstrator portal
+* Enter <diagnosisName> with <mapRuleCondition>
+* Get the ICD-10 code for the SNOMED diagnosis
+
+# Doctor add diagnosis <diagnosisName>
+ * Open clinical tab
+ * Open "Diagnoses" Tab
+ * Doctor add the diagnosis for <diagnosisName> having ICD-10 codes
+ * Save data
+

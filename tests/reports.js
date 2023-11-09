@@ -3,12 +3,12 @@ var assert = require("assert")
 var date = require("./util/date");
 
 step("Select start date, end date and <reportFormat> format for <reportName> and click on run button", async function (reportFormat, reportName) {
-	let startDate = date.yesterday()
+	let startDate = date.today()
 	let endDate = date.today()
-	await timeField(toRightOf(text(reportName)), below(text("Start Date"))).select(startDate)
-	await timeField(toRightOf(text(reportName)), toRightOf(text("Start Date")), below(text("End Date"))).select(endDate)
-	await dropDown(toRightOf(text(reportName)), below(text("Format"))).select(reportFormat)
-	await click(button(toRightOf(text(reportName))))
+	await timeField(within($("//*[normalize-space()='" + reportName + "']/..")), below(text("Start Date"))).select(startDate)
+	await timeField(within($("//*[normalize-space()='" + reportName + "']/..")), toRightOf(text("Start Date")), below(text("End Date"))).select(endDate)
+	await dropDown(within($("//*[normalize-space()='" + reportName + "']/..")), below(text("Format"))).select(reportFormat)
+	await click(button("Run Now"),toRightOf(text(reportName)), within($("//*[normalize-space()='" + reportName + "']/..")))
 });
 
 step("Validate the report generated.", async function () {

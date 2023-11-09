@@ -6,7 +6,10 @@ const {
     into,
     textBox,
     press,
+    link,
+    openTab,
     text,
+    $
 } = require('taiko');
 const taikoHelper = require("../util/taikoHelper")
 var users = require("../util/users");
@@ -22,11 +25,12 @@ step("Goto Administration", async function () {
 });
 
 step("Goto openMRS", async function () {
+    await openTab()
     await goto(process.env.bahmniHost + "/openmrs", { waitForNavigation: true, navigationTimeout: process.env.loginTimeout });
 });
 
 step("Log out of openMRS if still logged in", async function () {
     if (await text("Log out").exists()) {
-        await click("Log out");
+    await click(link("Log out"))
     };
 });

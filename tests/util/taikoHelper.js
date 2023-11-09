@@ -185,5 +185,5 @@ module.exports = {
     returnHeaderPos: returnHeaderPos,
     getSnomedCodeFromSnomedName: getSnomedCodeFromSnomedName,
     getContraindicativeDrugFromSnomedDiagnosisName: getContraindicativeDrugFromSnomedDiagnosisName,
-    getContraindicativeDrugs:getContraindicativeDrugs
+    getContraindicativeDrugs:getContraindicativeDrugs,
 }
