@@ -62,11 +62,11 @@
 * Open the form created through form builder
 * Click on delete form
 
-# Configue global variable for <anonymise> method
+# Validate global property for anonymised config
 * Login to openMRS as user "admin"
 * Goto Administration
 * Open Settings
-* Click on fhir global properties and add config path for <anonymise> method
+* Click on fhir global properties and add config path for anonymise method
 
 
 # Export Non-anonymised data
@@ -96,4 +96,4 @@
 
 * Validate condition ndjson file for anonymised data
 * Validate medication ndjson file for anonymised data
-*  Validate patient ndjson file for anonymised data
+* Validate patient ndjson file for anonymised data

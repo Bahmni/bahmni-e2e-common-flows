@@ -387,9 +387,6 @@ async function validateReport(value, name) {
 }
 
 step("Invoke endpoint for <fhirType> export", async function (fhirType) {
-   // const currentPageUrl = await evaluate(() => window.location.href);
-   // gauge.dataStore.scenarioStore.put("currentPageUrl", currentPageUrl)
-    //console.log("currentPageUrl " + currentPageUrl)
     let taskLink = fhirType == "anonymised" ? await requestResponse.createFHIRExport(true) : await requestResponse.createFHIRExport(false)
     let urlToDownloadFile = await requestResponse.getURLToDownloadNDJSONFile(taskLink);
     await requestResponse.downloadAndProcessData(urlToDownloadFile);
@@ -401,23 +398,10 @@ step("Open Settings", async function () {
 });
 
 
-step("Click on fhir global properties and add config path for <anonymisedType> method", async function (anonymisedType) {
+step("Click on fhir global properties and add config path for anonymise method", async function () {
     await click($("//a[normalize-space()='Fhir']"));
     await clear($("//textarea[@id='settings0.globalProperty.propertyValue']"), { waitForNavigation: false, navigationTimeout: 3000 })
-    switch (anonymisedType) {
-        case 'Redact':
-            await write("/openmrs/data/fhir-export-anonymise-config.json", into($("//textarea[@id='settings0.globalProperty.propertyValue']")));
-            break;
-        case 'Random':
-            await write("/openmrs/data/fhir-export-anonymise-random-config.json", into($("//textarea[@id='settings0.globalProperty.propertyValue']")));
-            break;
-        case 'Fixed':
-            await write("/openmrs/data/fhir-export-anonymise-fixed-config.json", into($("//textarea[@id='settings0.globalProperty.propertyValue']")));
-            break;
-        case 'Correlate':
-            await write("/openmrs/data/fhir-export-anonymise-correlate-config.json", into($("//textarea[@id='settings0.globalProperty.propertyValue']")));
-            break;
-    }
+    await write("/openmrs/data/fhir-export-anonymise-config.json", into($("//textarea[@id='settings0.globalProperty.propertyValue']")));
     await click($("//input[@value='Save']"));
 });
 
@@ -442,8 +426,6 @@ step("Validate patient ndjson file", async function () {
                 assert.equal(obj.birthDate, birthYear)
                 assert.equal(obj.address[0].city, city)
                 assert.equal(obj.telecom[0].value, mobileNumber)
-                console.log("done patient non anonymised")
-
             }
         }
         )
@@ -465,7 +447,6 @@ step("Validate medication ndjson file", async function () {
                 assert.equal(obj.dosageInstruction[0].doseAndRate[0].doseQuantity.value, medicalPrescriptions.dose)
                 assert.equal(obj.dosageInstruction[0].doseAndRate[0].doseQuantity.unit, medicalPrescriptions.units)
                 assert.equal(obj.dosageInstruction[0].timing.repeat.duration, medicalPrescriptions.duration)
-                console.log("done medication non anonymised")
             }
         }
 
@@ -478,13 +459,10 @@ step("Validate condition ndjson file", async function () {
         .pipe(ndjson.parse())
         .on('data', function (obj) {
             var diagnosisName = gauge.dataStore.scenarioStore.get("diagnosisName")
-            console.log("diagnosisName " + diagnosisName)
-            console.log("obj.code.text " + obj.code.text)
             if (diagnosisName === obj.code.text.replace(/\s*\(disorder\)/, '')) {
                 assert.ok(obj.code.text.replace(/\s*\(disorder\)/, ''))
                 var referenceID = obj.id
                 gauge.dataStore.scenarioStore.put("referenceID", referenceID)
-                console.log("done condition non anonymised")
             }
         }
 
@@ -497,72 +475,53 @@ step("Click on FHIR Export module", async function () {
 
 step("Validate condition ndjson file for anonymised data", async function () {
     var referenceID = gauge.dataStore.scenarioStore.get("referenceID")
-    let currentUrl = gauge.dataStore.scenarioStore.get("currentPageUrl");
-    console.log("referenceID " + referenceID)
     const fileStream = fs.createReadStream('./extracted_data/Condition.ndjson');
     fileStream
         .pipe(ndjson.parse())
         .on('data', function (obj) {
-            console.log("obj.id " + obj.id)
             if (obj.id === referenceID) {
-                console.log("Inside condition")
                 var correlatedId = obj["subject"]["reference"].split("/")[1]
-                console.log("correlatedId " + correlatedId )
-                gauge.dataStore.scenarioStore.put("correlatedId ", correlatedId )
+                gauge.dataStore.scenarioStore.put("correlatedId", correlatedId)
                 assert.ok(!obj.subject.recordedDate)
                 assert.ok(!obj.recorder)
                 assert.ok(!obj.encounter)
                 const subjectReference = obj.subject.reference;
-                console.log("subjectReference " + subjectReference)
                 assert.ok(!subjectReference.includes('-'))
-                const regex = /\/patient\/([^/]+)\//;
-                const expectedPatientID = currentUrl.match(regex);
                 let patientReference = obj.subject.reference;
                 let actualPatientID = patientReference.split('/').pop();
-                assert.notEqual(actualPatientID, expectedPatientID);
-                console.log("done condition anonymised")
-
+                validateCorrelatedField(actualPatientID)
             }
         }
         )
 });
 
 step("Validate medication ndjson file for anonymised data", async function () {
-    var correlatedId  = gauge.dataStore.scenarioStore.get("correlatedId")
-    let currentUrl = gauge.dataStore.scenarioStore.get("currentPageUrl");
-    const fileStream = fs.createReadStream('./extracted_data/Patient.ndjson');
+    var correlatedId = gauge.dataStore.scenarioStore.get("correlatedId")
+    const fileStream = fs.createReadStream('./extracted_data/MedicationRequest.ndjson');
     fileStream
         .pipe(ndjson.parse())
         .on('data', function (obj) {
-            if (obj.id === correlatedId) {
-                console.log("Inside medication")
+            if (obj["subject"]["reference"].split("/")[1] === correlatedId) {
                 assert.ok(!obj.priority)
                 assert.ok(!obj.encounter)
                 assert.ok(!obj.authoredOn)
                 assert.ok(!obj.requester)
                 assert.ok(!obj.dosageInstruction)
-                    const actualPatientID = correlatedId ;
-                    assert.ok(!actualPatientID .includes('-'));
-                    const regex = /\/patient\/([^/]+)\//;
-                    const expectedPatientID = currentUrl.match(regex);
-                    console.log("expectedPatientID " + expectedPatientID);
-                    console.log("actualPatientID " + actualPatientID);
-                    assert.notEqual(actualPatientID, expectedPatientID);
-                console.log("done medication correlate")
+                const actualPatientID = correlatedId;
+                assert.ok(!actualPatientID.includes('-'));
+                validateCorrelatedField(actualPatientID)
             }
         }
         )
 });
 
 step("Validate patient ndjson file for anonymised data", async function () {
-    var correlatedId  = gauge.dataStore.scenarioStore.get("correlatedId ")
-    let currentUrl = gauge.dataStore.scenarioStore.get("currentPageUrl");
+    var correlatedId = gauge.dataStore.scenarioStore.get("correlatedId")
     const fileStream = fs.createReadStream('./extracted_data/Patient.ndjson');
     fileStream
         .pipe(ndjson.parse())
         .on('data', function (obj) {
-            if (obj.id === correlatedId ) {
-                console.log("Inside patient")
+            if (obj.id === correlatedId) {
                 assert.ok(!obj.identifier)
                 assert.ok(!obj.address)
                 assert.ok(!obj.name)
@@ -574,24 +533,11 @@ step("Validate patient ndjson file for anonymised data", async function () {
                 assert.equal(birthData, "01")
                 assert.equal(birthMonth, "01")
                 const actualPatientID = obj.id;
-                console.log("actualPatientID " + actualPatientID);
                 assert.ok(!actualPatientID.includes('-'))
-                const regex = /\/patient\/([^/]+)\//;
-                const expectedPatientID = currentUrl.match(regex);
-                console.log("expectedPatientID " + expectedPatientID);
-                assert.notEqual(actualPatientID, expectedPatientID);
-                console.log("done patient anonymised")
-
+                validateCorrelatedField(actualPatientID)
             }
         }
         )
-});
-
-step("Validate privilege to export data", async function () {
-    assert.ok(await text("You do not have sufficient privilege to export data").exists())
-    assert.ok(await $("//aria-hidde[@class='ng-binding']").isDisabled())
-    assert.ok(await $("//button[normalize-space()='Refresh']").isDisabled())
-
 });
 
 step("Select start date,end date and <FHIRExportType> option to export data", async function (FHIRExportType) {
@@ -608,16 +554,13 @@ step("Select start date,end date and <FHIRExportType> option to export data", as
     await click($("//button[normalize-space()='Refresh']"))
     await requestResponse.deleteIfExists(zipFilePath);
     await requestResponse.deleteIfExists(extractionPath);
-    //await waitFor(5000);
 });
 
 
-step("Download Zip file,rename it and extract the files present in it", async function () {
+step("Download and extract zip file", async function () {
     const requiredFiles = ['Condition.ndjson', 'MedicationRequest.ndjson', 'Patient.ndjson'];
     var downloadDirectory = path.resolve(__dirname, '../data', 'downloaded');
-    console.log('Download directory:', downloadDirectory);
     const extractionPath = './extracted_data';
-    console.log('Extraction directory:', extractionPath);
     fileExtension.removeDir(downloadDirectory);
 
     await client().send('Page.setDownloadBehavior', {
@@ -635,7 +578,6 @@ step("Download Zip file,rename it and extract the files present in it", async fu
             console.log('List of files in the downloaded folder:');
             files.forEach((file) => {
                 var originalFileName = file;
-                console.log(file);
                 const newFileName = 'data.zip';
                 const originalFilePath = path.join(downloadDirectory, originalFileName);
                 const newFilePath = path.join(downloadDirectory, newFileName);
@@ -665,3 +607,25 @@ step("Download Zip file,rename it and extract the files present in it", async fu
         }
     });
 });
+
+step("Validate privilege to export FHIR data with <user> credentials", async function (user) {
+    if (user == "doctor") {
+        assert.ok(await text("You do not have sufficient privilege to export data").exists())
+        assert.ok(await $("//aria-hidde[@class='ng-binding']").isDisabled())
+        assert.ok(await $("//button[normalize-space()='Refresh']").isDisabled())
+    }
+    else if (user == "defaultExporter") {
+        assert.ok(await $("//div[@class='note-warning ng-binding']").exists())
+        assert.ok(await $("//input[@id='anonymise']").isDisabled())
+    }
+    else {
+        assert.ok(await $("//div[@class='note-warning ng-binding']").exists())
+    }
+});
+
+async function validateCorrelatedField(actualPatientID) {
+    let patientDashboardUrl = gauge.dataStore.scenarioStore.get("patientDashboardUrl");
+    const regex = /\/patient\/([^/]+)\//;
+    const expectedPatientID = patientDashboardUrl.match(regex);
+    assert.notEqual(actualPatientID, expectedPatientID);
+}
