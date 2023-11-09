@@ -10,6 +10,16 @@
             "contraindication_drug": "Propranolol hydrochloride 80 mg oral tablet"
         },
         {
+            "diagnosis_name": "hypokalemia",
+            "diagnosis_code": "43339004",
+            "contraindication_drug": "Acetazolamide 250 mg oral tablet"
+        },
+        {
+            "diagnosis_name": "hyponatremia",
+            "diagnosis_code": "89627008",
+            "contraindication_drug": "Acetazolamide 250 mg oral tablet"
+        },
+        {
             "diagnosis_name": "covid-19",
             "diagnosis_code": "840539006"
         },
@@ -42,5 +52,8 @@
             "diagnosis_name": "Pelvic peritonitis",
             "diagnosis_code": "788010000"
         }
-    ]
+    ],
+    "drug1": "Amiodarone hydrochloride 100 mg oral tablet",
+    "drug2": "Albendazole 400 mg chewable tablet",
+    "drug_dosage": "Ranitidine (as ranitidine hydrochloride) 150 mg oral tablet "
 }

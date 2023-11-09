@@ -1,0 +1,12 @@
+{
+    "drug_name": "Colchicine 500 microgram and probenecid 500 mg oral tablet",
+    "units": "Tablet(s)",
+    "frequency": "Once a day",
+    "dose": "100",
+    "duration": "1",
+    "notes": "Every 12 hours for 5 days",
+    "RecommendedDoseForColchicine" : "1.0mg",
+    "RecommendedDoseForProbenecid" : "1.0g",
+    "PrescribedDoseForColchicine":"50.00mg",
+    "PrescribedDoseForProbenecid":"50.00g"
+}
