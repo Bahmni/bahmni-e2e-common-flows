@@ -121,17 +121,19 @@ step("Doctor notes the diagnosis and condition <filePath>", async function (file
     var diagnosisFile = `./bahmni-e2e-common-flows/data/${filePath}.json`;
     gauge.dataStore.scenarioStore.put("diagnosisFile", diagnosisFile)
     var medicalDiagnosis = JSON.parse(fileExtension.parseContent(diagnosisFile))
+    gauge.dataStore.scenarioStore.put("medicalDiagnosis", medicalDiagnosis)
     gauge.message(medicalDiagnosis)
-    await click("Diagnosis");
-    await write(medicalDiagnosis.diagnosis.diagnosisName, into(textBox(below("Diagnosis"))));
-    await click("Accept", toRightOf(medicalDiagnosis.diagnosis.diagnosisName))
+    await click("Diagnoses");
+    await write(medicalDiagnosis.diagnosis.diagnosisName, into(textBox(below("Diagnoses"))));
+    await waitFor(() => $("(//A[starts-with(text(),\"" + medicalDiagnosis.diagnosis.diagnosisName + "\")])[1]").isVisible())
+    await click($("(//A[starts-with(text(),\"" + medicalDiagnosis.diagnosis.diagnosisName + "\")])[1]"))
     await click(medicalDiagnosis.diagnosis.order, below("Order"));
     await click(medicalDiagnosis.diagnosis.certainty, below("Certainty"));
     for (var i = 0; i < medicalDiagnosis.condition.length; i++) {
         await write(medicalDiagnosis.condition[i].conditionName, into(textBox(below("Condition"))));
-        waitFor(2000);
-        await click("Accept", toRightOf(medicalDiagnosis.condition[i].conditionName))
-        await click(medicalDiagnosis.condition[i].status, below($("//div[@class='col col2']//span[contains(text(),'Status')]")));
+        await waitFor(() => $("(//A[starts-with(text(),\"" + medicalDiagnosis.condition[i].conditionName + "\")])[1]").isVisible())
+        await click($("(//A[starts-with(text(),\"" + medicalDiagnosis.condition[i].conditionName + "\")])[1]"))
+        await click(medicalDiagnosis.condition[i].status, below($("//div[@class='col col2']//*[contains(text(),'Status')]")));
         await click("Add", below("Action"))
     }
 });
