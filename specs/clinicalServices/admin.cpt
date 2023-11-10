@@ -69,8 +69,8 @@
 * Click on fhir global properties and add config path for anonymise method
 
 
-# Export Non-anonymised data
-* Invoke endpoint for "non-anonymised" export
+# Export <fhirType> data
+* Invoke endpoint for "fhirType" export
 
 # Validate Non-anonymised fields from ndjson file export
 * Validate medication ndjson file

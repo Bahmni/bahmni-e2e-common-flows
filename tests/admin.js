@@ -540,12 +540,12 @@ step("Validate patient ndjson file for anonymised data", async function () {
         )
 });
 
-step("Select start date,end date and <FHIRExportType> option to export data", async function (FHIRExportType) {
+step("Select start date, end date and <FHIRExportType> option to export data", async function (FHIRExportType) {
     let startDate = date.yesterday()
     let endDate = date.today()
     await timeField(toRightOf(text("Start Date"))).select(startDate)
     await timeField(toRightOf(text("End Date"))).select(endDate)
-    if (FHIRExportType === "Non-Anonymised") {
+    if (FHIRExportType === "non-anonymised") {
         await click(checkBox(toLeftOf("Anonymise")))
     }
     const zipFilePath = './data.zip';
