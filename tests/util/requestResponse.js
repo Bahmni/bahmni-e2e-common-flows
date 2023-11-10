@@ -234,12 +234,12 @@ async function checkStatusForProcedure(endpoint) {
 }
 
 async function createValueSet(jsonFile) {
-    var randomUUID=uuid.v4();
-    jsonFile.id=`bahmni-procedures-head${randomUUID}`;
+    var randomUUID = uuid.v4();
+    jsonFile.id = `bahmni-procedures-head${randomUUID}`;
     jsonFile.name = `bahmni-procedures-head${randomUUID}`;
     jsonFile.title = `head-procedure-automation`;
     jsonFile.url = `${endpoints.VALUESET_URL_PROCEDURE}${randomUUID}`;
-    var body=jsonFile; 
+    var body = jsonFile;
     let response = await axios({
         url: endpoints.SNOWSTORM_URL.split('$')[0],
         method: 'post',

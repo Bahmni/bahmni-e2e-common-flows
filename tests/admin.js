@@ -108,7 +108,7 @@ step("edit form <formName>", async function (formName) {
     await click(link(toRightOf(formName)))
 });
 
-step("create obs <obsName> <properties>", async function (obsName, properties) {
+step("Create obs <obsName> <properties>", async function (obsName, properties) {
     await dragAndDrop($("//div[normalize-space()='Obs']"), into($(".form-builder-column")))
     await click("Select Obs Source")
     await write(obsName, into(textBox(below("Control Properties"))))

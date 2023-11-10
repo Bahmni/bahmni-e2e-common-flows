@@ -60,6 +60,7 @@ function getDateYearsAgo(numberOfYearsAgo) {
 }
 function today() {
     const today = new Date()
+    today.setHours(0, 0, 0, 0);
     return today
 }
 
@@ -169,5 +170,5 @@ module.exports = {
     getDateInShortFormat: getDateInShortFormat,
     addDaysAndReturnDateInShortFormat: addDaysAndReturnDateInShortFormat,
     calculate_age: calculate_age,
-    getDateAndTime:getDateAndTime
+    getDateAndTime: getDateAndTime
 }
