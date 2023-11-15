@@ -1,0 +1,9 @@
+{
+    "name":"nonAnonymised",
+    "inheritedRoles":[
+        "anonymised"
+    ],
+    "priviliges":[
+        "Export Non Anonymised Patient Data"
+    ]
+}

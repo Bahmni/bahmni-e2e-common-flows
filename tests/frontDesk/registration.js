@@ -127,7 +127,7 @@ step("Enter random age of the patient", async function () {
 });
 
 step("Enter patient random mobile number", async function () {
-    var mobile = faker.phone.number('+919#########')
+    var mobile = faker.phone.number('9#########')
     if (await text("Primary Contact").exists(500, 1000)) {
         if (gauge.dataStore.scenarioStore.get("isNewPatient"))
             await write(mobile, into(textBox(toRightOf("Primary Contact"))));
@@ -438,13 +438,29 @@ step("Open patient dashboard", async function () {
 });
 
 step("Login as user <user> with location <location> in bahmni snomed", async function (user, location) {
+    // if (!textBox(toRightOf("Username")).exists(0, 0)) {
+    //     await reload()
+    // }
+    // await write(users.getUserNameFromEncoding(process.env[user]), into(textBox(toRightOf("Username"))));
+    // await write(users.getPasswordFromEncoding(process.env[user]), into(textBox(toRightOf("Password"))));
+    // await dropDown("Location").select(location);
+    // await click(button("Login"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+    // await taikoHelper.repeatUntilNotFound(text("BAHMNI EMR LOGIN"))
+    // await taikoHelper.repeatUntilNotFound($("#overlay"))
     if (!textBox(toRightOf("Username")).exists(0, 0)) {
         await reload()
     }
     await write(users.getUserNameFromEncoding(process.env[user]), into(textBox(toRightOf("Username"))));
     await write(users.getPasswordFromEncoding(process.env[user]), into(textBox(toRightOf("Password"))));
-    await dropDown("Location").select(location);
     await click(button("Login"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+    await dropDown("Location").select({ index: '1' });
+    await click(button("Submit Location"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
     await taikoHelper.repeatUntilNotFound(text("BAHMNI EMR LOGIN"))
     await taikoHelper.repeatUntilNotFound($("#overlay"))
+});
+
+step("Save National ID", async function () {
+    var nationalID = await $("//input[@ng-model='identifier.identifier']").text();
+    gauge.dataStore.scenarioStore.put("patientNationalID",nationalID)
+    console.log(nationalID)
 });

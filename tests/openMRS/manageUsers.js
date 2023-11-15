@@ -7,6 +7,10 @@ const {
     toRightOf,
     scrollTo,
     text,
+    link,
+    checkBox,
+    toLeftOf,
+    button,
 } = require('taiko');
 var users = require("../util/users");
 
@@ -27,6 +31,9 @@ step("Add Role <file1> if not already exists", async function (roleDetailsFile) 
         await write(roleDetails.name, into(textBox(toRightOf("Role"))))
         for (var resultIndx = 0; resultIndx < roleDetails.inheritedRoles.length; resultIndx++) {
             await click(roleDetails.inheritedRoles[resultIndx])
+        }
+        for (var resultIndx = 0; resultIndx < roleDetails.priviliges.length; resultIndx++) {
+            await click(roleDetails.priviliges[resultIndx])
         }
         await scrollTo("Save role")
         await click("Save role", { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
@@ -60,4 +67,33 @@ step("Save hospital user", async function () {
 step("Select <file1> role", async function (roleDetailsFile) {
     var roleDetails = JSON.parse(roleDetailsFile)
     await click(roleDetails.name);
+});
+
+step("Add <fhirExport> user <filePath>", async function (fhirExport, filePath) {
+    await click("Add User");
+    await click("Next", below("Create a new person"));
+    gauge.dataStore.scenarioStore.put(fhirExport, filePath)
+    await click(checkBox(toLeftOf("Create a Provider account for this user")))
+    //console.log("fhirExport: " + fhirExport)
+});
+
+step("Enter <fhirExportUser> user's personal details", async function (fhirExportUser) {
+    var fhirExportUser = JSON.parse(gauge.dataStore.scenarioStore.get(fhirExportUser))
+    await write(fhirExportUser.name, into(textBox(toRightOf("Given"))));
+    await click(fhirExportUser.gender);
+});
+
+step("Enter <fhirExportUser> user's details", async function (fhirExportUser) {
+    var fhirExportUser = JSON.parse(gauge.dataStore.scenarioStore.get(fhirExportUser))
+    await write(users.getUserNameFromEncoding(fhirExportUser.userDetails), into(textBox(toRightOf("Username"))));
+    await write(users.getPasswordFromEncoding(fhirExportUser.userDetails), into(textBox(toRightOf("User's Password"))));
+    await write(users.getPasswordFromEncoding(fhirExportUser.userDetails), into(textBox(toRightOf("Confirm Password"))));
+});
+
+step("Find <user1> user and delete it", async function (user1) {
+    await write(user1, into(textBox(toRightOf("Find User on Name"))));
+    await click(button("Search"));
+    await click(link(below("System Id")))
+    await scrollTo("Delete User")
+    await click("Delete User");
 });

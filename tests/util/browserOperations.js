@@ -44,7 +44,7 @@ step("Reload the page", async function () {
     await reload({ waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
 });
 
-step("close tab", async function () {
+step("Close tab", async function () {
     await closeTab()
 });
 

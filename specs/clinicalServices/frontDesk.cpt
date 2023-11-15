@@ -130,6 +130,7 @@
 # Create new patient with random details and start an OPD visit
 * Open "Registration" module
 * Create a new patient with random patient detail for snomed
+  Save National ID
 * Start an OPD Visit
 
 # Create a new patient with random patient detail for snomed
@@ -139,6 +140,7 @@
 * Enter patient random last name
 * Enter patient random gender
 * Enter random age of the patient
+* Enter patient random mobile number
 * Enter random village
 * Upload patient image
 * Save the patient data
@@ -179,7 +181,8 @@
 * Validate "Date of Birth" on diagnosis line reports
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
-* close tab
+* Validate "Date & Time of Diagnosis" on diagnosis line reports
+* Close tab
 
 # Validate the SNOMED diagnosis line report for Asthma
 * Validate "Patient Name" on diagnosis line reports
@@ -190,7 +193,8 @@
 * Validate "Date of Birth" on diagnosis line reports
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
-* close tab
+* Validate "Date & Time of Diagnosis" on diagnosis line reports
+* Close tab
 
 # Validate the SNOMED diagnosis line report for COVID-19
 * Validate "Patient Name" on diagnosis line reports
@@ -203,7 +207,7 @@
 * Validate "Date of Birth" on diagnosis line reports
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
-* close tab
+* Close tab
 
 # Validate the SNOMED diagnosis line report for COVID-19 with ICD-10 code
 * Validate "Patient Name" on diagnosis line reports
@@ -212,7 +216,7 @@
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
 * Validate "ICD10 Code(s)" on diagnosis line reports
-* close tab
+* Close tab
 
 # Validate the SNOMED diagnosis line report for Bronchitis with ICD-10 code
 * Validate "Patient Name" on diagnosis line reports
@@ -221,7 +225,7 @@
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
 * Validate "ICD10 Code(s)" on diagnosis line reports
-* close tab
+* Close tab
 
 # Validate the SNOMED diagnosis line report for Peritonitis with ICD-10 code
 * Validate "Patient Name" on diagnosis line reports
@@ -233,4 +237,4 @@
 * Validate "Diagnosis" on diagnosis line reports
 * Validate "SNOMED Code" on diagnosis line reports
 * Validate "ICD10 Code(s)" on diagnosis line reports
-* close tab 
+* Close tab 

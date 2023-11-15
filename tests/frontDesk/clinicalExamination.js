@@ -10,6 +10,7 @@ const {
     write,
     dropDown,
     highlight,
+    evaluate,
     below,
     within,
     scrollTo,
@@ -59,6 +60,7 @@ step("Doctor prescribes medicines <prescriptionNames>", async function (prescrip
         gauge.dataStore.scenarioStore.put("prescriptions" + i, prescriptionFile)
         var drugName = gauge.dataStore.scenarioStore.get("Drug Name")
         var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
+        gauge.dataStore.scenarioStore.put("medicalPrescriptions", medicalPrescriptions)
         gauge.message(medicalPrescriptions)
 
         if (medicalPrescriptions.drug_name != null) {
@@ -73,6 +75,8 @@ step("Doctor prescribes medicines <prescriptionNames>", async function (prescrip
                 await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
             }
             await click("Add");
+            const patientDashboardUrl = await evaluate(() => window.location.href);
+            gauge.dataStore.scenarioStore.put("patientDashboardUrl", patientDashboardUrl)
         }
 
     }
@@ -225,7 +229,29 @@ step("Click on dismiss button", async function () {
     assert.ok(await $("//i[@class='fa fa-exclamation-circle cdss-icon-medication']").exists())
 });
 
-step("Verify CDSS is enabled in openMRS in order to trigger contraindication alerts", async function () {
+step("Doctor should be able to add drug after adding the mandatory details", async function () {
+    var prescriptionFile = `./bahmni-e2e-common-flows/data/consultation/diagnosis/snomedMedication.json`;
+    var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
+    gauge.dataStore.scenarioStore.put("medicalPrescriptions", medicalPrescriptions)
+    var drugName = gauge.dataStore.scenarioStore.get("drugName")
+    medicalPrescriptions["drugName"] = drugName;
+    await dropDown(toRightOf("Units")).select(medicalPrescriptions.units);
+    await dropDown(toRightOf("Frequency")).select(medicalPrescriptions.frequency)
+    await write(medicalPrescriptions.dose, into(textBox(toRightOf("Dose"))));
+    await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
+    await click("Add");
+    const patientDashboardUrl = await evaluate(() => window.location.href);
+    gauge.dataStore.scenarioStore.put("patientDashboardUrl", patientDashboardUrl)
+});
+
+step("Verify medication on patient clinical dashboard", async function () {
+    var medicalPrescriptions = gauge.dataStore.scenarioStore.get("medicalPrescriptions")
+    assert.ok(await text(medicalPrescriptions.drugName, within($("#Treatments"))).exists())
+    assert.ok(await text(`${medicalPrescriptions.dose} ${medicalPrescriptions.units}, ${medicalPrescriptions.frequency}`, within($("#Treatments"))).exists())
+    assert.ok(await text(`${medicalPrescriptions.duration} Day(s)`, within($("#Treatments"))).exists())
+});
+
+step("Verify CDSS is enabled in openmrs in order to trigger contraindication alerts", async function () {
     var cdssEnable = requestResponse.checkCdssIsEnabled()
     assert.ok(cdssEnable)
 });
@@ -285,20 +311,19 @@ step("Doctor is able to select the reason for dismissal", async function () {
 });
 
 step("Verify the dosage alert message for the substances <drugName>", async function (drugName) {
-    var prescriptionFile ="./bahmni-e2e-common-flows/data/consultation/medications/Colchicine.json"
+    var prescriptionFile = "./bahmni-e2e-common-flows/data/consultation/medications/Colchicine.json"
     var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
     var data = fileExtension.parseContent("./bahmni-e2e-common-flows/data/consultation/medications/verifyDrugDosageAlertMessage.txt")
     if (drugName == "Probenecid") {
         var expected = data.replace('<substanceName>', drugName)
-        .replace('<prescribedDose>', medicalPrescriptions.PrescribedDoseForProbenecid)
-        .replace('<recommendedDose>', medicalPrescriptions.RecommendedDoseForProbenecid)
-        //await click($("//p[@ng-class=\"{'strike-text': !alert.isActive}\"][1]"))
+            .replace('<prescribedDose>', medicalPrescriptions.PrescribedDoseForProbenecid)
+            .replace('<recommendedDose>', medicalPrescriptions.RecommendedDoseForProbenecid)
         await click($("//div[@class='active-drug-alert bg-warning']"))
     }
     else {
         var expected = data.replace('<substanceName>', drugName)
-        .replace('<prescribedDose>', medicalPrescriptions.PrescribedDoseForColchicine)
-        .replace('<recommendedDose>', medicalPrescriptions.RecommendedDoseForColchicine)
+            .replace('<prescribedDose>', medicalPrescriptions.PrescribedDoseForColchicine)
+            .replace('<recommendedDose>', medicalPrescriptions.RecommendedDoseForColchicine)
         await click($("//div[@class='active-drug-alert bg-warning']"))
     }
     var actual = await $("//div[@class='cdss-alert-details']//div[@class='alert-detail']").text()
@@ -312,17 +337,17 @@ step("Procedure created is uploaded in Bahmni", async function () {
     assert.equal(statusOfProcedure, "completed")
 });
 
-step("Click on Procedure", async function() {
-	await scrollTo(" Procedures ")
+step("Click on Procedure", async function () {
+    await scrollTo(" Procedures ")
     await click(" Procedures ")
 });
 
 step("Add Procedure", async function () {
-	var procedureTitle = gauge.dataStore.scenarioStore.get("procedureTitle")
+    var procedureTitle = gauge.dataStore.scenarioStore.get("procedureTitle")
     await click(procedureTitle)
     await scrollTo(" Procedures ")
     var clinicalProcedure = await $("section[class='orders-section-right'] li:nth-child(1) a:nth-child(1)").text();
-    gauge.dataStore.scenarioStore.put("clinicalProcedure",clinicalProcedure)
+    gauge.dataStore.scenarioStore.put("clinicalProcedure", clinicalProcedure)
     await click(clinicalProcedure)
     await click("Save")
 });
@@ -330,23 +355,23 @@ step("Add Procedure", async function () {
 step("Verify Procedure on patient clinical dashboard", async function () {
     var clinicalProcedure = gauge.dataStore.scenarioStore.get("clinicalProcedure")
     assert.ok(await text(clinicalProcedure, below($("//h2[normalize-space()='Procedure Orders']"))).exists())
-    var bahmniURL=await currentURL();
+    var bahmniURL = await currentURL();
     gauge.dataStore.scenarioStore.put("bahmniURL", bahmniURL)
 });
 
 step("Create ValueSet for a procedure <filePath>", async function (filePath) {
-    var jsonFile=JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${filePath}.json`))
-    var procedureValueSet=await requestResponse.createValueSet(jsonFile)
-    var procedureValueSetURL=procedureValueSet.url
+    var jsonFile = JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${filePath}.json`))
+    var procedureValueSet = await requestResponse.createValueSet(jsonFile)
+    var procedureValueSetURL = procedureValueSet.url
     gauge.dataStore.scenarioStore.put("procedureValueSetURL", procedureValueSetURL)
     var procedureName = procedureValueSet['name']
     var procedureTitle = procedureValueSet['title']
-    gauge.dataStore.scenarioStore.put("procedureName", procedureName) 
-    gauge.dataStore.scenarioStore.put("procedureTitle", procedureTitle) 
+    gauge.dataStore.scenarioStore.put("procedureName", procedureName)
+    gauge.dataStore.scenarioStore.put("procedureTitle", procedureTitle)
 });
 
-step("Verify the updated procedure name", async function() {
-    var updatedProcedureName=gauge.dataStore.scenarioStore.get("updatedProcedureName")
+step("Verify the updated procedure name", async function () {
+    var updatedProcedureName = gauge.dataStore.scenarioStore.get("updatedProcedureName")
     var updatedClinicalProcedure = await $("section[class='orders-section-right'] li:nth-child(1) a:nth-child(1)").text();
     assert.equal(updatedClinicalProcedure, updatedProcedureName)
 });
@@ -357,18 +382,18 @@ step("Navigate to ICD Mappings Demonstrator portal", async function () {
 });
 
 step("Enter <diagnosisName> with <mapRuleCondition>", async function (diagnosisName, mapRuleCondition) {
-    await getICD10Code(diagnosisName,mapRuleCondition)
+    await getICD10Code(diagnosisName, mapRuleCondition)
 });
 
 
-async function getICD10Code(diagnosisName,mapRuleCondition) {
+async function getICD10Code(diagnosisName, mapRuleCondition) {
     let patientGender = gauge.dataStore.scenarioStore.get("patientGender")
     let patientAge = gauge.dataStore.scenarioStore.get("patientAge")
     await clear($("//input[@id='mat-input-0']"), { waitForNavigation: false, navigationTimeout: 3000 })
-    if (mapRuleCondition=="age") {
+    if (mapRuleCondition == "age") {
         await write(patientAge, into(textBox(toRightOf("Age: "))))
     }
-    else if (mapRuleCondition=="gender") {
+    else if (mapRuleCondition == "gender") {
         await click($("//div[@id='mat-select-value-1']"))
         await click($("//span[normalize-space()='" + patientGender + "']"))
     }
