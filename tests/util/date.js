@@ -1,4 +1,5 @@
-
+const assert = require("assert");
+const { validate } = require("uuid");
 function yesterday() {
     const today = new Date()
     const yesterday = new Date(today)
@@ -59,6 +60,7 @@ function getDateYearsAgo(numberOfYearsAgo) {
 }
 function today() {
     const today = new Date()
+    today.setHours(0, 0, 0, 0);
     return today
 }
 
@@ -145,6 +147,7 @@ function getDateAndTime(date) {
     return `${date.getDate().toString().padStart(2, '0')}-${date.toLocaleString('en-us', { month: 'short' })}-${date.getFullYear()} ${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}`
 }
 
+
 module.exports = {
     today: today,
     yesterday: yesterday,
@@ -167,5 +170,5 @@ module.exports = {
     getDateInShortFormat: getDateInShortFormat,
     addDaysAndReturnDateInShortFormat: addDaysAndReturnDateInShortFormat,
     calculate_age: calculate_age,
-    getDateAndTime:getDateAndTime
+    getDateAndTime: getDateAndTime
 }

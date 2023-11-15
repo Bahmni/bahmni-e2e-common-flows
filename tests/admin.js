@@ -29,12 +29,14 @@ const {
     highlight,
     mouseAction,
     currentURL,
+    switchTo,
     radioButton,
     fileField,
     tableCell,
     clear,
     timeField,
-    client
+    client,
+    to,
 } = require('taiko');
 
 const path = require('path');
@@ -113,7 +115,7 @@ step("edit form <formName>", async function (formName) {
     await click(link(toRightOf(formName)))
 });
 
-step("create obs <obsName> <properties>", async function (obsName, properties) {
+step("Create obs <obsName> <properties>", async function (obsName, properties) {
     await dragAndDrop($("//div[normalize-space()='Obs']"), into($(".form-builder-column")))
     await click("Select Obs Source")
     await write(obsName, into(textBox(below("Control Properties"))))
@@ -177,7 +179,7 @@ step("select the type of concept being created as <conceptType>", async function
     await dropDown(toRightOf("Class")).select(conceptType);
 });
 
-step("save the concept", async function () {
+step("Save the concept", async function () {
     await click("Save Concept");
 });
 
@@ -386,6 +388,60 @@ async function validateReport(value, name) {
     assert.equal(actual, expected);
 }
 
+step("Search Body Site name", async function () {
+    var procedureTitle = gauge.dataStore.scenarioStore.get("procedureTitle")
+    var procedureName = gauge.dataStore.scenarioStore.get("procedureName")
+    await write(procedureTitle, into(textBox(below("Find Concept(s)"))));
+    await click(button("Search"));
+    await click(procedureName)
+
+});
+
+step("Update the procedure name", async function () {
+    await clear($("input[value='Reattachment of muscle']"), toRightOf("Short Name"), { waitForNavigation: false, navigationTimeout: 3000 })
+    var updatedProcedureName = users.randomName(10)
+    gauge.dataStore.scenarioStore.put("updatedProcedureName", updatedProcedureName)
+    await write(updatedProcedureName, into(textBox(toRightOf("Short Name"))))
+    var openmrsURL = await currentURL()
+    gauge.dataStore.scenarioStore.put("openmrsURL", openmrsURL)
+
+});
+
+step("Click on Procedure name", async function () {
+    var clinicalProcedure = gauge.dataStore.scenarioStore.get("clinicalProcedure")
+    await click(clinicalProcedure)
+
+});
+
+step("Click on Edit", async function () {
+    await click($("//a[@id='editConcept']"));
+});
+
+step("Switch to <tabName> tab", async function (tabName) {
+    var bahmniURL = gauge.dataStore.scenarioStore.get("bahmniURL")
+    var openmrsURL = gauge.dataStore.scenarioStore.get("openmrsURL")
+    if (tabName == "openMRS") {
+        openmrsURL = openmrsURL.replace("form", "htm")
+        await switchTo(openmrsURL)
+    }
+    else {
+        await switchTo(bahmniURL)
+    }
+});
+
+
+step("Remove the procedure from openMRS", async function () {
+    await write("Procedure Orders", into(textBox(toLeftOf($("//input[@value='Search']")))));
+    await click(button("Search"));
+    await click($("//span[normalize-space()='Procedure Orders']"))
+    await click($("//a[@id='editConcept']"));
+    await highlight($("//select[@id='conceptSetsNames']"))
+    await click($("//tr[12]//td//tr//td[1]//*[contains(text(),'bahmni-procedures-head')]"))
+    await click(button("Remove"))
+    await click("Save Concept");
+    await closeTab();
+});
+
 step("Invoke endpoint for <fhirType> export", async function (fhirType) {
     let taskLink = fhirType == "anonymised" ? await requestResponse.createFHIRExport(true) : await requestResponse.createFHIRExport(false)
     let urlToDownloadFile = await requestResponse.getURLToDownloadNDJSONFile(taskLink);
@@ -442,7 +498,7 @@ step("Validate medication ndjson file", async function () {
             let identifier = match[1];
             var medicalPrescriptions = gauge.dataStore.scenarioStore.get("medicalPrescriptions")
             if (identifier == patientIdentifierValue) {
-                assert.equal(obj.medicationCodeableConcept.text, gauge.dataStore.scenarioStore.get("drugName"))
+                assert.equal(obj.medicationCodeableConcept.text, medicalPrescriptions.drug_name)
                 assert.equal(obj.dosageInstruction[0].timing.code.text, medicalPrescriptions.frequency)
                 assert.equal(obj.dosageInstruction[0].doseAndRate[0].doseQuantity.value, medicalPrescriptions.dose)
                 assert.equal(obj.dosageInstruction[0].doseAndRate[0].doseQuantity.unit, medicalPrescriptions.units)
@@ -575,7 +631,6 @@ step("Download and extract zip file", async function () {
         if (err) {
             console.error('Error reading directory:', err);
         } else {
-            console.log('List of files in the downloaded folder:');
             files.forEach((file) => {
                 var originalFileName = file;
                 const newFileName = 'data.zip';
@@ -585,7 +640,6 @@ step("Download and extract zip file", async function () {
                     if (renameError) {
                         console.error('Error renaming the file:', renameError);
                     } else {
-                        console.log('File renamed to "data.zip"');
                         const zip = new AdmZip(newFilePath);
                         zip.extractAllTo(extractionPath, true);
                         fs.readdir(extractionPath, (extractionError, extractedFiles) => {
@@ -595,8 +649,6 @@ step("Download and extract zip file", async function () {
                                 for (const file of requiredFiles) {
                                     if (!extractedFiles.includes(file)) {
                                         console.error(`Required file '${file}' not found.`);
-                                    } else {
-                                        console.log(`Found file: ${file}`);
                                     }
                                 }
                             }

@@ -6,8 +6,10 @@ const {
     into,
     textBox,
     press,
+    link,
     openTab,
     text,
+    $
 } = require('taiko');
 const taikoHelper = require("../util/taikoHelper")
 var users = require("../util/users");
@@ -29,6 +31,6 @@ step("Goto openMRS", async function () {
 
 step("Log out of openMRS if still logged in", async function () {
     if (await text("Log out").exists()) {
-        await click("Log out");
+    await click(link("Log out"))
     };
 });

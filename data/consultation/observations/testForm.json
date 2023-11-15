@@ -3,17 +3,17 @@
     "ObservationFormDetails": [
         {
             "type": "TextBox",
-            "label": "HEIGHT",
-            "short_name": "HEIGHT",
-            "value": "172",
+            "label": "Heart Rate",
+            "short_name": "Heart Rate",
+            "value": "72",
             "unit": ""
         },
         {
             "type": "Button",
-            "label": "Is admission to hospital required?",
-            "short_name": "Is admission to hospital required?",
-            "value": "Inpatient management not required",
-            "shortValue": "Inpatient management not required (finding)"
+            "label": "Heart Rate Abnormal",
+            "short_name": "Heart Rate Abnormal",
+            "value": "No",
+            "shortValue": "No"
         },
         {
             "type": "Group",

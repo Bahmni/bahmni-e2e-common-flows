@@ -90,7 +90,7 @@ step("Verify medical prescription in patient clinical dashboard", async function
         var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
         assert.ok(await text(medicalPrescriptions.drug_name, within($("#Treatments"))).exists())
         assert.ok(await text(`${medicalPrescriptions.dose} ${medicalPrescriptions.units}, ${medicalPrescriptions.frequency}`, within($("#Treatments"))).exists())
-        assert.ok(await text(`${medicalPrescriptions.duration} Days`, within($("#Treatments"))).exists())
+        assert.ok(await text(`${medicalPrescriptions.duration} Day(s)`, within($("#Treatments"))).exists())
     }
 });
 
@@ -234,9 +234,9 @@ step("Validate <patientDetail> on diagnosis line reports", async function (patie
             let expectedClass = "General"
             assert.equal(actual, expectedClass)
             break;
-        case 'Date & Time of Diagnosis':
-            let dateTime=gauge.dataStore.scenarioStore.get("dateTime")
-            assert.equal(actual, dateTime)
+        case 'ICD10 Code(s)':
+            let icd10Code = gauge.dataStore.scenarioStore.get("icd10Code")
+            assert.equal(actual.trim(), icd10Code.trim())
             break;
         default:
             assert.equal(actual, "")

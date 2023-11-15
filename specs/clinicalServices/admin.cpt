@@ -25,7 +25,7 @@
 * enter a description
 * select the type of concept being created as "Drug"
 * make it saleable
-* save the concept
+* Save the concept
 
 # Do Search Index
 * Click Search Index
@@ -70,7 +70,7 @@
 
 
 # Export <fhirType> data
-* Invoke endpoint for "fhirType" export
+* Invoke endpoint for <fhirType> export
 
 # Validate Non-anonymised fields from ndjson file export
 * Validate medication ndjson file

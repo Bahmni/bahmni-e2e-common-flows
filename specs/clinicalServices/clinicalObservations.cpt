@@ -95,5 +95,38 @@
 * Enter Form Values <formPath>
 * Verify no error displayed on page
 
-# Doctor adds a drug that has contraindication with the diagnosis <diagnosisName>
-* Doctor add the drug for <diagnosisName>
+# Verify that the medication is striked off after it is dismissed
+* Click on cross button to close the alert
+* Verify that the medication is striked off
+
+# Doctor add drugs <medications> which are contraindicative with each other
+* Open "Medications" Tab
+* Doctor prescribes medicines <medications>
+
+# Doctor add a drug with high dosage <medications>
+* Open "Medications" Tab
+* Doctor prescribes medicines <medications>
+
+# Doctor select the reason for dismissal
+* Verify that a list of reasons for dismissal is displayed
+* Doctor is able to select the reason for dismissal
+
+# Doctor prescribes a drug <medications> that is contraindicated for the patient's diagnosis
+* Open "Medications" Tab
+* Doctor prescribes medicines <medications>
+
+# Verify the dosage alert message is displayed for the substance <drugName>
+* Verify the dosage alert message for the substances <drugName>
+* Click on cross button to close the alert
+
+# Navigate to the ICD Mappings Demonstrator and retrieve the ICD-10 codes for <diagnosisName> using the mapRule associated with the <mapRuleCondition> condition
+* Navigate to ICD Mappings Demonstrator portal
+* Enter <diagnosisName> with <mapRuleCondition>
+* Get the ICD-10 code for the SNOMED diagnosis
+
+# Doctor add diagnosis <diagnosisName>
+ * Open clinical tab
+ * Open "Diagnoses" Tab
+ * Doctor add the diagnosis for <diagnosisName> having ICD-10 codes
+ * Save data
+

@@ -1,14 +1,15 @@
 const { $, goto, below, write, textBox, into, click, toLeftOf, dropDown, checkBox, reload, text, timeField, waitFor, highlight, screenshot, toRightOf, button, switchTo, within } = require('taiko');
 var assert = require("assert")
 var date = require("./util/date");
+const { format } = require("date-fns")
 
 step("Select start date, end date and <reportFormat> format for <reportName> and click on run button", async function (reportFormat, reportName) {
-	let startDate = date.yesterday()
-	let endDate = date.today()
-	await timeField(toRightOf(text(reportName)), below(text("Start Date"))).select(startDate)
-	await timeField(toRightOf(text(reportName)), toRightOf(text("Start Date")), below(text("End Date"))).select(endDate)
-	await dropDown(toRightOf(text(reportName)), below(text("Format"))).select(reportFormat)
-	await click(button(toRightOf(text(reportName))))
+	let startDate = format(date.today(), "dd/MM/yyyy")
+	let endDate = format(date.today(), "dd/MM/yyyy")
+	await write(startDate, into($("//TH[@class='reports-start-date']/input"), within($("//*[normalize-space()='" + reportName + "']/.."))))
+	await write(endDate, into($("//TH[@class='reports-stop-date']/input"), within($("//*[normalize-space()='" + reportName + "']/.."))))
+	await dropDown(within($("//*[normalize-space()='" + reportName + "']/..")), below(text("Format"))).select(reportFormat)
+	await click(button("Run Now"),toRightOf(text(reportName)), within($("//*[normalize-space()='" + reportName + "']/..")))
 });
 
 step("Validate the report generated.", async function () {

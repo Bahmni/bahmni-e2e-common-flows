@@ -1,7 +1,6 @@
 const {
     waitFor,
-} = require('taiko');
-const path = require('path');
+} = require('taiko');const path = require('path');
 const axios = require('axios')
 const Module = require('module');
 //require("../../data")
@@ -10,6 +9,7 @@ const assert = require("assert");
 const zlib = require('zlib');
 const unzipper = require('unzipper');
 var users = require("./users");
+const uuid = require('uuid');
 const { url } = require('inspector');
 const fs = require('fs').promises;
 const yauzl = require('yauzl');
@@ -184,10 +184,229 @@ async function checkCdssIsEnabled() {
     return jsonData;
 
 }
+async function getProcedureDataFromValuesetURL() {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0],
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    return jsonData;
+
+}
+
+async function uploadProcedureOrders(procedureOrders) {
+    let response = await axios({
+        url: `${process.env.bahmniHost}${endpoints.PROCEDURE_ORDERS}`,
+        params: {
+            valueSetId: procedureOrders,
+            locale: "en",
+            conceptClass: "Procedure",
+            conceptDatatype: "N/A",
+            contextRoot: "Procedure Orders",
+        },
+        method: 'post',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var taskLink = response.data
+    return taskLink;
+}
+async function checkStatusForProcedure(endpoint) {
+    var status = ""
+    while (true) {
+        var response = await axios({
+            url: endpoint.replace("http", "https"),
+            method: 'get',
+            headers: {
+                'accept': `application/json`,
+                'Content-Type': `application/json`,
+                'Authorization': `Basic ${process.env.admin}`
+            }
+        });
+
+        var jsonData = response.data
+        status = jsonData.status
+        if (status == "completed" || status == "rejected") {
+            break;
+        }
+        await waitFor(2000)
+    }
+
+    return status;
+
+}
+
+async function createValueSet(jsonFile) {
+    var randomUUID = uuid.v4();
+    jsonFile.id = `bahmni-procedures-head${randomUUID}`;
+    jsonFile.name = `bahmni-procedures-head${randomUUID}`;
+    jsonFile.title = `head-procedure-automation`;
+    jsonFile.url = `${endpoints.VALUESET_URL_PROCEDURE}${randomUUID}`;
+    var body = jsonFile;
+    let response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0],
+        method: 'post',
+        data: body,
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`
+        }
+    });
+    return jsonFile;
+}
+
+async function getIDFromProcedureValueset(procedureUrl) {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL,
+        params: {
+            url: procedureUrl,
+        },
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data.id
+    return jsonData;
+
+}
+async function deleteProcedureValueset(procedureID) {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0] + procedureID,
+        method: 'delete',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    return jsonData;
+
+}
+async function getProcedureDataFromValuesetURL() {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0],
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    return jsonData;
+
+}
+
+async function uploadProcedureOrders(procedureOrders) {
+    let response = await axios({
+        url: `${process.env.bahmniHost}${endpoints.PROCEDURE_ORDERS}`,
+        params: {
+            valueSetId: procedureOrders,
+            locale: "en",
+            conceptClass: "Procedure",
+            conceptDatatype: "N/A",
+            contextRoot: "Procedure Orders",
+        },
+        method: 'post',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var taskLink = response.data
+    return taskLink;
+}
+async function checkStatusForProcedure(endpoint) {
+    var status = ""
+    while (true) {
+        var response = await axios({
+            url: endpoint.replace("http", "https"),
+            method: 'get',
+            headers: {
+                'accept': `application/json`,
+                'Content-Type': `application/json`,
+                'Authorization': `Basic ${process.env.admin}`
+            }
+        });
+
+        var jsonData = response.data
+        status = jsonData.status
+        if (status == "completed" || status == "rejected") {
+            break;
+        }
+        await waitFor(2000)
+    }
+
+    return status;
+
+}
+
+async function createValueSet(jsonFile) {
+    var randomUUID = uuid.v4();
+    jsonFile.id = `bahmni-procedures-head${randomUUID}`;
+    jsonFile.name = `bahmni-procedures-head${randomUUID}`;
+    jsonFile.title = `head-procedure-automation`;
+    jsonFile.url = `${endpoints.VALUESET_URL_PROCEDURE}${randomUUID}`;
+    var body = jsonFile;
+    let response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0],
+        method: 'post',
+        data: body,
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`
+        }
+    });
+    return jsonFile;
+}
+
+async function getIDFromProcedureValueset(procedureUrl) {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL,
+        params: {
+            url: procedureUrl,
+        },
+        method: 'get',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data.id
+    return jsonData;
+
+}
+async function deleteProcedureValueset(procedureID) {
+    var response = await axios({
+        url: endpoints.SNOWSTORM_URL.split('$')[0] + procedureID,
+        method: 'delete',
+        headers: {
+            'accept': `application/json`,
+            'Content-Type': `application/json`,
+            'Authorization': `Basic ${process.env.admin}`
+        }
+    });
+    var jsonData = response.data
+    return jsonData;
+
+}
 
 async function createFHIRExport(isAnonymised) {
    const  url= process.env.bahmniHost + endpoints.FHIR_EXPORT;
-    //const url = "https://dev.snomed.mybahmni.in/openmrs/ws/rest/v1/fhirexport";
 
     const headers = {
         'accept': 'application/json',
@@ -222,7 +441,6 @@ async function getURLToDownloadNDJSONFile(taskLink) {
                 'Authorization': `Basic ${process.env.plainExporter}`
             }
         });
-        //console.log(response.data);
         var jsonData = response.data
         status = jsonData.status
         if (status == "completed" || status == "rejected") {
@@ -252,18 +470,13 @@ async function downloadAndProcessData(apiUrl) {
 
     await fs.writeFile(zipFilePath, Buffer.from(response.data, 'binary'));
 
-    //console.log('ZIP file downloaded successfully.');
     const zip = new AdmZip(zipFilePath);
     zip.extractAllTo(extractionPath, true);
-
-   // console.log('ZIP file extracted successfully.');
     try {
         const extractedFiles = await fs.readdir(extractionPath);
         for (const file of requiredFiles) {
             if (!extractedFiles.includes(file)) {
                 console.error(`Required file '${file}' not found.`);
-            } else {
-                console.log(`Found file: ${file}`);
             }
         }
     } catch (error) {
@@ -282,8 +495,6 @@ async function deleteIfExists(path) {
         } else {
             await fs.unlink(path);
         }
-
-        console.log(`${path} deleted successfully.`);
     } catch (error) {
     }
 }
@@ -300,9 +511,16 @@ module.exports = {
     checkDiagnosisInOpenmrs: checkDiagnosisInOpenmrs,
     getSnomedDiagnosisDataFromAPI: getSnomedDiagnosisDataFromAPI,
     checkCdssIsEnabled: checkCdssIsEnabled,
+    getProcedureDataFromValuesetURL: getProcedureDataFromValuesetURL,
+    uploadProcedureOrders: uploadProcedureOrders,
+    checkStatusForProcedure: checkStatusForProcedure,
+    createValueSet: createValueSet,
+    getIDFromProcedureValueset: getIDFromProcedureValueset,
+    deleteProcedureValueset: deleteProcedureValueset,
     getURLToDownloadNDJSONFile: getURLToDownloadNDJSONFile,
     downloadAndProcessData: downloadAndProcessData,
     createFHIRExport:createFHIRExport,
     deleteIfExists:deleteIfExists
 }
+
 
