@@ -371,7 +371,7 @@ async function getValueAndShortNameFromJsonFile(configurations) {
             await validateReport(configuration.shortValue, configuration.short_name)
         }
         else if (configuration.type === 'DropDown') {
-            await validateReport(configuration.fullValue, configuration.short_name)
+            await validateReport(configuration.value, configuration.short_name)
         }
         else {
             await validateReport(configuration.value, configuration.short_name)

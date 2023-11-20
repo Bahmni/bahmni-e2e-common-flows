@@ -251,7 +251,7 @@ step("Verify medication on patient clinical dashboard", async function () {
     assert.ok(await text(`${medicalPrescriptions.duration} Day(s)`, within($("#Treatments"))).exists())
 });
 
-step("Verify CDSS is enabled in openmrs in order to trigger contraindication alerts", async function () {
+step("Verify CDSS is enabled in openMRS in order to trigger contraindication alerts", async function () {
     var cdssEnable = requestResponse.checkCdssIsEnabled()
     assert.ok(cdssEnable)
 });
