@@ -9,13 +9,6 @@
             "unit": ""
         },
         {
-            "type": "Button",
-            "label": "Heart Rate Abnormal",
-            "short_name": "Heart Rate Abnormal",
-            "value": "No",
-            "shortValue": "No"
-        },
-        {
             "type": "Group",
             "label": "Coronary Artery Disease, Progress",
             "value": [
@@ -38,46 +31,11 @@
                     "value": "No change"
                 },
                 {
-                    "type": "Button",
-                    "label": "Coronary Artery Disease, Symptoms of Angina",
-                    "short_name": "Symptoms of Angina since last visit",
-                    "value": "Yes",
-                    "shortValue": "True"
-                },
-                {
-                    "type": "Button",
-                    "label": "Coronary Artery Disease, Symptoms of Heart Failure",
-                    "short_name": "Symptoms Of Heart Failure Since Last Visit",
-                    "value": "No",
-                    "shortValue": "False"
-                },
-                {
-                    "type": "Button",
-                    "label": "Coronary Artery Disease, Is on Max Dose Anti-Anginal",
-                    "short_name": "Is patient on max dose anti-anginal medicines",
-                    "value": "Yes",
-                    "shortValue": "True"
-                },
-                {
                     "type": "DropDown",
                     "label": "Coronary Artery Disease, Risk factors",
                     "short_name": "Risk factors",
                     "value": "Structure of apex of heart",
                     "fullValue": "Structure of apex of heart (body structure)"
-                },
-                {
-                    "type": "Button",
-                    "label": "Coronary Artery Disease, Patient on Atorvastatin",
-                    "short_name": "Is patient on Atorvastatin (at least 20 mg)",
-                    "value": "No",
-                    "shortValue": "False"
-                },
-                {
-                    "type": "Button",
-                    "label": "Coronary Artery Disease, Patient on Low Dose Aspirin",
-                    "short_name": "Is patient on low dose aspirin ?",
-                    "value": "Yes",
-                    "shortValue": "True"
                 }
             ]
         }
