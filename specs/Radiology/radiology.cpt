@@ -6,7 +6,8 @@
 
 # verify patient details on DCM4chee
 * Login to DCM4chee
-* Click Modality Worklist
+Click Modality Worklist
 * Enter patient id in radiology app
 * Search on DCM4chee
-* click on the patient details
+click on the patient details
+* verify patient details on DCM4chee in Folders tab

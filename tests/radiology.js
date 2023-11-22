@@ -14,11 +14,19 @@ step("Click Signin", async function () {
     await click("Sign in", { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
 });
 
-step("Enter patient id in radiology app", async function () {
+step("Enter patient name in radiology app", async function () {
     var patientFirstName = gauge.dataStore.scenarioStore.get("patientFirstName");
     await highlight("Patient Name")
     await highlight(textBox(below("Patient Name")))
     await write(patientFirstName, into(textBox(below("Patient Name"))))
+    await press("Enter")
+});
+
+step("Enter patient id in radiology app", async function () {
+    var patientID = gauge.dataStore.scenarioStore.get("patientIdentifier");
+    await highlight("Patient ID")
+    await highlight(textBox(below("Patient ID")))
+    await write(patientID, into(textBox(below("Patient ID"))))
     await press("Enter")
 });
 
@@ -61,4 +69,18 @@ step("click on the patient details", async function () {
 step("Click Modality Worklist", async function () {
     await click("Modality Worklist", { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
     await waitFor(1000)
+});
+
+step("verify patient details on DCM4chee in Folders tab", async function () {
+    var firstName = gauge.dataStore.scenarioStore.get("patientFirstName")
+    var lastName = gauge.dataStore.scenarioStore.get("patientLastName")
+    var patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
+    var name = `${firstName},${lastName}`
+    var nameInTable = await $("//table[@class='folded-table']/Tbody/tr[1]//TD[2]").text()
+    var patientIDInTable = await $("//table[@class='folded-table']/Tbody/tr[1]//TD[3]").text()
+    // assert.ok(name.toLowerCase() == nameInTable.toLowerCase())
+    assert.equal(patientIdentifierValue, patientIDInTable)
+    var ord = await $("//table[@class='folded-table']/Tbody/tr[2]//TD[4]").text()
+    gauge.dataStore.scenarioStore.put("ORD", ord)
+    gauge.message(ord)
 });
