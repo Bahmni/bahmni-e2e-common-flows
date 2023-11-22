@@ -681,3 +681,9 @@ async function validateCorrelatedField(actualPatientID) {
     const expectedPatientID = patientDashboardUrl.match(regex);
     assert.notEqual(actualPatientID, expectedPatientID);
 }
+
+step("Verify the short name of the procedure setMember in openMRS", async function () {
+	let expectedName=gauge.dataStore.scenarioStore.get("clinicalProcedure")
+    let actualName=await textBox(toRightOf("Short Name")).value()
+    assert.equal(actualName,expectedName)
+});
