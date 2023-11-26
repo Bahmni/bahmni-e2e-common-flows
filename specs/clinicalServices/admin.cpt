@@ -50,3 +50,52 @@
 # Navigate to Audit Log module
 * Open "Admin" module
 * Open Audit Log module
+# Create a form with form name as <formName>
+* Open Form builder
+* Create a form
+* Enter form name as <formName>
+* start creating a form
+
+# Delete the <formName> from the openMRS if exist
+* Click on Manage Forms
+* Delete <formName> if exist
+
+# Delete the procedure from openMRS
+* Goto Dictionary
+* Search procedure name and delete it
+
+# Validate global property for anonymised config
+* Login to openMRS as user "admin"
+* Goto Administration
+* Open Settings
+* Click on fhir global properties and add config path for anonymise method
+
+
+# Export <fhirType> data
+* Invoke endpoint for <fhirType> export
+
+# Validate Non-anonymised fields from ndjson file export
+* Validate medication ndjson file
+* Validate patient ndjson file 
+* Validate condition ndjson file
+
+# Create user and role to export Anonymised and Non-anonymised data
+* Create "defaultFhirExport" user <file:bahmni-e2e-common-flows/data/fhirExportUser/defaultExporter.json> and role <file:bahmni-e2e-common-flows/data/fhirExportUser/defaultExporterRole.json> to export data
+* Create "plainFhirExport" user <file:bahmni-e2e-common-flows/data/fhirExportUser/plainExporter.json> and role <file:bahmni-e2e-common-flows/data/fhirExportUser/plainExporterRole.json> to export data
+
+
+# Create <fhirExport> user <filePathUser> and role <filePathRole> to export data
+* Manage Roles
+* Add Role <filePathRole> if not already exists
+* Manage Users
+* Add <fhirExport> user <filePathUser>
+* Enter <fhirExport> user's personal details
+* Enter <fhirExport> user's details
+* Select <filePathRole> role
+* Save hospital user
+
+# Validate Anonymised fields from ndjson file export
+
+* Validate condition ndjson file for anonymised data
+* Validate medication ndjson file for anonymised data
+* Validate patient ndjson file for anonymised data

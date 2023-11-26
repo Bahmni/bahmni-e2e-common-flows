@@ -1,0 +1,14 @@
+Substance : <substanceName>
+
+Present in this patient’s medication :
+
+Colchicine 500 microgram and probenecid 500 mg oral tablet
+
+Route of administration :
+
+Oral
+Prescribed daily dose : <prescribedDose>
+Recommended average daily dose : <recommendedDose>
+Prescribed amount is 50 times over the average daily dose
+
+Conclusion : Combined prescribed amount is 50.00 times the average daily dose.

@@ -15,7 +15,10 @@ const {
     waitFor,
     scrollTo,
     highlight,
-    link
+    link,
+    below,
+    closeTab,
+    evaluate,
 } = require('taiko');
 const taikoHelper = require("../util/taikoHelper")
 var fileExtension = require("../util/fileExtension")
@@ -79,11 +82,14 @@ step("verify OPD", async function () {
 
 step("Verify medical prescription in patient clinical dashboard", async function () {
     await taikoHelper.repeatUntilNotFound($(".dashboard-section-loader"))
-    var prescriptionFile = gauge.dataStore.scenarioStore.get("prescriptions")
-    var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
-    assert.ok(await (await text(medicalPrescriptions.drug_name)).exists())
-    assert.ok(await (await text(`${medicalPrescriptions.dose} ${medicalPrescriptions.units}, ${medicalPrescriptions.frequency}`)).exists())
-    assert.ok(await (await text(`${medicalPrescriptions.duration} Day(s)`)).exists())
+    var prescriptionCount = gauge.dataStore.scenarioStore.get("prescriptionsCount")
+    for (var i = 0; i < prescriptionCount; i++) {
+        var prescriptionFile = gauge.dataStore.scenarioStore.get("prescriptions" + i)
+        var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
+        assert.ok(await text(medicalPrescriptions.drug_name, within($("#Treatments"))).exists())
+        assert.ok(await text(`${medicalPrescriptions.dose} ${medicalPrescriptions.units}, ${medicalPrescriptions.frequency}`, within($("#Treatments"))).exists())
+        assert.ok(await text(`${medicalPrescriptions.duration} Day(s)`, within($("#Treatments"))).exists())
+    }
 });
 
 step("Verify vitals", async function () {
@@ -125,3 +131,96 @@ step("Validate the lab tests are available in patient clinical dashboard", async
     var labTest =gauge.dataStore.scenarioStore.get("LabTest")
     assert.ok(await text(labTest,within($("//section[@id='Lab-Results']"))).exists())
 });
+
+step("Verify diagnosis in patient clinical dashboard", async function () {
+    var medicalDiagnosis = gauge.dataStore.scenarioStore.get("medicalDiagnosis")
+    assert.ok(await text(medicalDiagnosis.diagnosis.diagnosisName, toLeftOf(medicalDiagnosis.diagnosis.certainty, toRightOf(medicalDiagnosis.diagnosis.order)), within($("#Diagnoses"))).exists())
+});
+
+
+step("Validate the count report for <ParentClass> and check count is increased and the added diagnosis is present in the report when descendents of <ChildClass> is added", async function (arg0, ChildClass) {
+    var medicalDiagnosis = gauge.dataStore.scenarioStore.get("medicalDiagnosis")
+    var countBeforeAddingDiagnosis = gauge.dataStore.scenarioStore.get("countBeforeAddingDiagnosis")
+    var countPos = await taikoHelper.returnHeaderPos("Count")
+    assert.ok(await text(medicalDiagnosis.diagnosis.diagnosisName, below(text("Diagnosis"))).exists())
+    await highlight($("//TD[normalize-space()='" + medicalDiagnosis.diagnosis.diagnosisName + "']/../TD[" + countPos + "]"))
+    var countAfterAddingDiagnosis = await $("//TD[normalize-space()='" + medicalDiagnosis.diagnosis.diagnosisName + "']/../TD[" + countPos + "]").text()
+    assert.ok(countAfterAddingDiagnosis > countBeforeAddingDiagnosis)
+    await closeTab();
+});
+
+step("Validate the count report for <ParentClass>  and check added diagnosis is not present in the report when descendents of <hildClass> is added", async function (ParentClass, hildClass) {
+    var medicalDiagnosis = gauge.dataStore.scenarioStore.get("medicalDiagnosis")
+    assert.ok(!await text(medicalDiagnosis.diagnosis.diagnosisName, below(text("Diagnosis"))).exists())
+    await closeTab();
+});
+
+step("Validate report and check count before adding diagnosis", async function () {
+    var countBeforeAddingDiagnosis = 0;
+    var diagnosisName = gauge.dataStore.scenarioStore.get("diagnosisName")
+    if (!await text(diagnosisName, below(text("Diagnosis"))).exists() === true) {
+        gauge.dataStore.scenarioStore.put("countBeforeAddingDiagnosis", countBeforeAddingDiagnosis)
+    }
+    else {
+        var countPos = await taikoHelper.returnHeaderPos("Count")
+        var countBeforeAddingDiagnosis = await $("//TD[normalize-space()='" + diagnosisName + "']/../TD[" + countPos + "]").text()
+        gauge.dataStore.scenarioStore.put("countBeforeAddingDiagnosis", countBeforeAddingDiagnosis)
+    }
+    await closeTab();
+})
+
+step("Validate <patientDetail> on diagnosis line reports", async function (patientDetail) {
+    let patientIdentifier = gauge.dataStore.scenarioStore.get("patientIdentifier")
+    var countPos = await taikoHelper.returnHeaderPos(patientDetail)
+    var actual = await $("//TD[normalize-space()='" + patientIdentifier + "']/../TD[" + countPos + "]").text()
+    switch (patientDetail) {
+        case 'Patient Name':
+            let firstName = gauge.dataStore.scenarioStore.get("patientFirstName")
+            let lastName = gauge.dataStore.scenarioStore.get("patientLastName")
+            let expectedPatientName = `${firstName} ${lastName}`
+            assert.equal(actual, expectedPatientName)
+            break;
+        case 'Gender':
+            let expectedGender = (gauge.dataStore.scenarioStore.get("patientGender") == "Female") ? "F" : "M";
+            assert.equal(actual, expectedGender)
+            break;
+        case 'Date of Birth':
+            let expectedBirthDate = gauge.dataStore.scenarioStore.get("patientBirthDate")
+            assert.equal(actual, expectedBirthDate)
+            break;
+        case 'Diagnosis':
+            let expectedDiagnosisName = gauge.dataStore.scenarioStore.get("diagnosisName")
+            assert.equal(actual, expectedDiagnosisName)
+            break;
+        case 'SNOMED Code':
+            let expectedDiagnosisCode = gauge.dataStore.scenarioStore.get("diagnosisCode")
+            assert.equal(actual, expectedDiagnosisCode)
+            break;
+        case 'city_village':
+            let expectedVillage = gauge.dataStore.scenarioStore.get("village")
+            assert.equal(actual, expectedVillage)
+            break;
+        case 'class':
+            let expectedClass = "General"
+            assert.equal(actual, expectedClass)
+            break;
+        case 'ICD10 Code(s)':
+            let icd10Code = gauge.dataStore.scenarioStore.get("icd10Code")
+            assert.equal(actual.trim(), icd10Code.trim())
+            break;
+        default:
+            assert.equal(actual, "")
+            break;
+    }
+});
+
+step("Validate obs <formPath> on the patient clinical dashboard", async function (formPath) {
+    var obsFormValues = JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/${formPath}.json`))
+    gauge.dataStore.scenarioStore.put(obsFormValues.ObservationFormName, obsFormValues)
+    await taikoHelper.repeatUntilNotFound($("#overlay"))
+    await evaluate($("//SPAN[normalize-space()='" + obsFormValues.ObservationFormName.trim() + "']/..//i[@class='fa fa-eye']"), (el) => el.click())
+    await taikoHelper.repeatUntilNotFound($("#overlay"))
+    await taikoHelper.validateFormFromFile(obsFormValues.ObservationFormDetails, obsFormValues.ObservationFormName)
+    await click($('.ngdialog-close'))
+});
+

@@ -1,5 +1,13 @@
 "use strict";
 var Buffer = require('buffer/').Buffer
+const { faker } = require('@faker-js/faker/locale/en_IND');
+const fs = require('fs');
+const Axios = require('axios')
+const { csv } = require('csvtojson');
+const path = require('path')
+const assert = require("assert")
+const fileExtension = require("./fileExtension")
+const { waitFor } = require("taiko")
 
 function getUserNameFromEncoding(encodedUser){
     let user = new Buffer(encodedUser,'base64');
@@ -44,10 +52,66 @@ function getRegID(){
     return "BAH-".concat(randomNumber(10000,1000000));
 }
 
+function getRandomPatientGender() {
+    var patientGender = gauge.dataStore.scenarioStore.get("patientGender")
+    if (!patientGender) {
+        patientGender = faker.name.sexType()
+        patientGender = patientGender.charAt(0).toUpperCase() + patientGender.slice(1);
+    }
+    gauge.dataStore.scenarioStore.put("patientGender", patientGender);
+    return patientGender;
+}
+
+async function downloadAndReturnImage() {
+    fileExtension.createDirIfNotPresent("temp");
+    var filepath = "temp/image" + faker.datatype.number({ min: 1, max: 100 }) + ".jpg"
+    var response = "";
+    let max_Retry = 5
+    while (max_Retry > 0) {
+        try {
+            response = await Axios({
+                url: faker.image.avatar(),
+                method: 'GET',
+                responseType: 'stream'
+            });
+            await response.data.pipe(fs.createWriteStream(filepath));
+            await waitFor(500);
+            await waitFor(() => fileExtension.exists(filepath));
+            assert.ok(fileExtension.exists(filepath), "Patient image not downloaded.");
+            max_Retry = 0;
+        } catch (e) {
+            console.log("Image download failed - " + e.message + ". Retrying...")
+            max_Retry = max_Retry - 1;
+        }
+    }
+    return filepath;
+}
+async function downloadAndReturnBase64Image() {
+    let image = await Axios.get(faker.image.avatar(), { responseType: 'arraybuffer' });
+    let strB64Image = Buffer.from(image.data).toString('base64');
+    return strB64Image;
+}
+
+
+async function randomZipCodeStateAndDistrict() {
+    let jsonfile = await csv().fromFile(path.resolve(__dirname, "../../data/", process.env.addresshierarchyPath));
+    var randomRow = faker.datatype.number({ min: 1, max: jsonfile.length });
+    var pincode = jsonfile[randomRow]["ZIP"]
+    gauge.dataStore.scenarioStore.put("pincode", pincode)
+    var state = jsonfile[randomRow]["STATE"]
+    gauge.dataStore.scenarioStore.put("state", state)
+    var district = jsonfile[randomRow]["DISTRICT"]
+    gauge.dataStore.scenarioStore.put("district", district)
+}
+
 module.exports={
     getRegID:getRegID,
     randomName:randomName,
     getUserNameFromEncoding:getUserNameFromEncoding,
     getPasswordFromEncoding:getPasswordFromEncoding,
-    getGender:getGender
+    getGender:getGender,
+    downloadAndReturnBase64Image:downloadAndReturnBase64Image,
+    randomZipCodeStateAndDistrict:randomZipCodeStateAndDistrict,
+    downloadAndReturnImage:downloadAndReturnImage,
+    getRandomPatientGender:getRandomPatientGender
 }

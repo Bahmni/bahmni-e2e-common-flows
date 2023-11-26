@@ -117,6 +117,13 @@ function getDateInLongFromat(date) {
 function getddmmmyyyyFormattedDate(date) {
     return `${date.getDate()}-${date.toLocaleString('en-us', { month: 'short' })}-${date.getFullYear()}`
 }
+function addDaysAndReturnDateInShortFormat(intDays) {
+    return getDateInShortFormat(new Date().setDate(new Date().getDate() + parseInt(intDays)))
+}
+function getDateInShortFormat(date) {
+    date = new Date(date)
+    return `${date.getDate().toString().padStart(2, '0')} ${date.toLocaleString('en-us', { month: 'short' })} ${date.getFullYear().toString().slice(2, 4)}`
+}
 module.exports = {
     today: today,
     yesterday: yesterday,
@@ -134,5 +141,7 @@ module.exports = {
     minusMinutes: minusMinutes,
     addMinutes: addMinutes,
     getDateInLongFromat: getDateInLongFromat,
-    getddmmmyyyyFormattedDate: getddmmmyyyyFormattedDate
+    getddmmmyyyyFormattedDate: getddmmmyyyyFormattedDate,
+    addDaysAndReturnDateInShortFormat:addDaysAndReturnDateInShortFormat,
+    getDateInShortFormat:getDateInShortFormat
 }
