@@ -57,10 +57,10 @@
 * Enter form name as <formName>
 * start creating a form
 
-# Delete the form from the openMRS
+# Delete the <formName> from the openMRS if exist
+
 * Click on Manage Forms
-* Open the form created through form builder
-* Click on delete form
+* Delete <formName> if exist
 
 # Validate global property for anonymised config
 * Login to openMRS as user "admin"

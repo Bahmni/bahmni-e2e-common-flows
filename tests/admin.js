@@ -346,14 +346,15 @@ step("Click on Manage Forms", async function () {
     await click("Manage Forms");
 });
 
-step("Open the form created through form builder", async function () {
-    var formName = gauge.dataStore.scenarioStore.get("FormName")
-    await click(formName)
-});
 
-step("Click on delete form", async function () {
+
+step("Delete <formName> if exist", async function(formName) {
+	if(await $("//a[normalize-space()='Test Form']").exists())
+    {
+    await click(formName)
     confirm('Are you sure you want to delete this entire form AND schema?', async () => await accept());
     await click($("//input[@value='Delete Form']"))
+    }
 });
 
 step("Validate the report generated for Snomed form builder form Report <observationFormFile>", async function (observationFormFile) {
