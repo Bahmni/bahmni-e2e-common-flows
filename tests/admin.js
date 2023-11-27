@@ -43,7 +43,7 @@ var taikoHelper = require("./util/taikoHelper");
 var users = require("./util/users");
 const csvConfig = require("./util/csvConfig");
 var date = require("./util/date");
-const endpoints=require('./../../tests/API/Constants/apiConstants').endpoints;
+const endpoints = require('./snomedEndpoints').endpoints;
 const requestResponse = require('./util/requestResponse');
 const AdmZip = require('adm-zip');
 var fileExtension = require("./util/fileExtension");
@@ -300,12 +300,11 @@ step("Click on Manage Forms", async function () {
     await click("Manage Forms");
 });
 
-step("Delete <formName> if exist", async function(formName) {
-	if(await $("//a[normalize-space()='Test Form']").exists())
-    {
-    await click(formName)
-    confirm('Are you sure you want to delete this entire form AND schema?', async () => await accept());
-    await click($("//input[@value='Delete Form']"))
+step("Delete <formName> if exist", async function (formName) {
+    if (await $("//a[normalize-space()='Test Form']").exists()) {
+        await click(formName)
+        confirm('Are you sure you want to delete this entire form AND schema?', async () => await accept());
+        await click($("//input[@value='Delete Form']"))
     }
 });
 
@@ -319,7 +318,7 @@ step("Create obs group <obsName> and add an ecl query for <obsField> <properties
         if (row.cells[0] === "Url") {
             await highlight(row.cells[0])
             var snomedCode = await taikoHelper.getSnomedCodeFromSnomedName(obsField)
-            await write(endpoints.ECL_QUERY+snomedCode, into(textBox(toRightOf(row.cells[0]))))
+            await write(endpoints.ECL_QUERY + snomedCode, into(textBox(toRightOf(row.cells[0]))))
         }
         else {
 
@@ -355,8 +354,7 @@ step("Create obs <obsName> <properties>", async function (obsName, properties) {
     await write(obsName, into(textBox(below("Control Properties"))))
     await press('Enter')
     await click(obsName)
-    for (var row of properties.rows)
-    {
+    for (var row of properties.rows) {
         if (row.cells[0] === "Url") {
             await highlight(row.cells[0])
             await write(endpoints.VALUESET_URL, into(textBox(toRightOf(row.cells[0]))))
@@ -370,7 +368,7 @@ step("Create obs <obsName> <properties>", async function (obsName, properties) {
 });
 
 step("Search procedure name and delete it", async function () {
-	var procedureTitle = gauge.dataStore.scenarioStore.get("procedureTitle")
+    var procedureTitle = gauge.dataStore.scenarioStore.get("procedureTitle")
     var procedureName = gauge.dataStore.scenarioStore.get("procedureName")
     await write(procedureTitle, into(textBox(below("Find Concept(s)"))));
     await click(button("Search"));
@@ -380,9 +378,9 @@ step("Search procedure name and delete it", async function () {
     await click($("//input[@value='Delete Concept']"))
 });
 
-step("Delete the procedure from snowstorm", async function() {
-    var procedureValueSetURL=gauge.dataStore.scenarioStore.get("procedureValueSetURL")
-	var procedureID= await requestResponse.getIDFromProcedureValueset(procedureValueSetURL)
+step("Delete the procedure from snowstorm", async function () {
+    var procedureValueSetURL = gauge.dataStore.scenarioStore.get("procedureValueSetURL")
+    var procedureID = await requestResponse.getIDFromProcedureValueset(procedureValueSetURL)
     await requestResponse.deleteProcedureValueset(procedureID)
 });
 
@@ -640,9 +638,9 @@ async function validateCorrelatedField(actualPatientID) {
 }
 
 step("Verify the short name of the procedure setMember in openMRS", async function () {
-	let expectedName=gauge.dataStore.scenarioStore.get("clinicalProcedure")
-    let actualName=await textBox(toRightOf("Short Name")).value()
-    assert.equal(actualName,expectedName)
+    let expectedName = gauge.dataStore.scenarioStore.get("clinicalProcedure")
+    let actualName = await textBox(toRightOf("Short Name")).value()
+    assert.equal(actualName, expectedName)
 });
 
 async function getValueAndShortNameFromJsonFile(configurations) {

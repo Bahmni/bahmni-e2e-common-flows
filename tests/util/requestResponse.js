@@ -13,7 +13,7 @@ const fs = require('fs').promises;
 const yauzl = require('yauzl');
 const readline = require('readline');
 const { createReadStream } = require('fs');
-const endpoints = require('./../../../tests/API/Constants/apiConstants').endpoints;
+const endpoints = require('../snomedEndpoints').endpoints;
 const fileExtension = require("./fileExtension")
 const AdmZip = require('adm-zip');
 
