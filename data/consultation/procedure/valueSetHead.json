@@ -1,0 +1,40 @@
+{
+    "resourceType": "ValueSet",
+    "id": "<name>",
+    "url": "<url>",
+    "version": "0.1",
+    "name": "<name>",
+    "title": "<title>",
+    "description": "List of possible procedures on head",
+    "status": "draft",
+    "experimental": true,
+    "compose": {
+        "include": [
+            {
+                "system": "http://snomed.info/sct",
+                "concept": [
+                    {
+                        "display": "Reattachment of Head Muscle",
+                        "code": "7486007"
+                    },
+                    {
+                        "display": "Change of Bandage from Head",
+                        "code": "448958000"
+                    },
+                    {
+                        "display": "Change of Splint from Head",
+                        "code": "302618007"
+                    },
+                    {
+                        "display": "Change of Cast from Head",
+                        "code": "180290000"
+                    },
+                    {
+                        "display": "Compression on Head with Pressure Dressing",
+                        "code": "450631000"
+                    }
+                ]
+            }
+        ]
+    }
+}

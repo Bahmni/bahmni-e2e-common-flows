@@ -1,0 +1,56 @@
+{
+    "snomedNameCodeMapping": [
+        {
+            "diagnosis_name": "malaria",
+            "diagnosis_code": "61462000"
+        },
+        {
+            "diagnosis_name": "asthma",
+            "diagnosis_code": "195967001",
+            "contraindication_drug": "Propranolol hydrochloride 80 mg oral tablet"
+        },
+        {
+            "diagnosis_name": "hypokalemia",
+            "diagnosis_code": "43339004",
+            "contraindication_drug": "Acetazolamide 250 mg oral tablet"
+        },
+        {
+            "diagnosis_name": "hyponatremia",
+            "diagnosis_code": "89627008",
+            "contraindication_drug": "Acetazolamide 250 mg oral tablet"
+        },
+        {
+            "diagnosis_name": "covid-19",
+            "diagnosis_code": "840539006"
+        },
+        {
+            "diagnosis_name": "clinical_finding",
+            "diagnosis_code": "404684003"
+        },
+        {
+            "diagnosis_name": "Coronary Artery Disease, Risk factors",
+            "diagnosis_code": "80891009"
+        },
+        {
+            "diagnosis_name": "Disease of liver",
+            "diagnosis_code": "235856003",
+            "contraindication_drug": "Atorvastatin (as atorvastatin calcium) 10 mg oral tablet"
+        },
+        {
+            "diagnosis_name": "procedure",
+            "diagnosis_code": "404684003"
+        },
+        {
+            "diagnosis_name": "SARS-CoV-2 breakthrough infection",
+            "diagnosis_code": "1217296006"
+        },
+        {
+            "diagnosis_name": "Bronchitis",
+            "diagnosis_code": "32398004"
+        },
+        {
+            "diagnosis_name": "Pelvic peritonitis",
+            "diagnosis_code": "788010000"
+        }
+    ]
+}

@@ -128,3 +128,119 @@
 * Save visit data
 * wait for overlay to disappear
 
+# Random SNOMED diagnosis is identified using ECL query for <diagnosisName> which is not present in Openmrs Database and Doctor adds the identified SNOMED diagnosis in bahmni using <type> search
+* Random snomed diagnosis is identified and verified in openmrs <diagnosisName>
+* Doctor add the diagnosis for <type>
+* Save data
+
+# Doctor adds the random SNOMED descendant of <diagnosisName> using <type> search
+ * Doctor add the diagnosis for <type>
+ * Save data
+
+
+# Login to Bahmni SNOMED location <location> as a <user>
+* Goto Clinical application
+* Check if "Clinical Service" app is opened
+* wait for overlay to disappear
+* Log out if still logged in
+* Login as user <user> with location <location> in bahmni snomed
+# Create new patient with random details and start an OPD visit
+* Open "Registration" module
+* Create a new patient with random patient detail for snomed
+* Start an OPD Visit
+
+# Create a new patient with random patient detail for snomed
+* Click create new patient
+* Enter patient random first name
+* Enter patient random middle name
+* Enter patient random last name
+* Enter patient random gender
+* Enter random age of the patient
+* Enter patient random mobile number
+* Enter random village
+* Upload patient image
+* Save the patient data
+* Verify no error displayed on page
+
+# Logout and Login to Bahmni SNOMED location <location> as a <user>
+* Log out if still logged in
+* Login as user <user> with location <location> in bahmni snomed
+
+# Validate the count report for <reportName> before adding the identified diagnosis <diagnosisName>
+* Random SNOMED diagnosis is identified using ECL query for descendants of <diagnosisName>
+* Doctor checks for the diagnosis in report <reportName>
+
+# Doctor checks for the diagnosis in report <reportName>
+* Select start date, end date and "HTML" format for <reportName> and click on run button
+* Validate report and check count before adding diagnosis
+* Click on home page
+
+# Validate the SNOMED diagnosis line report for Malaria
+* Validate "Patient Name" on diagnosis line reports
+* Validate "Gender" on diagnosis line reports
+* Validate "Date of Birth" on diagnosis line reports
+* Validate "Diagnosis" on diagnosis line reports
+* Validate "SNOMED Code" on diagnosis line reports
+* Close tab
+
+# Validate the SNOMED diagnosis line report for Asthma
+* Validate "Patient Name" on diagnosis line reports
+* Validate "Gender" on diagnosis line reports
+* Validate "education" on diagnosis line reports
+* Validate "class" on diagnosis line reports
+* Validate "city_village" on diagnosis line reports
+* Validate "Date of Birth" on diagnosis line reports
+* Validate "Diagnosis" on diagnosis line reports
+* Validate "SNOMED Code" on diagnosis line reports
+* Close tab
+
+# Validate the SNOMED diagnosis line report for COVID-19
+* Validate "Patient Name" on diagnosis line reports
+* Validate "Gender" on diagnosis line reports
+* Validate "education" on diagnosis line reports
+* Validate "class" on diagnosis line reports
+* Validate "occupation" on diagnosis line reports
+* Validate "city_village" on diagnosis line reports
+* Validate "address1" on diagnosis line reports
+* Validate "Date of Birth" on diagnosis line reports
+* Validate "Diagnosis" on diagnosis line reports
+* Validate "SNOMED Code" on diagnosis line reports
+* Close tab
+
+# Validate the SNOMED diagnosis line report for COVID-19 with ICD-10 code
+* Validate "Patient Name" on diagnosis line reports
+* Validate "Gender" on diagnosis line reports
+* Validate "Date of Birth" on diagnosis line reports
+* Validate "Diagnosis" on diagnosis line reports
+* Validate "SNOMED Code" on diagnosis line reports
+* Validate "ICD10 Code(s)" on diagnosis line reports
+* Close tab
+
+# Validate the SNOMED diagnosis line report for Bronchitis with ICD-10 code
+* Validate "Patient Name" on diagnosis line reports
+* Validate "Gender" on diagnosis line reports
+* Validate "Date of Birth" on diagnosis line reports
+* Validate "Diagnosis" on diagnosis line reports
+* Validate "SNOMED Code" on diagnosis line reports
+* Validate "ICD10 Code(s)" on diagnosis line reports
+* Close tab
+
+# Validate the SNOMED diagnosis line report for Peritonitis with ICD-10 code
+* Validate "Patient Name" on diagnosis line reports
+* Validate "Gender" on diagnosis line reports
+* Validate "education" on diagnosis line reports
+* Validate "class" on diagnosis line reports
+* Validate "city_village" on diagnosis line reports
+* Validate "Date of Birth" on diagnosis line reports
+* Validate "Diagnosis" on diagnosis line reports
+* Validate "SNOMED Code" on diagnosis line reports
+* Validate "ICD10 Code(s)" on diagnosis line reports
+* Close tab
+
+# Visit is closed at the front desk
+* Open "Registration" module
+* Open newly created patient details by search
+* Enter visit details
+* Confirm if you want to close the visit
+* Close visit
+

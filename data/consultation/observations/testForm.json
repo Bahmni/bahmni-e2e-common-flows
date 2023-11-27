@@ -1,0 +1,43 @@
+{
+    "ObservationFormName": "Test Form",
+    "ObservationFormDetails": [
+        {
+            "type": "TextBox",
+            "label": "Heart Rate",
+            "short_name": "Heart Rate",
+            "value": "72",
+            "unit": ""
+        },
+        {
+            "type": "Group",
+            "label": "Coronary Artery Disease, Progress",
+            "value": [
+                {
+                    "type": "TextArea",
+                    "label": "Coronary Artery Disease, EKG",
+                    "short_name": "Last EKG",
+                    "value": "Not found"
+                },
+                {
+                    "type": "TextArea",
+                    "label": "Coronary Artery Disease, If Not Aspirin What is the Contraindication",
+                    "short_name": "If not on aspirin what is the contraindication",
+                    "value": "Paracetamol"
+                },
+                {
+                    "type": "TextArea",
+                    "label": "Coronary Artery Disease, Changes in EKG",
+                    "short_name": "Any changes in EKG",
+                    "value": "No change"
+                },
+                {
+                    "type": "DropDown",
+                    "label": "Coronary Artery Disease, Risk factors",
+                    "short_name": "Risk factors",
+                    "value": "Structure of apex of heart",
+                    "fullValue": "Structure of apex of heart (body structure)"
+                }
+            ]
+        }
+    ]
+}
