@@ -7,7 +7,8 @@ const {
     closeTab,
     $,
     video,
-    waitFor
+    waitFor,
+    deleteCookies
 } = require('taiko');
 const path = require('path');
 const taikoHelper = require("../util/taikoHelper");
@@ -93,3 +94,7 @@ afterScenario(async (context) => {
         console.log("Error closing browser - " + e.message)
     }
 }, { tags: ['ui'] });
+
+step("Delete Browsercookies", async function() {
+	await deleteCookies();
+});

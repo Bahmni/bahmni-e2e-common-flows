@@ -17,11 +17,14 @@ const {
     confirm,
     accept,
     button,
-    link
+    link,
+    above,
+    evaluate
 } = require('taiko');
 var fileExtension = require("../util/fileExtension");
-const taikoHelper = require("../util/taikoHelper")
-var date = require("../util/date")
+const taikoHelper = require("../util/taikoHelper");
+var date = require("../util/date");
+var assert = require("assert");
 
 step("Doctor prescribe tests <prescriptions>", async function (prescriptionFile) {
     var prescriptionFile = `./bahmni-e2e-common-flows/data/${prescriptionFile}.json`;
@@ -59,8 +62,15 @@ step("Doctor prescribes medicines <prescriptionNames>", async function (prescrip
             if (await textBox(toRightOf("Drug Name")).exists()) {
                 await write(drugName, into(textBox(toRightOf("Drug Name"))));
                 await click(link(drugName, below(textBox(toRightOf("Drug Name")))));
-                await dropDown(toRightOf("Units")).select(medicalPrescriptions.units);
+                if (medicalPrescriptions.assertUnits == "true") {
+                    assert.equal(await getDropDownValueFromMedications('uniform-dose-unit'), medicalPrescriptions.units);
+                } else {
+                    await dropDown(toRightOf("Units")).select(medicalPrescriptions.units);
+                }
                 await dropDown(toRightOf("Frequency")).select(medicalPrescriptions.frequency)
+                if (medicalPrescriptions.assertRoute == "true") {
+                    assert.equal(await getDropDownValueFromMedications('route'), medicalPrescriptions.route);
+                }
                 await write(medicalPrescriptions.dose, into(textBox(toRightOf("Dose"))));
                 await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
                 await write(medicalPrescriptions.notes, into(textBox(toRightOf("Additional Instructions"))));
@@ -71,6 +81,16 @@ step("Doctor prescribes medicines <prescriptionNames>", async function (prescrip
     }
 }
 );
+
+async function getDropDownValueFromMedications(selector) {
+    return (await dropDown({ id: selector }).value()).replace("string:", "").trim();
+    // evaluate(() => {
+    //     const dropdown = document.querySelector(selector);
+    //     let selectedValue = dropdown.options[dropdown.selectedIndex].value;
+    //     selectedValue = selectedValue.replace("String:", "").trim();
+    //     return selectedValue;
+    // })
+}
 
 
 step("Doctor captures consultation notes <notes>", async function (notes) {
