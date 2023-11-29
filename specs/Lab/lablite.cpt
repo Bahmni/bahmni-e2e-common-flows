@@ -8,15 +8,15 @@
 # Verify the open orders in Lablite
 * Verify test prescribed is displayed on Pending Lab Orders table
 
-# Upload report in Lablite
-* Select prescribed test in Pending Lab Orders table
-* Open upload report side panel
+# Upload report in Lablite for <testName>
+* Select prescribed <testName> in Pending Lab Orders table
+* Open "Upload Report" side panel
 * Select Lab Report in side panel
 * Select today's date in Report Date Field
 * Upload and verify the reports table
 
-# Upload and verify report in lablite
-* Upload report in Lablite
+# Upload and verify report in lablite for <testName>
+* Upload report in Lablite for <testName>
 * Verify the uploaded report
 
 # Verify lab-lite audit events
@@ -24,3 +24,10 @@
 * Verify Event "User <user> accessed lab dashboard for patient <patient>" in Audit log for the "doctor"
 * Verify Event "User <user> uploaded Lab report [<labReportFile>] for lab tests [<labTest>] for patient <patient>" in Audit log for the "doctor"
 * Verify Event "User <user> viewed lab report [<labReportFile>] dated <date> for lab tests [<labTest>] for patient <patient>" in Audit log for the "doctor"
+
+# Enter test result for <testName>
+* Select prescribed <testName> in Pending Lab Orders table
+* Open "Enter Test Results" side panel
+* Enter test result in side panel
+* Select today's date in Report Date Field
+* Upload and verify the report is uploaded successfully

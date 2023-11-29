@@ -168,3 +168,13 @@ step("Validate obs <form> on the patient clinical dashboard", async function (fo
     await taikoHelper.validateFormFromFile(obsFormValues.ObservationFormDetails, obsFormValues.ObservationFormName)
     await click($('.ngdialog-close'))
 });
+
+step("Verify medical test in patient clinical dashboard", async function() {
+    await taikoHelper.repeatUntilNotFound($(".dashboard-section-loader"))
+    var prescriptionCount = gauge.dataStore.scenarioStore.get("prescriptionsCount")
+    for (var i = 0; i < prescriptionCount; i++) {
+        var prescriptionFile = gauge.dataStore.scenarioStore.get("prescriptions" + i)
+        var medicalPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
+        assert.ok(await text(`${medicalPrescriptions.Result[0].value}`, toRightOf(`${medicalPrescriptions.Result[0].label}`)).exists())
+    }
+});
