@@ -1,0 +1,10 @@
+{
+    "LabGroup":"Blood",
+    "test":"HIV Test",
+    "Result": [
+        {
+            "label": "HIV Test",
+            "value": "True"
+        }
+    ]
+}

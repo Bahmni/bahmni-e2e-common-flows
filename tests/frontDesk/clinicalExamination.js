@@ -26,16 +26,21 @@ const taikoHelper = require("../util/taikoHelper");
 var date = require("../util/date");
 var assert = require("assert");
 
-step("Doctor prescribe tests <prescriptions>", async function (prescriptionFile) {
-    var prescriptionFile = `./bahmni-e2e-common-flows/data/${prescriptionFile}.json`;
-    var testPrescription = JSON.parse(fileExtension.parseContent(prescriptionFile))
-    gauge.message(testPrescription)
-    gauge.dataStore.scenarioStore.put("LabTest", testPrescription.test)
-    await taikoHelper.repeatUntilFound(text(testPrescription.test))
+step("Doctor prescribe tests <prescriptions>", async function (labOrderNames) {
+    var labOrderList = labOrderNames.split(',')
+    var labOrderCount = labOrderList.length
+    gauge.dataStore.scenarioStore.put("labOrderCount", labOrderCount)
+    for (var i = 0; i < labOrderCount; i++) {
+        var labOrderFile = `./bahmni-e2e-common-flows/data/${labOrderList[i]}.json`;
+        gauge.dataStore.scenarioStore.put("labOrder" + i, labOrderFile)
+        var testLabOrder = JSON.parse(fileExtension.parseContent(labOrderFile))
+        gauge.message(testLabOrder)
+    await taikoHelper.repeatUntilFound(text(testLabOrder.test))
     console.log("test found.")
-    await click(testPrescription.test, { force: true })
+    await click(testLabOrder.test, { force: true })
     console.log("Selected test.")
     await waitFor(100)
+    }
 });
 
 

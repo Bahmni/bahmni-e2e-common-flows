@@ -1,0 +1,10 @@
+{
+    "LabGroup":"Blood",
+    "test":"Sickling test only",
+    "Result": [
+        {
+            "label": "Sickle cell screening test",
+            "value": "Positive"
+        }
+    ]
+}

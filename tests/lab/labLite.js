@@ -16,7 +16,9 @@ const {
     attach,
     image,
     $,
-    within
+    within,
+    textBox,
+    dropDown,
 } = require('taiko');
 var assert = require("assert");
 var fileExtension = require("../util/fileExtension");
@@ -45,18 +47,24 @@ step("Select the patient in lablite search result", async function () {
 });
 
 step("Verify test prescribed is displayed on Pending Lab Orders table", async function () {
-    var labTest = gauge.dataStore.scenarioStore.get("LabTest")
-    await highlight(text(labTest, below("Pending Lab Orders"), below("Test"), above("Upload Report")))
-    assert.ok(await text(labTest, below("Pending Lab Orders"), below("Test"), above("Upload Report")).exists())
+    var labOrderCount = gauge.dataStore.scenarioStore.get("labOrderCount")
+    for (var i = 0; i < labOrderCount; i++) {
+        var labOrderFile = gauge.dataStore.scenarioStore.get("labOrder" + i)
+        var testLabOrder = JSON.parse(fileExtension.parseContent(labOrderFile))
+        await highlight(text(testLabOrder.test, below("Pending Lab Orders"), below("Test"), above("Upload Report")))
+        assert.ok(await text(testLabOrder.test, below("Pending Lab Orders"), below("Test"), above("Upload Report")).exists())
+    }
 });
 
-step("Open upload report side panel", async function () {
-    await click("Upload Report");
+step("Open <panelName> side panel", async function (panelName) {
+    await click(panelName);
 });
 
-step("Select prescribed test in Pending Lab Orders table", async function () {
-    var labTest = gauge.dataStore.scenarioStore.get("LabTest")
-    await checkBox(below("Pending Lab Orders"), above("Upload Report"), toLeftOf(labTest)).check();
+step("Select prescribed <testName> in Pending Lab Orders table", async function (labOrderFile) {
+    var labOrderFile = `./bahmni-e2e-common-flows/data/${labOrderFile}.json`;
+    var testLabOrder = JSON.parse(fileExtension.parseContent(labOrderFile))
+    gauge.dataStore.scenarioStore.put("LabTestFile", testLabOrder)
+    await checkBox(below("Pending Lab Orders"), above("Upload Report"), toLeftOf(testLabOrder.test)).check();
 });
 
 step("Select Lab Report in side panel", async function () {
@@ -94,11 +102,25 @@ step("Verify the uploaded report", async function () {
 });
 
 
-step("Click Home button on lab-lite", async function() {
-	await click(button({ "aria-label": "Home" }));
+step("Click Home button on lab-lite", async function () {
+    await click(button({ "aria-label": "Home" }));
 });
 
-step("Verify order is removed from Pending lab orders table", async function() {
-	var labTest = gauge.dataStore.scenarioStore.get("LabTest")
-    assert.ok(!await text(labTest,above("Upload Report")).exists(500,1000));
+step("Verify order is removed from Pending lab orders table", async function () {
+    var labTest = gauge.dataStore.scenarioStore.get("LabTest")
+    assert.ok(!await text(labTest, above("Upload Report")).exists(500, 1000));
+});
+
+step("Enter test result in side panel", async function () {
+    let LabTestFile = gauge.dataStore.scenarioStore.get("LabTestFile")
+    for (const detail of LabTestFile.Result) {
+        const labelValue = detail.label;
+        await click($("//span[normalize-space()='Select an answer']"));
+        await click(detail.value);
+    }
+});
+
+step("Upload and verify the report is uploaded successfully", async function () {
+    await click(button("Save and Upload"));
+    assert.ok(await text("Report successfully uploaded").exists());
 });
