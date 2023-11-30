@@ -23,18 +23,18 @@ var fileExtension = require("../util/fileExtension");
 const taikoHelper = require("../util/taikoHelper")
 var date = require("../util/date")
 
-step("Doctor prescribe tests <prescriptions>", async function (prescriptionNames) {
-    var prescriptionsList = prescriptionNames.split(',')
-    var prescriptionsCount = prescriptionsList.length
-    gauge.dataStore.scenarioStore.put("prescriptionsCount", prescriptionsCount)
-    for (var i = 0; i < prescriptionsCount; i++) {
-        var prescriptionFile = `./bahmni-e2e-common-flows/data/${prescriptionsList[i]}.json`;
-        gauge.dataStore.scenarioStore.put("prescriptions" + i, prescriptionFile)
-        var testPrescriptions = JSON.parse(fileExtension.parseContent(prescriptionFile))
-        gauge.message(testPrescriptions)
-    await taikoHelper.repeatUntilFound(text(testPrescriptions.test))
+step("Doctor prescribe tests <prescriptions>", async function (labOrderNames) {
+    var labOrderList = labOrderNames.split(',')
+    var labOrderCount = labOrderList.length
+    gauge.dataStore.scenarioStore.put("labOrderCount", labOrderCount)
+    for (var i = 0; i < labOrderCount; i++) {
+        var labOrderFile = `./bahmni-e2e-common-flows/data/${labOrderList[i]}.json`;
+        gauge.dataStore.scenarioStore.put("labOrder" + i, labOrderFile)
+        var testLabOrder = JSON.parse(fileExtension.parseContent(labOrderFile))
+        gauge.message(testLabOrder)
+    await taikoHelper.repeatUntilFound(text(testLabOrder.test))
     console.log("test found.")
-    await click(testPrescriptions.test, { force: true })
+    await click(testLabOrder.test, { force: true })
     console.log("Selected test.")
     await waitFor(100)
     }
