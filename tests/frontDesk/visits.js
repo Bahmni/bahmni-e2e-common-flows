@@ -176,8 +176,7 @@ step("Verify medical test in patient clinical dashboard", async function () {
     await taikoHelper.repeatUntilNotFound($(".dashboard-section-loader"))
     var labOrderCount = gauge.dataStore.scenarioStore.get("labOrderCount")
     for (var i = 0; i < labOrderCount; i++) {
-        var labOrderFile = gauge.dataStore.scenarioStore.get("labOrder" + i)
-        var testLabOrder = JSON.parse(fileExtension.parseContent(labOrderFile))
+        var testLabOrder = gauge.dataStore.scenarioStore.get("labOrder" + i)
         for (var j = 0; j < testLabOrder.Result.length; j++) {
             assert.ok(await text(`${testLabOrder.Result[j].value}`, toRightOf(`${testLabOrder.Result[j].label}`),within($("#Lab-Results"))).exists())
         }

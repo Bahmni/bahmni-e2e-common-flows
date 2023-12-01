@@ -49,8 +49,7 @@ step("Select the patient in lablite search result", async function () {
 step("Verify test prescribed is displayed on Pending Lab Orders table", async function () {
     var labOrderCount = gauge.dataStore.scenarioStore.get("labOrderCount")
     for (var i = 0; i < labOrderCount; i++) {
-        var labOrderFile = gauge.dataStore.scenarioStore.get("labOrder" + i)
-        var testLabOrder = JSON.parse(fileExtension.parseContent(labOrderFile))
+        var testLabOrder = gauge.dataStore.scenarioStore.get("labOrder" + i)
         await highlight(text(testLabOrder.test, below("Pending Lab Orders"), below("Test"), above("Upload Report")))
         assert.ok(await text(testLabOrder.test, below("Pending Lab Orders"), below("Test"), above("Upload Report")).exists())
     }
