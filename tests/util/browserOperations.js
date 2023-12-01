@@ -48,9 +48,9 @@ step("reload the page", async function () {
 step("close tab", async function () {
     await closeTab()
 });
-
+const browserOptions = { headless: headless, args: ["--no-sandbox", "--disable-dev-shm-usage", '--use-fake-ui-for-media-stream', "--window-size=1440,900"] }
 beforeScenario(async (context) => {
-    const browserOptions = { headless: headless, args: ["--no-sandbox", "--disable-dev-shm-usage", '--use-fake-ui-for-media-stream', "--window-size=1440,900"] }
+    
     try {
         await openBrowser(browserOptions)
     }
@@ -97,4 +97,11 @@ afterScenario(async (context) => {
 
 step("Delete Browsercookies", async function() {
 	await deleteCookies();
+});
+
+
+step("Restart browser", async function() {
+	await closeBrowser();
+    await openBrowser(browserOptions);
+    
 });
