@@ -84,12 +84,12 @@ step("Select Doctor in side panel", async function () {
 });
 
 step("Upload and verify the reports table", async function () {
-    var labTest = gauge.dataStore.scenarioStore.get("LabTest")
+    var labTest = gauge.dataStore.scenarioStore.get("LabTestFile")
     var labReportFile = gauge.dataStore.scenarioStore.get("labReportFile")
     await click(button("Save and Upload"));
     await taikoHelper.repeatUntilNotFound($("//H3[text()='Report successfully uploaded']"));
-    await highlight(text(labTest, below("Reports Table"), below("Test"), toLeftOf(labReportFile)))
-    assert.ok(await text(labTest, below("Reports Table"), below("Test"), toLeftOf(labReportFile)).exists());
+    await highlight(text(labTest.test, below("Reports Table"), below("Test"), toLeftOf(labReportFile)))
+    assert.ok(await text(labTest.test, below("Reports Table"), below("Test"), toLeftOf(labReportFile)).exists());
 });
 
 step("Verify the uploaded report", async function () {
@@ -107,8 +107,8 @@ step("Click Home button on lab-lite", async function () {
 });
 
 step("Verify order is removed from Pending lab orders table", async function () {
-    var labTest = gauge.dataStore.scenarioStore.get("LabTest")
-    assert.ok(!await text(labTest, above("Upload Report")).exists(500, 1000));
+    var labTest = gauge.dataStore.scenarioStore.get("LabTestFile")
+    assert.ok(!await text(labTest.test, above("Upload Report")).exists(500, 1000));
 });
 
 step("Enter test result in side panel", async function () {

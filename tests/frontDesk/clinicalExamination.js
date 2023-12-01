@@ -32,14 +32,12 @@ step("Doctor prescribe tests <prescriptions>", async function (labOrderNames) {
     gauge.dataStore.scenarioStore.put("labOrderCount", labOrderCount)
     for (var i = 0; i < labOrderCount; i++) {
         var labOrderFile = `./bahmni-e2e-common-flows/data/${labOrderList[i]}.json`;
-        gauge.dataStore.scenarioStore.put("labOrder" + i, labOrderFile)
         var testLabOrder = JSON.parse(fileExtension.parseContent(labOrderFile))
+        gauge.dataStore.scenarioStore.put("labOrder" + i, testLabOrder)
         gauge.message(testLabOrder)
-    await taikoHelper.repeatUntilFound(text(testLabOrder.test))
-    console.log("test found.")
-    await click(testLabOrder.test, { force: true })
-    console.log("Selected test.")
-    await waitFor(100)
+        await taikoHelper.repeatUntilFound(text(testLabOrder.test))
+        await click(testLabOrder.test, { force: true })
+        await waitFor(100)
     }
 });
 

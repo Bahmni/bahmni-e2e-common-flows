@@ -273,12 +273,12 @@ step("Verify Event <message> in Audit log for the <user>", async function (strMe
     var patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
     var username = users.getUserNameFromEncoding(process.env[strUser]);
     var todayDate = date.getDateInLongFromat(date.today())
-    var labTest = gauge.dataStore.scenarioStore.get("LabTest")
+    var labTest = gauge.dataStore.scenarioStore.get("LabTestFile")
     strMessage = strMessage.replace('<user>', username)
         .replace('<patient>', patientIdentifierValue)
         .replace('<labReportFile>', labReportFile)
         .replace('<date>', todayDate)
-        .replace("<labTest>", labTest);
+        .replace("<labTest>", labTest.test);
     if (strMessage.includes(patientIdentifierValue)) {
         assert.ok(await text(strMessage, toRightOf(username), toRightOf(patientIdentifierValue)).exists());
     }

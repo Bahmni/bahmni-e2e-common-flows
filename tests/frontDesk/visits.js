@@ -151,8 +151,11 @@ step("Verify consultation notes in patient clinical dashboard", async function (
 });
 
 step("Validate the lab tests are available in patient clinical dashboard", async function () {
-    var labTest = gauge.dataStore.scenarioStore.get("LabTest")
-    assert.ok(await text(labTest, within($("#Lab-Results"))).exists())
+    var labOrderCount = gauge.dataStore.scenarioStore.get("labOrderCount")
+    for (var i = 0; i < labOrderCount; i++) {
+        var testLabOrder = gauge.dataStore.scenarioStore.get("labOrder" + i)
+        assert.ok(await text(testLabOrder.test, within($("#Lab-Results"))).exists())
+    }
 });
 
 step("Verify no error displayed on page", async function () {
