@@ -178,7 +178,7 @@ step("Verify medical test in patient clinical dashboard", async function () {
     for (var i = 0; i < labOrderCount; i++) {
         var testLabOrder = gauge.dataStore.scenarioStore.get("labOrder" + i)
         for (var j = 0; j < testLabOrder.Result.length; j++) {
-            assert.ok(await text(`${testLabOrder.Result[j].value}`, toRightOf(`${testLabOrder.Result[j].label}`),within($("#Lab-Results"))).exists())
+            assert.ok(await text(`${testLabOrder.Result[j].value}`, toRightOf(`${testLabOrder.Result[j].label}`),within($("#Lab-Results"))).exists(), "Result not found for " + testLabOrder.Result[j].label+" "+testLabOrder.Result[j].value)
         }
     }
 });
