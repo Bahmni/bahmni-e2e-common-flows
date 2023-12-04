@@ -17,7 +17,8 @@ const {
     highlight,
     link,
     below,
-    evaluate
+    evaluate,
+    closeTab
 } = require('taiko');
 const taikoHelper = require("../util/taikoHelper")
 var fileExtension = require("../util/fileExtension")
@@ -181,4 +182,13 @@ step("Verify medical test in patient clinical dashboard", async function () {
             assert.ok(await text(`${testLabOrder.Result[j].value}`, toRightOf(`${testLabOrder.Result[j].label}`),within($("#Lab-Results"))).exists())
         }
     }
+});
+
+step("Verify the document uploaded is available in patient dashboard", async function () {
+    var labTest=gauge.dataStore.scenarioStore.get("LabTestFile")
+    assert.ok(await text(labTest.test,within($("#Lab-Results"))).exists())
+    await click(text(labTest.test,within($("#Lab-Results"))))
+    await highlight($("//body//img"))
+    assert.ok(await $("//body//img").exists());
+    await closeTab()
 });
