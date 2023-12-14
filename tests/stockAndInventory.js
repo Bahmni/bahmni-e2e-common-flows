@@ -1,4 +1,4 @@
-const { goto, $, below, write, textBox, into, click, toLeftOf, checkBox, reload, text, waitFor, highlight, screenshot } = require('taiko');
+const { goto, $, below, write, textBox, into, click, toLeftOf, checkBox, reload, text, waitFor, highlight, screenshot, button } = require('taiko');
 var assert = require("assert")
 step("enter odoo username", async function () {
     await write(process.env.odooUsername, into(textBox(below("Email"))));
@@ -42,16 +42,20 @@ step("select Customer", async function () {
 });
 
 step("Confirm sale", async function () {
-    await waitFor(async () => (await text("Confirm Sale").exists()))
-    await click("Confirm Sale");
+    await waitFor(async () => (await text("CONFIRM").exists()))
+    await click("CONFIRM");
     await waitFor(async () => (await text("Quotation confirmed").exists()))
     assert.ok(await text("Quotation confirmed").exists());
 });
 
 step("Goto Odoo", async function () {
-    await goto(process.env.odooURL+"/web/login", { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+    await goto(process.env.odooURL + "/web/login", { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
 });
 
 step("Click Quotations", async function () {
     await click("Quotations", { waitForNavigation: true, navigationTimeout: process.env.actionTimeout })
+});
+
+step("Click Odoo Home button", async function () {
+    await click(button({ title: "Home Menu" }));
 });
