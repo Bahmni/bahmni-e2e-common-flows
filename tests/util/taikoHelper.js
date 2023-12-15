@@ -39,7 +39,7 @@ async function verifyConfigurations(configurations, observationFormName) {
                 break;
             default:
                 if (configuration.label != "Date of Sample Collection")
-                    assert.ok(await text(configuration.value, toRightOf(configuration.label)).exists())
+                    assert.ok(await text(configuration.value, toRightOf(configuration.label)).exists(),`${configuration.value} To Right of ${configuration.label} is not exist.`)
                 break;
         }
     }

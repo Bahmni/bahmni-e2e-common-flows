@@ -220,5 +220,5 @@ step("Verify the details in Appointments display control with status <status>", 
     let appointmentDate = gauge.dataStore.scenarioStore.get("appointmentDate");
     let appointmentStartTime = gauge.dataStore.scenarioStore.get("appointmentStartTime");
     let appointmentEndTime = gauge.dataStore.scenarioStore.get("appointmentEndTime");
-    assert.ok(text(`${appointmentStartTime} - ${appointmentEndTime}`, toRightOf(appointmentDate, toLeftOf(status), within($("//*[text()='Appointments']/ancestor::section")))).exists())
+    assert.ok(text(`${appointmentStartTime} - ${appointmentEndTime}`, toRightOf(appointmentDate, toLeftOf(status), within($("//*[text()='Appointments']/ancestor::section")))).exists(),`Appointment details not found for status: ${status}, appointmentDate: ${appointmentDate}, startTime: ${appointmentStartTime}, endTime: ${appointmentEndTime}`)
 });

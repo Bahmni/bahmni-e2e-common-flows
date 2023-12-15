@@ -45,7 +45,7 @@ step("Confirm sale", async function () {
     await waitFor(async () => (await text("Confirm Sale").exists()))
     await click("Confirm Sale");
     await waitFor(async () => (await text("Quotation confirmed").exists()))
-    assert.ok(await text("Quotation confirmed").exists());
+    assert.ok(await text("Quotation confirmed").exists(),`Text with Quotation confirmed not found`);
 });
 
 step("Goto Odoo", async function () {

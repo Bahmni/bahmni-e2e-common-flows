@@ -291,7 +291,7 @@ step("Open newly created patient details by search", async function () {
 
 step("Verify correct patient form is open", async function () {
     var patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
-    assert.ok(await text(patientIdentifierValue).exists());
+    assert.ok(await text(patientIdentifierValue).exists(),`${patientIdentifierValue} does not exist`);
 });
 
 step("Enter random village", async function () {

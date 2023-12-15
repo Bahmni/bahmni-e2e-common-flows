@@ -221,7 +221,7 @@ step("Upload <profile> data file", async function (profile) {
             max_Retry = 0
         }
     }
-    assert.ok(await text('COMPLETED', near("Status"), toRightOf(profile.toLowerCase() + '.csv')).exists());
+    assert.ok(await text('COMPLETED', near("Status"), toRightOf(profile.toLowerCase() + '.csv')).exists(),`Upload of ${profile.toLowerCase()}.csv did not complete successfully`);
     alert(/^can not be represented as java.sql.Timestamp]9.*$/, async () => await accept())
 });
 
@@ -280,7 +280,7 @@ step("Verify Event <message> in Audit log for the <user>", async function (strMe
         .replace('<date>', todayDate)
         .replace("<labTest>", labTest.test);
     if (strMessage.includes(patientIdentifierValue)) {
-        assert.ok(await text(strMessage, toRightOf(username), toRightOf(patientIdentifierValue)).exists());
+        assert.ok(await text(strMessage, toRightOf(username), toRightOf(patientIdentifierValue)).exists(), `Audit log message not found for ${strMessage} toRightOf ${username} toRightOf ${patientIdentifierValue}`);
     }
-    assert.ok(await text(strMessage, toRightOf(username)).exists());
+    assert.ok(await text(strMessage, toRightOf(username)).exists(), `Audit log message not found for ${strMessage} toRightOf ${username}`);
 });
