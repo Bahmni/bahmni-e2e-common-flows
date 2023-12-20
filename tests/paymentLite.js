@@ -237,7 +237,7 @@ step("open the invoice", async function () {
 
 step("verify the payment is complete", async function () {
 	var invoiceNumber = gauge.dataStore.scenarioStore.get("invoiceNumber")
-	assert.ok(await text("COMPLETED", below(invoiceNumber)).exists(),"Payment is not completed")
+	assert.ok(await text("COMPLETED", below(invoiceNumber)).exists(),`Text completed below ${invoiceNumber} is not found`)
 });
 
 step("Add Payment", async function () {

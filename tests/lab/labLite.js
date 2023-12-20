@@ -42,7 +42,7 @@ step("Select the patient in lablite search result", async function () {
     var patientFirstName = gauge.dataStore.scenarioStore.get("patientFirstName");
     var patientMiddleName = gauge.dataStore.scenarioStore.get("patientMiddleName");
     var patientLastName = gauge.dataStore.scenarioStore.get("patientLastName");
-    assert.ok(await text("Found 1 patient").exists(),"Patient not found")
+    assert.ok(await text("Found 1 patient").exists(),"Text with Found 1 patient not found")
     await click(`${patientFirstName} ${patientMiddleName} ${patientLastName}`)
 });
 
@@ -121,5 +121,5 @@ step("Enter test result in side panel", async function () {
 
 step("Upload and verify the report is uploaded successfully", async function () {
     await click(button("Save and Upload"));
-    assert.ok(await text("Report successfully uploaded").exists(),"Report is not uploaded successfully");
+    assert.ok(await text("Report successfully uploaded").exists(),"Text with Report successfully uploaded is not found");
 });
