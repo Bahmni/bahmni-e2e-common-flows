@@ -42,7 +42,7 @@ step("Select the patient in lablite search result", async function () {
     var patientFirstName = gauge.dataStore.scenarioStore.get("patientFirstName");
     var patientMiddleName = gauge.dataStore.scenarioStore.get("patientMiddleName");
     var patientLastName = gauge.dataStore.scenarioStore.get("patientLastName");
-    assert.ok(await text("Found 1 patient").exists())
+    assert.ok(await text("Found 1 patient").exists(),"Text with Found 1 patient not found")
     await click(`${patientFirstName} ${patientMiddleName} ${patientLastName}`)
 });
 
@@ -51,7 +51,7 @@ step("Verify test prescribed is displayed on Pending Lab Orders table", async fu
     for (var i = 0; i < labOrderCount; i++) {
         var testLabOrder = gauge.dataStore.scenarioStore.get("labOrder" + i)
         await highlight(text(testLabOrder.test, below("Pending Lab Orders"), below("Test"), above("Upload Report")))
-        assert.ok(await text(testLabOrder.test, below("Pending Lab Orders"), below("Test"), above("Upload Report")).exists())
+        assert.ok(await text(testLabOrder.test, below("Pending Lab Orders"), below("Test"), above("Upload Report")).exists(), `Lab order ${testLabOrder.test} is not displayed on Pending Lab Orders table`)
     }
 });
 
@@ -88,7 +88,7 @@ step("Upload and verify the reports table", async function () {
     await click(button("Save and Upload"));
     await taikoHelper.repeatUntilNotFound($("//H3[text()='Report successfully uploaded']"));
     await highlight(text(labTest.test, below("Reports Table"), below("Test"), toLeftOf(labReportFile)))
-    assert.ok(await text(labTest.test, below("Reports Table"), below("Test"), toLeftOf(labReportFile)).exists());
+    assert.ok(await text(labTest.test, below("Reports Table"), below("Test"), toLeftOf(labReportFile)).exists(), `Lab order ${labTest.test} is not displayed on Reports table`);
 });
 
 step("Verify the uploaded report", async function () {
@@ -107,7 +107,7 @@ step("Click Home button on lab-lite", async function () {
 
 step("Verify order is removed from Pending lab orders table", async function () {
     var labTest = gauge.dataStore.scenarioStore.get("LabTestFile")
-    assert.ok(!await text(labTest.test, above("Upload Report")).exists(500, 1000));
+    assert.ok(!await text(labTest.test, above("Upload Report")).exists(500, 1000), `Lab order ${labTest.test} is not removed from Pending lab orders table`);
 });
 
 step("Enter test result in side panel", async function () {
@@ -121,5 +121,5 @@ step("Enter test result in side panel", async function () {
 
 step("Upload and verify the report is uploaded successfully", async function () {
     await click(button("Save and Upload"));
-    assert.ok(await text("Report successfully uploaded").exists());
+    assert.ok(await text("Report successfully uploaded").exists(),"Text with Report successfully uploaded is not found");
 });

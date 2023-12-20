@@ -237,7 +237,7 @@ step("open the invoice", async function () {
 
 step("verify the payment is complete", async function () {
 	var invoiceNumber = gauge.dataStore.scenarioStore.get("invoiceNumber")
-	assert.ok(await text("COMPLETED", below(invoiceNumber)).exists())
+	assert.ok(await text("COMPLETED", below(invoiceNumber)).exists(),`Text completed below ${invoiceNumber} is not found`)
 });
 
 step("Add Payment", async function () {
@@ -268,7 +268,7 @@ step("goto reports in payment lite", async function () {
 
 step("Validate Report is displayed", async function () {
 	await waitFor(async () => (await $("//embed[@type='application/pdf']").exists()))
-	assert.ok(await $("//embed[@type='application/pdf']").exists());
+	assert.ok(await $("//embed[@type='application/pdf']").exists(),`Report is not displayed`);
 });
 
 step("Download the report", async function () {

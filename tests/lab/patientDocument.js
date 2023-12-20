@@ -15,7 +15,7 @@ step("Save the report", async function () {
 	await click(button('SAVE'), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
 	await taikoHelper.repeatUntilNotFound($("#overlay"))
 	await click($("//select/../img"));
-	assert.ok(await $("//div[@class='image-container']//img").exists());
+	assert.ok(await $("//div[@class='image-container']//img").exists(),"Patient document does not exist");
 	await waitFor(3000)
 	await click(button({"class":"dialog-close-btn"}))
 	await waitFor(async () => !(await $("//div[@class='image-container']//img").exists()))
@@ -23,7 +23,7 @@ step("Save the report", async function () {
 
 step("validate patient document in patient dashboard", async function() {
 	await click($("//a[@class='img-concept']"));
-	assert.ok(await $("//img[@class='slide']").exists());
+	assert.ok(await $("//img[@class='slide']").exists(),"Patient document does not exist");
 	await waitFor(async () => (await $(".dialog-close-btn").exists()))
 	const closeButton = $(".dialog-close-btn");
 	await evaluate(closeButton, (el) => el.click());
