@@ -27,6 +27,7 @@ const {
 } = require('taiko');
 var date = require("../util/date");
 const taikoHelper = require("../util/taikoHelper")
+var moment = require("moment");
 
 step("View all appointments", async function () {
     await click(process.env.appointmentList);
@@ -86,7 +87,7 @@ step("Enter appointment time <appointmentTime> into Start time", async function 
 step("Open calender at time <appointmentTime>", async function (appointmentTime) {
     await click($(".fc-widget-content"), toRightOf(`${appointmentTime}`));
     await waitFor(async () => !(await $("overlay").exists()))
-    gauge.dataStore.scenarioStore.put("appointmentStartDate", date.getDateFrommmddyyyy(await textBox({ placeHolder: "mm/dd/yyyy" }).value()))
+    gauge.dataStore.scenarioStore.put("appointmentStartDate", moment(await textBox({ placeHolder: "dd/mmm/yyyy" }).value(),"DD/MMM/YYYY").toDate())
 });
 
 step("put <appointmentDate> as appointment date", async function (appointmentDate) {
