@@ -290,7 +290,7 @@ step("Click on Manage Forms", async function () {
 });
 
 step("Delete <formName> if exist", async function (formName) {
-    if (await $("//a[normalize-space()='Blood Pressure']").exists()) {
+    if (await $("//a[normalize-space()='"+formName+"']").exists()) {
         await click(formName)
         confirm('Are you sure you want to delete this entire form AND schema?', async () => await accept());
         await click($("//input[@value='Delete Form']"))
