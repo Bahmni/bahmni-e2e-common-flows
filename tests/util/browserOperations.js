@@ -6,7 +6,6 @@ const {
     setConfig,
     closeTab,
     $,
-    video,
     waitFor
 } = require('taiko');
 const path = require('path');
@@ -16,11 +15,11 @@ const fileExtension = require("../util/fileExtension")
 const headless = process.env.headless_chrome.toLowerCase() === 'true';
 
 beforeSuite(async () => {
-    try {
-        fileExtension.removeDir(process.env.video_file_path);
-    } catch (e) {
-        console.log("Error Deleting directory - " + process.env.video_file_path + ". Error message - " + e.message)
-    }
+    // try {
+    //     fileExtension.removeDir(process.env.video_file_path);
+    // } catch (e) {
+    //     console.log("Error Deleting directory - " + process.env.video_file_path + ". Error message - " + e.message)
+    // }
 });
 
 afterSuite(async () => {
@@ -55,29 +54,29 @@ beforeScenario(async (context) => {
         await openBrowser(browserOptions)
     }
     await setConfig({ ignoreSSLErrors: true });
-    let scenarioName = context.currentScenario.name;
-    let videoDir = process.env.video_file_path + '/' + scenarioName.replace(/ /g, "_")
-    gauge.dataStore.scenarioStore.put("videoDir", videoDir)
-    await video.startRecording(videoDir + '/video.mp4',5);
+    // let scenarioName = context.currentScenario.name;
+    // let videoDir = process.env.video_file_path + '/' + scenarioName.replace(/ /g, "_")
+    // gauge.dataStore.scenarioStore.put("videoDir", videoDir)
+    // await video.startRecording(videoDir + '/video.mp4',5);
 });
 
 afterScenario(async (context) => {
-    let videoDir = gauge.dataStore.scenarioStore.get("videoDir")
-    try {
-        if (!context.currentScenario.isFailed) {
-            fileExtension.removeDir(videoDir);
-            console.log("Video deleted for scenario - " + context.currentScenario.name)
-        } else {
-            await video.stopRecording();
-            if (fileExtension.exists(videoDir)) {
-                console.log("Video successfully saved - " + videoDir + '/video.mp4')
-            } else {
-                console.log("Video not successfully saved for scenario - " + context.currentScenario.name)
-            }
-        }
-    } catch (e) {
-        console.log("Error Stopping Video - " + e.message)
-    }
+    // let videoDir = gauge.dataStore.scenarioStore.get("videoDir")
+    // try {
+    //     if (!context.currentScenario.isFailed) {
+    //         fileExtension.removeDir(videoDir);
+    //         console.log("Video deleted for scenario - " + context.currentScenario.name)
+    //     } else {
+    //         await video.stopRecording();
+    //         if (fileExtension.exists(videoDir)) {
+    //             console.log("Video successfully saved - " + videoDir + '/video.mp4')
+    //         } else {
+    //             console.log("Video not successfully saved for scenario - " + context.currentScenario.name)
+    //         }
+    //     }
+    // } catch (e) {
+    //     console.log("Error Stopping Video - " + e.message)
+    // }
     try {
         await closeBrowser();
     }
