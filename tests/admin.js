@@ -103,26 +103,15 @@ step("start creating a form", async function () {
     await click("Create Form");
 });
 
-step("put formname <formName>", async function (formName) {
+step("Put formname <formName>", async function (formName) {
     gauge.dataStore.scenarioStore.put("FormName", formName)
 });
 
-step("edit form <formName>", async function (formName) {
+step("Edit form <formName>", async function (formName) {
     await click(link(toRightOf(formName)))
 });
 
-step("create obs <obsName> <properties>", async function (obsName, properties) {
-    await dragAndDrop("Obs", $(".form-builder-row"));
-    await click("Select Obs Source")
-    await write(obsName, into(textBox(below("Control Properties"))))
-    await press('Enter')
-    await click(obsName)
-    for (var row of properties.rows) {
-        await click(checkBox(toRightOf(row.cells[0])));
-    }
-});
-
-step("create obs group <obsName>", async function (obsName) {
+step("Create obs group <obsName>", async function (obsName) {
     await dragAndDrop("ObsGroup", $(".form-builder-row"));
     await click("Select ObsGroup Source")
     await write(obsName, into(textBox(below("Control Properties"))))
@@ -301,7 +290,7 @@ step("Click on Manage Forms", async function () {
 });
 
 step("Delete <formName> if exist", async function (formName) {
-    if (await $("//a[normalize-space()='Test Form']").exists()) {
+    if (await $("//a[normalize-space()='Blood Pressure']").exists()) {
         await click(formName)
         confirm('Are you sure you want to delete this entire form AND schema?', async () => await accept());
         await click($("//input[@value='Delete Form']"))
