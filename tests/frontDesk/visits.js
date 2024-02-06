@@ -97,11 +97,11 @@ step("Verify vitals", async function () {
     for (var vitalFormValue of vitalFormValues.ObservationFormDetails) {
         if (vitalFormValue.type == 'Group') {
             for (var vitalFormGroup of vitalFormValue.value) {
-                assert.ok(await text(vitalFormGroup.value, within($("#Vitals")), toRightOf(vitalFormGroup.label.split(" ")[0])).exists())
+                assert.ok(await text(vitalFormGroup.value, within($("//span[normalize-space()='Vitals']")), toRightOf(vitalFormGroup.label.split(" ")[0])).exists())
             }
         }
         else {
-            assert.ok(await text(vitalFormValue.value, within($("#Vitals")), toRightOf(vitalFormValue.label.split(" ")[0])).exists())
+            assert.ok(await text(vitalFormValue.value, within($("//span[normalize-space()='Vitals']")), toRightOf(vitalFormValue.label.split(" ")[0])).exists())
         }
     };
 });
@@ -109,21 +109,21 @@ step("Verify vitals", async function () {
 step("Verify diagnosis and condition in patient clinical dashboard", async function () {
     var diagnosisFile = gauge.dataStore.scenarioStore.get("diagnosisFile")
     var medicalDiagnosis = JSON.parse(fileExtension.parseContent(diagnosisFile))
-    assert.ok(await text(medicalDiagnosis.diagnosis.diagnosisName, toLeftOf(medicalDiagnosis.diagnosis.certainty, toLeftOf(medicalDiagnosis.diagnosis.order)), within($("//section[@id='Diagnosis']"))).exists())
+    assert.ok(await text(medicalDiagnosis.diagnosis.diagnosisName, toLeftOf(medicalDiagnosis.diagnosis.certainty, toLeftOf(medicalDiagnosis.diagnosis.order)), within($("//section[@id='Diagnoses']"))).exists())
 });
 
 step("Verify history & examination in patient clinical dashboard", async function () {
     var historyAndExaminationDetails = gauge.dataStore.scenarioStore.get("historyAndExaminationDetails")
-    assert.ok(await text(`${historyAndExaminationDetails.Chief_Complaints[0].Chief_Complaint} since ${historyAndExaminationDetails.Chief_Complaints[0].for} ${historyAndExaminationDetails.Chief_Complaints[0].for_frequency}`, toRightOf("Chief Complaint"), within($("#History-and-Examinations"))).exists())
-    assert.ok(await text(`${historyAndExaminationDetails.Chief_complaint_notes}`, within($("#History-and-Examinations")), toRightOf("Chief Complaint Notes")).exists())
-    assert.ok(await text(`${historyAndExaminationDetails.History_Notes}`, within($("#History-and-Examinations")), toRightOf("History Notes")).exists())
-    assert.ok(await text(`${historyAndExaminationDetails.Examination_notes}`, within($("#History-and-Examinations")), toRightOf("Examination Notes")).exists())
-    assert.ok(await text(`${historyAndExaminationDetails.Smoking_History}`, within($("#History-and-Examinations")), toRightOf("Smoking History")).exists())
+    assert.ok(await text(`${historyAndExaminationDetails.Chief_Complaints[0].Chief_Complaint} since ${historyAndExaminationDetails.Chief_Complaints[0].for} ${historyAndExaminationDetails.Chief_Complaints[0].for_frequency}`, toRightOf("Chief Complaint"), within($(" #History-and-Examinations "))).exists())
+    assert.ok(await text(`${historyAndExaminationDetails.Chief_complaint_notes}`, within($(" #History-and-Examinations ")), toRightOf("Chief Complaint Notes")).exists())
+    assert.ok(await text(`${historyAndExaminationDetails.History_Notes}`, within($(" #History-and-Examinations ")), toRightOf("History Notes")).exists())
+    assert.ok(await text(`${historyAndExaminationDetails.Examination_notes}`, within($(" #History-and-Examinations ")), toRightOf("Examination Notes")).exists())
+    assert.ok(await text(`${historyAndExaminationDetails.Smoking_History}`, within($(" #History-and-Examinations ")), toRightOf("Smoking History")).exists())
 });
 
 step("Verify consultation notes in patient clinical dashboard", async function () {
     var consultationNote = gauge.dataStore.scenarioStore.get("consultationNotes")
-    await click(link(toLeftOf(text("OPD"), within($("#Visits")))))
+    await click(link(toLeftOf(text("OPD"), within($(" #Visits")))))
     assert.ok(await text(consultationNote, within($("#observation-section")), toRightOf("consultation note")).exists())
 });
 
