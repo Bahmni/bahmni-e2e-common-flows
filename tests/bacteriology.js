@@ -1,4 +1,4 @@
-const { click, waitFor, text, timeField,toRightOf,scrollTo } = require("taiko");
+const { click, waitFor, text, timeField,toRightOf,scrollTo,$, scrollDown,within } = require("taiko");
 var date = require("./util/date");
 var fileExtension = require("./util/fileExtension");
 var taikoHelper = require("./util/taikoHelper");
@@ -23,9 +23,8 @@ step("Enter Bacteriology results", async function() {
     await taikoHelper.executeConfigurations(observationFormValues.ObservationFormDetails,observationFormValues.ObservationFormName,true)
 });
 
-step("verify bacteriology details", async function() {
+step("Verify bacteriology details", async function () {
     var observationFormValues = JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/consultation/observations/Bacteriology.json`))
-    await scrollTo("Bacteriology Results");
-    await click(observationFormValues.SampleType)
+    await click(observationFormValues.SampleType,within($("#Bacteriology-Results")))
     await taikoHelper.verifyConfigurations(observationFormValues.ObservationFormDetails,observationFormValues.ObservationFormName)
 });

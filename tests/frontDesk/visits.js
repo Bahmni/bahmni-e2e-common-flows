@@ -109,7 +109,7 @@ step("Verify vitals", async function () {
 step("Verify diagnosis and condition in patient clinical dashboard", async function () {
     var diagnosisFile = gauge.dataStore.scenarioStore.get("diagnosisFile")
     var medicalDiagnosis = JSON.parse(fileExtension.parseContent(diagnosisFile))
-    assert.ok(await text(medicalDiagnosis.diagnosis.diagnosisName, toLeftOf(medicalDiagnosis.diagnosis.certainty, toLeftOf(medicalDiagnosis.diagnosis.order)), within($("//section[@id='Diagnosis']"))).exists())
+    assert.ok(await text(medicalDiagnosis.diagnosis.diagnosisName, toLeftOf(medicalDiagnosis.diagnosis.certainty, toLeftOf(medicalDiagnosis.diagnosis.order)), within($("//section[@id='Diagnoses']"))).exists())
 });
 
 step("Verify history & examination in patient clinical dashboard", async function () {
@@ -123,13 +123,13 @@ step("Verify history & examination in patient clinical dashboard", async functio
 
 step("Verify consultation notes in patient clinical dashboard", async function () {
     var consultationNote = gauge.dataStore.scenarioStore.get("consultationNotes")
-    await click(link(toLeftOf(text("OPD"), within($("#Visits")))))
+    await click(link(toLeftOf(text("OPD")), within($("#Visits"))))
     assert.ok(await text(consultationNote, within($("#observation-section")), toRightOf("consultation note")).exists())
 });
 
 step("Validate the lab tests are available in patient clinical dashboard", async function () {
     var labTest =gauge.dataStore.scenarioStore.get("LabTest")
-    assert.ok(await text(labTest,within($("//section[@id='Lab-Results']"))).exists())
+    assert.ok(await text(labTest,within($("#Lab-Results"))).exists())
 });
 
 step("Verify diagnosis in patient clinical dashboard", async function () {
@@ -224,3 +224,12 @@ step("Validate obs <formPath> on the patient clinical dashboard", async function
     await click($('.ngdialog-close'))
 });
 
+
+step("Verify Radiology order for test <radiologyTest> in patient clinical dashboard", async function (radiologyTest) {
+    assert.ok(await text(radiologyTest,within($("#Radiology-Orders"))).exists())
+	
+});
+
+step("Verify Radiology order for test <radiologyTest> under pacs display control in patient clinical dashboard", async function (radiologyTest) {
+	assert.ok(await link(radiologyTest,within($("#Pacs"))).exists())
+});
