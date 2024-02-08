@@ -123,7 +123,7 @@ step("Verify history & examination in patient clinical dashboard", async functio
 
 step("Verify consultation notes in patient clinical dashboard", async function () {
     var consultationNote = gauge.dataStore.scenarioStore.get("consultationNotes")
-    await click(link(toLeftOf(text("OPD"), within($("#Visits")))))
+    await click(link(toLeftOf(text("OPD")), within($("#Visits"))))
     assert.ok(await text(consultationNote, within($("#observation-section")), toRightOf("consultation note")).exists())
 });
 
