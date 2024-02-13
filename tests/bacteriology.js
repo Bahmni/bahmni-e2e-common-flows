@@ -25,6 +25,7 @@ step("Enter Bacteriology results", async function() {
 
 step("Verify bacteriology details", async function () {
     var observationFormValues = JSON.parse(fileExtension.parseContent(`./bahmni-e2e-common-flows/data/consultation/observations/Bacteriology.json`))
+    await scrollTo($("#Bacteriology-Results"))
     await click(observationFormValues.SampleType,within($("#Bacteriology-Results")))
     await taikoHelper.verifyConfigurations(observationFormValues.ObservationFormDetails,observationFormValues.ObservationFormName)
 });
