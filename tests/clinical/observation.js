@@ -45,7 +45,6 @@ step("Enter History and examination details <filePath>", async function (filePat
     gauge.dataStore.scenarioStore.put("historyAndExaminationDetails", historyAndExaminationDetails)
     for (var chiefComplaint of historyAndExaminationDetails.Chief_Complaints) {
         await scrollTo("Chief Complaint")
-        await click($("//span[@class='Select-clear']"))
         await write(chiefComplaint.Chief_Complaint, into(textBox(toRightOf("Chief Complaint"))));
         await click($("//div[@role='option' and text()='"+chiefComplaint.Chief_Complaint+"']"));
         // await click(chiefComplaint.Chief_Complaint, below(textBox(toRightOf("Chief Complaint"))));
