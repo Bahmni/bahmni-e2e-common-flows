@@ -23,7 +23,8 @@ const {
     below,
     press,
     scrollTo,
-    evaluate
+    evaluate,
+    radioButton
 } = require('taiko');
 var date = require("../util/date");
 const taikoHelper = require("../util/taikoHelper")
@@ -61,9 +62,9 @@ step("Select service <service>", async function (service) {
 
 step("Search and select service", async function () {
     await write(process.env.service, into($("//*[@data-testid='service-search']//INPUT")))
-    await waitFor(async () => (await $("//DIV[text()='" + process.env.service + "' and contains(@id,'option')]").exists()));
+    await waitFor(async () => (await $("//DIV[text()='" + process.env.service + "' and contains(@class,'option')]").exists()));
     await waitFor(200);
-    await evaluate($("//DIV[text()='" + process.env.service + "' and contains(@id,'option')]"), (el) => el.click());
+    await evaluate($("//DIV[text()='" + process.env.service + "' and contains(@class,'option')]"), (el) => el.click());
 });
 
 step("Search and select appointment location", async function () {
@@ -86,8 +87,8 @@ step("Enter appointment time <appointmentTime> into Start time", async function 
 
 step("Open calender at time <appointmentTime>", async function (appointmentTime) {
     await click($(".fc-widget-content"), toRightOf(`${appointmentTime}`));
-    await waitFor(async () => !(await $("overlay").exists()))
-    gauge.dataStore.scenarioStore.put("appointmentStartDate", moment(await textBox({ placeHolder: "dd/mmm/yyyy" }).value(),"DD/MMM/YYYY").toDate())
+    await taikoHelper.repeatUntilNotFound($("#overlay"))
+    gauge.dataStore.scenarioStore.put("appointmentStartDate", moment(await textBox({ placeHolder: "mm/dd/yyyy" }).value(), "MM/DD/YYYY").toDate())
 });
 
 step("put <appointmentDate> as appointment date", async function (appointmentDate) {
@@ -105,6 +106,8 @@ step("Click Save", async function () {
 
 step("Check and Save", async function () {
     await click("Check and Save");
+    await waitFor(async () => (await $(`//DIV/P[text()='Appointment Created!']`).exists()));
+    await waitFor(async () => !(await $(`//DIV/P[text()='Appointment Created!']`).exists()));
 });
 
 step("Goto tomorrow's date", async function () {
@@ -143,7 +146,7 @@ step("select the walk in appointment option", async function () {
 });
 
 step("select the teleconsultation appointment option", async function () {
-    await click(checkBox(toLeftOf("Teleconsultation")))
+    await checkBox("Teleconsultation").check();
 });
 
 step("select the recurring appointment option", async function () {
@@ -199,4 +202,37 @@ step("Manage locations", async function () {
 
 step("Goto Today", async function () {
     await click("Today")
+});
+
+step("Select List View in Appointments", async function () {
+    await click("List view")
+});
+
+step("Get Apointmnet Date and Time", async function () {
+    var patientIdentifierValue = gauge.dataStore.scenarioStore.get("patientIdentifier");
+    let appointmentDate = await $("//A[text()='" + patientIdentifierValue + "']/../../TD[3]").text();
+    let appointmentStartTime = await $("//A[text()='" + patientIdentifierValue + "']/../../TD[4]").text();
+    let appointmentEndTime = await $("//A[text()='" + patientIdentifierValue + "']/../../TD[5]").text();
+    gauge.dataStore.scenarioStore.put("appointmentDate", appointmentDate)
+    gauge.dataStore.scenarioStore.put("appointmentStartTime", appointmentStartTime)
+    gauge.dataStore.scenarioStore.put("appointmentEndTime", appointmentEndTime)
+});
+
+step("Verify the details in Appointments display control with status <status>", async function (status) {
+    let appointmentDate = gauge.dataStore.scenarioStore.get("appointmentDate");
+    let appointmentStartTime = gauge.dataStore.scenarioStore.get("appointmentStartTime");
+    let appointmentEndTime = gauge.dataStore.scenarioStore.get("appointmentEndTime");
+    assert.ok(text(`${appointmentStartTime} - ${appointmentEndTime}`, toRightOf(appointmentDate, toLeftOf(status), within($("//*[text()='Appointments']/ancestor::section")))).exists(), `Appointment details not found for status: ${status}, appointmentDate: ${appointmentDate}, startTime: ${appointmentStartTime}, endTime: ${appointmentEndTime}`)
+});
+
+step("Select Regular Appointment option", async function() {
+	await click(button("Regular Appointment"));
+});
+
+step("Close appointment side panel", async function() {
+	await click($("//div[contains(@class,'AddAppointment_close')]/svg"),{ waitForNavigation: true, navigationTimeout: process.env.actionTimeout })
+});
+
+step("Select <status> appointment status", async function(status) {
+	await radioButton(status).select();
 });
