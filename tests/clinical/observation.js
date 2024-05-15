@@ -15,6 +15,7 @@ const {
     scrollTo,
     reload,
     highlight,
+    link
 } = require('taiko');
 const taikoHelper = require("../util/taikoHelper")
 const fileExtension = require("../util/fileExtension")
@@ -36,8 +37,9 @@ step("Enter History and examination details <filePath>", async function (filePat
     for (var chiefComplaint of historyAndExaminationDetails.Chief_Complaints) {
         await scrollTo("Chief Complaint")
         await write(chiefComplaint.Chief_Complaint, into(textBox(toRightOf("Chief Complaint"))));
-        await scrollTo("Chief Complaint")
-        //await click('Accept', { force: true });
+        await scrollTo("Chief Complaint");
+        await waitFor(async () => (await link(chiefComplaint.Chief_Complaint).exists()));
+        await click(link(chiefComplaint.Chief_Complaint));
         await write(chiefComplaint.for, into(textBox(toRightOf("for"))));
         await dropDown(toRightOf("for")).select(chiefComplaint.for_frequency);
     }

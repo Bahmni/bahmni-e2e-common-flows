@@ -34,11 +34,12 @@
 * Search and select service
 * select the recurring appointment option
 * select the Start date as today
-* select the End date as after few occurances                
-* select Repeats every <days> days
+* select the End date as after "5" occurence
+* select Repeats every <days> "Day(s)"
 * Check and Save
 * wait for "1000"
-* Click Close
+* Select List View in Appointments
+* Get Apointmnet Date and Time
 
 # Receptionist cancels the newly created appointment
 * Click back button

@@ -3,23 +3,27 @@
     "ObservationFormDetails": [
         {
             "type": "TextBox",
-            "label": "Pulse (/min)",
-            "value": "70"
+            "label": "Pulse",
+            "value": "70",
+            "unit":"(/min)"
         },
         {
             "type": "TextBox",
-            "label": "SPO2 (%)",
-            "value": "99"
+            "label": "SPO2",
+            "value": "99",
+            "unit":"(%)"
         },
         {
             "type": "TextBox",
-            "label": "RR (/min)",
-            "value": "99"
+            "label": "RR",
+            "value": "99",
+            "unit":"(/min)"
         },
         {
             "type": "TextBox",
-            "label": "Temperature (F)",
-            "value": "99"
+            "label": "Temperature",
+            "value": "99",
+            "unit":"(F)"
         },
         {
             "type": "Group",
@@ -27,13 +31,15 @@
             "value": [
                 {
                     "type": "TextBox",
-                    "label": "Diastolic (mm Hg)",
-                    "value": "110"
+                    "label": "Diastolic",
+                    "value": "110",
+                    "unit":"(mm Hg)"
                 },
                 {
                     "type": "TextBox",
-                    "label": "Systolic (mm Hg)",
-                    "value": "110"
+                    "label": "Systolic",
+                    "value": "110",
+                    "unit":"(mm Hg)"
                 },
                 {
                     "type": "Button",

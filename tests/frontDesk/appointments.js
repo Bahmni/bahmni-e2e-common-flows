@@ -24,7 +24,8 @@ const {
     press,
     scrollTo,
     evaluate,
-    radioButton
+    radioButton,
+    clear
 } = require('taiko');
 var date = require("../util/date");
 const taikoHelper = require("../util/taikoHelper")
@@ -154,16 +155,21 @@ step("select the recurring appointment option", async function () {
 });
 
 step("select the Start date as today", async function () {
-    await click("Today", below("Starts"));
-    gauge.dataStore.scenarioStore.put("appointmentStartDate", new Date())
+    await clear(textBox(below(text("Appointment start date"))));
+    await write(moment().format('MM/DD/YYYY'), into(textBox(below(text("Appointment start date")))))
+    gauge.dataStore.scenarioStore.put("appointmentStartDate", new Date());
 });
 
-step("select the End date as after few occurances", async function () {
-    await click("After", below("Ends"));
+step("select the End date as after <numberOfOccurences> occurence", async function (numberOfOccurences) {
+    await clear(textBox({"id":"occurrences"}));
+    await write(numberOfOccurences, into(textBox({"id":"occurrences"})));
 });
 
-step("select Repeats every <numberOfDays> days", async function (numberOfDays) {
-    await write(numberOfDays, into(textBox(below("Repeats"))));
+step("select Repeats every <numberOfDays> <type>", async function (numberOfDays, type) {
+    await clear(textBox({"id":"period"}));
+    await write(numberOfDays, into(textBox({"id":"period"})));
+    await click($("#recurrence-type"));
+    await click($("//div[contains(text(),'"+type+"')]"))
 });
 
 step("Click Cancel all", async function () {

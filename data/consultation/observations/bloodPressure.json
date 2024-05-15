@@ -12,14 +12,8 @@
                         {
                             "type": "TextBox",
                             "label": "Systolic (mm Hg)",
-                            "short_name": "Systolic (mm Hg)",
+                            "short_name": "Systolic",
                             "value": "120"
-                        },
-                        {
-                            "type": "Button",
-                            "label": "Systolic Abnormal",
-                            "short_name": "Systolic Abnormal",
-                            "value": "Yes"
                         }
                     ]
                 },
@@ -30,22 +24,16 @@
                         {
                             "type": "TextBox",
                             "label": "Diastolic (mm Hg)",
-                            "short_name": "Diastolic (mm Hg)",
+                            "short_name": "Diastolic",
                             "value": "76"
-                        },
-                        {
-                            "type": "Button",
-                            "label": "Diastolic Abnormal",
-                            "short_name": "Diastolic Abnormal",
-                            "value": "Yes"
-                        },
-                        {
-                            "type": "Button",
-                            "label": "Posture",
-                            "short_name": "Posture",
-                            "value": "Sitting"
                         }
                     ]
+                },
+                {
+                    "type": "Button",
+                    "label": "Posture",
+                    "short_name": "Posture",
+                    "value": "Sitting"
                 }
             ]
         }
