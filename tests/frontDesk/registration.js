@@ -293,7 +293,7 @@ step("Verify correct patient form is open", async function () {
 });
 
 step("Enter random village", async function () {
-    var village = faker.address.cityName();
+    var village = faker.address.cityName().replace(/[^a-zA-Z0-9\s]/g, '');
     if (gauge.dataStore.scenarioStore.get("isNewPatient"))
         await write(village, into(textBox(toRightOf("Village"))))
     gauge.message(`village ${village}`)
@@ -407,7 +407,7 @@ step("Enter random pinCode", async function () {
 
 step("Enter random Locality/Sector", async function () {
     var locality = gauge.dataStore.scenarioStore.get("locality")
-    localitySector = !locality ? faker.address.secondaryAddress() : locality;
+    localitySector = !locality ? faker.address.secondaryAddress().replace(/[^a-zA-Z0-9\s]/g, '') : locality;
     gauge.dataStore.scenarioStore.put("localitySector",localitySector)
     await write(localitySector, into(textBox(toRightOf("Locality/Sector"))));
     gauge.message(`localitySector ${localitySector}`)
