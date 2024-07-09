@@ -71,8 +71,9 @@ step("Validate lab result <details>", async function (details) {
         }
 });
 
-step("Put identifier <patientIdentifier>", async function (patientIdentifier) {
+step("Put identifier <patientIdentifier> <name>", async function (patientIdentifier, name) {
         gauge.dataStore.scenarioStore.put("patientIdentifier", patientIdentifier);
+        gauge.dataStore.scenarioStore.put("patientFullName", name);
 });
 
 step("Click backlog of sample collection", async function () {

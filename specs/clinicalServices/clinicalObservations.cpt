@@ -123,3 +123,13 @@
 # Doctor select the reason for dismissal
 * Verify that a list of reasons for dismissal is displayed
 * Doctor is able to select the reason for dismissal
+
+# Doctor Refills the medications
+* Open "Medications" Tab
+* Refill medicines
+* Save data
+
+# Doctor stops the medications
+* Open "Medications" Tab
+* Stop medications
+* Save data

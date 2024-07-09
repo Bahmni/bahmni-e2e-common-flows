@@ -42,6 +42,7 @@ step("Create a radiology order", async function () {
 });
 
 step("choose test <test>", async function (test) {
+    gauge.dataStore.scenarioStore.put("radiologyTest", test)
     await click(test);
 });
 

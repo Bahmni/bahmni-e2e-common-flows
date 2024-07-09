@@ -1,0 +1,26 @@
+{
+    "Vendor": {
+        "name": "Test Vendor",
+        "address": {
+            "street1": "Test Address",
+            "street2": "Test Address",
+            "village":"Kottayam"
+        },
+        "contact_person": "Test Vendor",
+        "phone": "1234567890",
+        "email": "wLk7c@example.com",
+        "GSTIN":"1234567890"
+    },
+    "products": [
+        {
+            "name": "Fluoxetine 20mg",
+            "description": "Fluoxetine 20mg (Capsule)",
+            "quantity": 10,
+            "UoM": "Unit(s)",
+            "Unit Price": "10.00",
+            "MRP":"15.00",
+            "Taxes":"Purchase Tax 15%",
+            "Subtotal":"100"
+        }
+    ]
+}

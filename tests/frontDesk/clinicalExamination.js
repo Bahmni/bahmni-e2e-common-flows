@@ -71,6 +71,7 @@ step("Doctor prescribes medicines <prescriptionNames>", async function (prescrip
                 await dropDown(toRightOf("Frequency")).select(medicalPrescriptions.frequency)
                 await write(medicalPrescriptions.dose, into(textBox(toRightOf("Dose"))));
                 await write(medicalPrescriptions.duration, into(textBox(toRightOf("Duration"))));
+                gauge.dataStore.scenarioStore.put("drugQuantity",await textBox({id:"quantity"}).value())
             }
             await click("Add");
             const patientDashboardUrl = await evaluate(() => window.location.href);
@@ -443,4 +444,12 @@ step("Get the ICD-10 code for the SNOMED diagnosis", async function () {
     gauge.dataStore.scenarioStore.put("icd10Code", icd10Code)
     await closeTab()
 
+});
+
+step("Refill medicines", async function() {
+	await click(button("Refill All"))
+});
+
+step("Stop medications", async function() {
+	await click(button("Stop"))
 });

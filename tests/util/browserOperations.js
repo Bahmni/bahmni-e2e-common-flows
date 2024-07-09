@@ -6,7 +6,8 @@ const {
     setConfig,
     closeTab,
     $,
-    waitFor
+    waitFor,
+    goBack
 } = require('taiko');
 const path = require('path');
 const taikoHelper = require("../util/taikoHelper");
@@ -15,6 +16,7 @@ const fileExtension = require("../util/fileExtension")
 const headless = process.env.headless_chrome.toLowerCase() === 'true';
 
 beforeSuite(async () => {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     // try {
     //     fileExtension.removeDir(process.env.video_file_path);
     // } catch (e) {
@@ -39,13 +41,19 @@ gauge.customScreenshotWriter = async function () {
 step("reload the page", async function () {
     await reload({ waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
 });
-
+step("Browser back", async function () {
+    await goBack();
+})
 step("Close tab", async function () {
     await closeTab()
 });
 
 beforeScenario(async (context) => {
-    const browserOptions = { headless: headless, args: ["--no-sandbox", "--disable-dev-shm-usage", '--use-fake-ui-for-media-stream', "--window-size=1440,900"] }
+    const browserOptions = {
+        headless: headless, args: ['--local-heuristics-only-for-password-generation', '--disable-popup-blocking', "--no-sandbox", "--disable-dev-shm-usage", '--use-fake-ui-for-media-stream', "--window-size=1440,900", '--password-store=basic'], 'prefs': {
+            'credentials_enable_service': false
+        }
+    }
     try {
         await openBrowser(browserOptions)
     }
@@ -58,7 +66,7 @@ beforeScenario(async (context) => {
     // let videoDir = process.env.video_file_path + '/' + scenarioName.replace(/ /g, "_")
     // gauge.dataStore.scenarioStore.put("videoDir", videoDir)
     // await video.startRecording(videoDir + '/video.mp4',5);
-});
+}, { tags: ['ui'] });
 
 afterScenario(async (context) => {
     // let videoDir = gauge.dataStore.scenarioStore.get("videoDir")
@@ -83,4 +91,4 @@ afterScenario(async (context) => {
     catch (e) {
         console.log("Error closing browser - " + e.message)
     }
-});
+}, { tags: ['ui'] });

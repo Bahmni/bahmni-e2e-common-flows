@@ -11,3 +11,44 @@
 # Convert Quotation to Sales
 * Click Odoo Home button
 * Click Sales
+
+# Navigate to Products page
+* Click Odoo Home button
+* Click Sales
+* wait for "2000"
+* Click "Products" from Odoo top menu and select "Products" from dropdown
+
+# Verify the quotation price details for a new customer
+* Verify the value "No Discount" is displayed for the field "Discount Type"
+* Verify the value "$ 0.00" is displayed for the field "Previous Outstanding Balance"
+* Verify the untaxed amount, taxes, round off, Total & Total Outstanding Balance
+
+# Navigate to Purchase page
+* Click Odoo Home button and select "Purchase"
+* Click "Orders" from Odoo top menu and select "Vendors" from dropdown
+
+# Receive the products
+* Click "RECEIVE PRODUCTS" button
+* Wait for "Receive From" text to exists
+* Validate the "Demand" quantity for all products
+* Add the detailed operations for each product not maintained by batch
+* Validate the "Done" quantity for all products
+* Click "VALIDATE" button
+* Wait for "Validate Stock Entries" text to exists
+* Validate the quantities entered along with Cost price, Sale price & MRP
+* Click "CONFIRM" button
+* wait for "3000"
+* Check current status is set as "DONE"
+
+# Receive the products in lots
+* Click "RECEIVE PRODUCTS" button
+* Wait for "Receive From" text to exists
+* Validate the "Demand" quantity for all products
+* Add the detailed operations for each product maintained by batch
+* Validate the "Done" quantity for all products
+* Click "VALIDATE" button
+* Wait for "Validate Stock Entries" text to exists
+* Validate the quantities entered along with Cost price, Sale price & MRP for product managed by lot
+* Click "CONFIRM" button
+* wait for "3000"
+* Check current status is set as "DONE"
