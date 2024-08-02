@@ -189,7 +189,7 @@ step("Login as user <user> with location <location>", async function (user, loca
     await write(users.getPasswordFromEncoding(process.env[user]), into(textBox(toRightOf("Password"))));
     await click(button("Login"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
     await dropDown("Location").select(location);
-    await click(button("Submit Location"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+    await click(button("Continue"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
     await taikoHelper.repeatUntilNotFound(text("BAHMNI EMR LOGIN"))
     await taikoHelper.repeatUntilNotFound($("#overlay"))
 });
@@ -202,7 +202,7 @@ step("Login as user <user>", async function (user) {
     await write(users.getPasswordFromEncoding(process.env[user]), into(textBox(toRightOf("Password"))));
     await click(button("Login"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
     await dropDown("Location").select({ index: '1' });
-    await click(button("Submit Location"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+    await click(button("Continue"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
     await taikoHelper.repeatUntilNotFound(text("BAHMNI EMR LOGIN"))
     await taikoHelper.repeatUntilNotFound($("#overlay"))
 });
@@ -219,7 +219,7 @@ step("Check login <location>", async function (location) {
         await write(users.getPasswordFromEncoding(process.env.receptionist), into(textBox({ placeholder: "Enter your password" })));
         await click(button("Login"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
         await dropDown("Location").select(location);
-        await click(button("Submit Location"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
+        await click(button("Continue"), { waitForNavigation: true, navigationTimeout: process.env.actionTimeout });
         await taikoHelper.repeatUntilNotFound(text("BAHMNI EMR LOGIN"))
         await taikoHelper.repeatUntilNotFound($("#overlay"))
     }
